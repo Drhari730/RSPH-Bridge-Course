@@ -49,7 +49,8 @@ Step two
 Step three
 \`\`\`
   Use this only for genuine ordered processes — never for a plain list of facts or a table comparison.
-- Never output raw HTML tags. Use only: ## / ### headings, **bold**, *italic*, \`code\`, "- " or "1. " lists, pipe tables, and \`\`\`flow blocks as described above.`;
+- For statistical/mathematical formulas (means, variance, hypothesis tests, sample size, etc.), use real LaTeX: \`$...$\` for an inline expression (e.g. the mean $\\bar{X}$), \`$$...$$\` on its own line for a standalone equation. Always use LaTeX for formulas — never spell one out as plain text like "X-bar = sum of X over n".
+- Never output raw HTML tags. Use only: ## / ### headings, **bold**, *italic*, \`code\`, "- " or "1. " lists, pipe tables, \`\`\`flow blocks, and $/$$ LaTeX math as described above.`;
 
 function stripHtml(html) {
   return String(html || '')

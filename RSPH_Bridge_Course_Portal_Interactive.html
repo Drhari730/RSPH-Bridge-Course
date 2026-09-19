@@ -7,6 +7,11 @@
   <link rel="icon" type="image/svg+xml" href="rsph_logo.svg" />
   <link rel="alternate icon" type="image/png" href="rsph_official_logo.png" />
 
+  <!-- KaTeX: renders the $...$ / $$...$$ statistical formulas embedded in lesson
+       content and the AI tutor's answers as real typeset math, not raw LaTeX text. -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" />
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+
   <style>
     :root {
       --rsph-crimson: #A82042;
@@ -667,6 +672,41 @@
     .lesson-body p { margin-bottom: 14px; }
     .lesson-body ul, .lesson-body ol { margin-left: 20px; margin-bottom: 14px; }
     .lesson-body li { margin-bottom: 4px; }
+    .lesson-body .katex-display, .tutor-ai-answer .katex-display {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 6px 0;
+      margin: 6px 0 14px;
+    }
+    .lesson-body .katex { font-size: 1.04em; }
+    .lesson-body .lesson-md-table-wrap {
+      overflow-x: auto;
+      margin: 6px 0 16px 0;
+      border-radius: 10px;
+      border: 1px solid var(--rsph-border);
+    }
+    .lesson-body table.lesson-md-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .lesson-body table.lesson-md-table th,
+    .lesson-body table.lesson-md-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--rsph-border);
+      text-align: left;
+      vertical-align: top;
+    }
+    .lesson-body table.lesson-md-table th {
+      background: #FEF2F2;
+      color: var(--rsph-crimson-dark);
+      font-weight: 700;
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .lesson-body table.lesson-md-table tr:last-child td { border-bottom: none; }
+    .lesson-body table.lesson-md-table tbody tr:nth-child(even) td { background: #FAFAFA; }
 
     .takeaway-card {
       background: #FEF3C7;
@@ -3568,14 +3608,12 @@
         `;
       }
 
-      // Markdown formatting helper
-      let bodyContent = lesson.content
-        .replace(/### (.*?)\n/g, '<h3 style="font-family: Georgia, serif; color: #1A202C; margin: 24px 0 10px; font-size: 18px;">$1</h3>')
-        .replace(/#### (.*?)\n/g, '<h4 style="font-family: Georgia, serif; color: var(--rsph-crimson); margin: 18px 0 8px; font-size: 15.5px;">$1</h4>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/\n\n/g, '</p><p style="margin: 12px 0; line-height: 1.7; font-size: 15.5px; color: #2D3748;">')
-        .replace(/\n- (.*?)/g, '<li style="margin: 5px 0;">$1</li>');
+      // Full markdown + LaTeX renderer (headings, lists, tables, $math$) — see
+      // renderLessonContent() below for why the old regex .replace() chain here
+      // was replaced (it never actually wrapped list items in <ul>, and had no
+      // idea what to do with the $...$ / $$...$$ LaTeX in the biostatistics
+      // lessons, so both showed up as broken/literal text on the page).
+      let bodyContent = renderLessonContent(lesson.content);
 
       viewer.innerHTML = `
         <div class="lesson-header-bar">
@@ -3602,7 +3640,7 @@
         ` : ''}
 
         <div class="lesson-body" style="font-size: 15.5px; line-height: 1.7; color: #2D3748;">
-          <p style="margin: 12px 0; line-height: 1.7;">${bodyContent}</p>
+          ${bodyContent}
         </div>
 
         ${lesson.explainer_html ? `
@@ -5539,7 +5577,9 @@
     // Renders a markdown pipe table (header row + |---|---| separator + body
     // rows) into a real <table>. Returns null if the block isn't a valid table
     // (caller then leaves the original text untouched).
-    function renderMarkdownTable(block) {
+    function renderMarkdownTable(block, wrapClass, tableClass) {
+      wrapClass = wrapClass || 'tutor-table-wrap';
+      tableClass = tableClass || 'tutor-table';
       const lines = block.trim().split('\n').filter((l) => l.trim().length);
       if (lines.length < 2) return null;
       const isSeparator = (line) => /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(line.trim());
@@ -5549,7 +5589,7 @@
       const headerCells = parseRow(lines[0]);
       const bodyRows = lines.slice(2).map(parseRow);
 
-      let html = '<div class="tutor-table-wrap"><table class="tutor-table"><thead><tr>';
+      let html = `<div class="${wrapClass}"><table class="${tableClass}"><thead><tr>`;
       headerCells.forEach((c) => { html += `<th>${inlineMdRaw(c)}</th>`; });
       html += '</tr></thead><tbody>';
       bodyRows.forEach((row) => {
@@ -5558,6 +5598,91 @@
         html += '</tr>';
       });
       html += '</tbody></table></div>';
+      return html;
+    }
+
+    // Renders one LaTeX expression via KaTeX. Falls back to the raw, escaped
+    // source (still wrapped in $ / $$) if KaTeX isn't loaded yet or the LaTeX
+    // is malformed — never throws, never blanks the page.
+    function katexSafe(expr, displayMode) {
+      try {
+        if (typeof katex !== 'undefined') {
+          return katex.renderToString(expr, { displayMode, throwOnError: false, strict: false });
+        }
+      } catch (e) { /* fall through to raw text below */ }
+      const raw = displayMode ? ('$$' + expr + '$$') : ('$' + expr + '$');
+      return `<code>${escapeHtml(raw)}</code>`;
+    }
+
+    // Full lesson-body renderer: LaTeX math ($...$ / $$...$$ via KaTeX),
+    // markdown pipe tables, ### / #### headings, **bold** / *italic*, and —
+    // unlike the old inline .replace() chain this replaced — correctly-wrapped
+    // <ul>/<ol> lists (the old regex left "- " lines as an empty <li> with the
+    // actual text spilling out unindented below it).
+    function renderLessonContent(raw) {
+      if (!raw) return '';
+      let text = String(raw).replace(/\r\n/g, '\n');
+
+      const mathBlocks = [];
+      text = text.replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => {
+        mathBlocks.push(katexSafe(expr.trim(), true));
+        return `\n@@MATH${mathBlocks.length - 1}@@\n`;
+      });
+      text = text.replace(/\$([^$\n]+?)\$/g, (m, expr) => {
+        mathBlocks.push(katexSafe(expr.trim(), false));
+        return `@@MATH${mathBlocks.length - 1}@@`;
+      });
+
+      const tableBlocks = [];
+      text = text.replace(/((?:^\|.*\|.*$\n?)+)/gm, (m) => {
+        const rendered = renderMarkdownTable(m, 'lesson-md-table-wrap', 'lesson-md-table');
+        if (!rendered) return m;
+        tableBlocks.push(rendered);
+        return `\n@@TABLE${tableBlocks.length - 1}@@\n`;
+      });
+
+      const applyInline = (line) => line
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/(?<!\*)\*(?!\*)(.+?)\*(?!\*)/g, '<em>$1</em>');
+
+      const lines = escapeHtml(text).split('\n');
+      let html = '';
+      let listType = null;
+      let paraBuffer = [];
+      const flushPara = () => {
+        if (paraBuffer.length) { html += `<p>${paraBuffer.join(' ')}</p>`; paraBuffer = []; }
+      };
+      const closeList = () => { if (listType) { html += `</${listType}>`; listType = null; } };
+
+      lines.forEach((rawLine) => {
+        const line = rawLine.trim();
+        if (!line) { flushPara(); closeList(); return; }
+        let m;
+        if (/^@@(MATH|TABLE)\d+@@$/.test(line)) {
+          flushPara(); closeList();
+          html += line;
+        } else if ((m = line.match(/^####\s+(.*)/))) {
+          flushPara(); closeList();
+          html += `<h4>${applyInline(m[1])}</h4>`;
+        } else if ((m = line.match(/^###\s+(.*)/))) {
+          flushPara(); closeList();
+          html += `<h3>${applyInline(m[1])}</h3>`;
+        } else if ((m = line.match(/^[-*]\s+(.*)/))) {
+          flushPara();
+          if (listType !== 'ul') { closeList(); html += '<ul>'; listType = 'ul'; }
+          html += `<li>${applyInline(m[1])}</li>`;
+        } else if ((m = line.match(/^\d+[.)]\s+(.*)/))) {
+          flushPara();
+          if (listType !== 'ol') { closeList(); html += '<ol>'; listType = 'ol'; }
+          html += `<li>${applyInline(m[1])}</li>`;
+        } else {
+          paraBuffer.push(applyInline(line));
+        }
+      });
+      flushPara(); closeList();
+
+      html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[Number(i)] || '');
+      html = html.replace(/@@TABLE(\d+)@@/g, (m, i) => tableBlocks[Number(i)] || '');
       return html;
     }
 
@@ -5599,7 +5724,7 @@
         if (!line) { flushPara(); closeList(); return; }
 
         let m;
-        if (/^@@(FLOW|TABLE)\d+@@$/.test(line)) {
+        if (/^@@(FLOW|TABLE|MATH)\d+@@$/.test(line)) {
           flushPara(); closeList();
           html += line;
         } else if ((m = line.match(/^###\s+(.*)/))) {
@@ -5631,6 +5756,16 @@
       if (!text) return '';
       let raw = String(text).replace(/\r\n/g, '\n');
 
+      const mathBlocks = [];
+      raw = raw.replace(/\$\$([\s\S]+?)\$\$/g, (m, expr) => {
+        mathBlocks.push(katexSafe(expr.trim(), true));
+        return `\n@@MATH${mathBlocks.length - 1}@@\n`;
+      });
+      raw = raw.replace(/\$([^$\n]+?)\$/g, (m, expr) => {
+        mathBlocks.push(katexSafe(expr.trim(), false));
+        return `@@MATH${mathBlocks.length - 1}@@`;
+      });
+
       const flowBlocks = [];
       raw = raw.replace(/```flow\s*\n([\s\S]*?)```/g, (m, inner) => {
         flowBlocks.push(renderFlowBlock(inner));
@@ -5647,6 +5782,7 @@
 
       let html = blockMdToHtml(escapeHtml(raw));
 
+      html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[Number(i)] || '');
       html = html.replace(/@@FLOW(\d+)@@/g, (m, i) => flowBlocks[Number(i)] || '');
       html = html.replace(/@@TABLE(\d+)@@/g, (m, i) => tableBlocks[Number(i)] || '');
 
