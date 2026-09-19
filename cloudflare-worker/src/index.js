@@ -67,7 +67,11 @@ async function handleAsk(request, env) {
 
   const userContent = `${studentName ? `Student's first name: ${studentName}\n` : ''}Retrieved textbook content:\n${contextBlock}\n\nStudent's question: ${question}`;
 
-  const kimiRes = await fetch('https://api.moonshot.ai/v1/chat/completions', {
+  // Kimi's account-level rate limit on this tier is very low (a handful of
+  // requests/minute) — with a whole class asking questions around the same
+  // time, hitting it is routine, not exceptional. Retry with backoff before
+  // giving up (the client falls back to the rule-based answer if we still fail).
+  const callKimi = () => fetch('https://api.moonshot.ai/v1/chat/completions', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${env.KIMI_API_KEY}`,
@@ -84,8 +88,24 @@ async function handleAsk(request, env) {
     })
   });
 
+  let kimiRes = await callKimi();
+  let errText = '';
+  // This Kimi account's rate-limit tier is tight (a handful of concurrent
+  // requests). It recovers fast (Kimi's own Retry-After, typically ~1s) --
+  // isolated/staggered questions almost always succeed on the first retry;
+  // only a genuine simultaneous flood of many students needs several. Widening
+  // jitter each attempt spreads collided requests apart instead of having
+  // them all retry in lockstep and collide again.
+  const MAX_ATTEMPTS = 5;
+  for (let attempt = 0; kimiRes.status === 429 && attempt < MAX_ATTEMPTS; attempt++) {
+    const retryAfterSec = parseFloat(kimiRes.headers.get('retry-after')) || 1;
+    const jitter = Math.random() * (0.4 + attempt * 0.3);
+    await new Promise(r => setTimeout(r, (retryAfterSec + jitter) * 1000));
+    kimiRes = await callKimi();
+  }
+
   if (!kimiRes.ok) {
-    const errText = await kimiRes.text().catch(() => '');
+    errText = await kimiRes.text().catch(() => '');
     return { status: 502, data: { error: 'Tutor backend error', detail: errText.slice(0, 300) } };
   }
 

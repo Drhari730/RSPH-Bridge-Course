@@ -5254,7 +5254,7 @@
       }
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const timeoutId = setTimeout(() => controller.abort(), 24000); // headroom for the Worker's rate-limit retry/backoff
 
       fetch(TUTOR_WORKER_URL, {
         method: 'POST',
