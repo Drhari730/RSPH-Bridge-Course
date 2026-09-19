@@ -270,6 +270,110 @@
       line-height: 1.5;
     }
 
+    /* STUDENT USER GUIDE FLOWCHART (Home Tab) */
+    .user-guide-section {
+      margin: 40px 0 8px;
+      background: linear-gradient(180deg, #FAFBFF 0%, #FFFFFF 100%);
+      border: 1px solid var(--rsph-border);
+      border-radius: 16px;
+      padding: 30px 26px;
+      box-shadow: 0 4px 16px rgba(2, 17, 82, 0.05);
+    }
+    .user-guide-header h3 {
+      font-family: 'Georgia', serif;
+      font-size: 22px;
+      color: #0F172A;
+      margin-bottom: 4px;
+    }
+    .user-guide-header p {
+      font-size: 13.5px;
+      color: var(--rsph-muted);
+      max-width: 720px;
+      margin-bottom: 26px;
+    }
+    .guide-flow {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px 14px;
+      padding: 6px 14px 0;
+    }
+    @media (max-width: 900px) {
+      .guide-flow { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 560px) {
+      .guide-flow { grid-template-columns: 1fr; padding: 6px 2px 0; }
+    }
+    .guide-step {
+      position: relative;
+      background: #FFFFFF;
+      border: 1.5px solid var(--rsph-border);
+      border-radius: 12px;
+      padding: 18px 16px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.3s ease;
+    }
+    .guide-step:hover {
+      border-color: var(--rsph-crimson);
+      box-shadow: 0 10px 24px rgba(168, 32, 66, 0.12);
+      transform: translateY(-4px);
+    }
+    /* Connector arrow to the next step (desktop 3-col: hidden at end of each row) */
+    .guide-flow .guide-step:not(:nth-child(3n))::after {
+      content: '→';
+      position: absolute;
+      right: -19px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--rsph-crimson);
+      opacity: 0.5;
+      z-index: 2;
+    }
+    .guide-flow .guide-step:last-child::after { content: none; }
+    @media (max-width: 900px) {
+      .guide-flow .guide-step::after { content: none !important; }
+    }
+    .guide-step-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--rsph-navy);
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 14px;
+      font-family: 'Georgia', serif;
+    }
+    .guide-step:nth-child(odd) .guide-step-num {
+      background: var(--rsph-crimson);
+    }
+    .guide-step-emoji { font-size: 22px; }
+    .guide-step h5 {
+      font-size: 14px;
+      color: #0F172A;
+      margin: 2px 0 0;
+    }
+    .guide-step p {
+      font-size: 12px;
+      color: #64748B;
+      line-height: 1.5;
+      margin: 0;
+    }
+    .guide-final-note {
+      margin-top: 22px;
+      background: #FDF2F8;
+      border: 1px dashed #F472B6;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: 12.5px;
+      color: #9D174D;
+    }
+
     /* PROGRESS BAR */
     .progress-strip {
       background: #FFFFFF;
@@ -1758,6 +1862,8 @@
   <!-- Firebase App & Cloud Firestore SDKs (v10.12.0 compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <!-- EmailJS SDK (client-side automated email delivery) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -1780,7 +1886,7 @@
       </span>
       <span id="regStudentIdDisplay" style="font-size: 11.5px; color: var(--rsph-muted);">ID: Not Registered</span>
     </div>
-    <div style="display: flex; gap: 8px; align-items: center;">
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
       <button class="reg-btn" onclick="openStudentModal()">📝 Student Registration</button>
       <span style="font-size: 11px; color: #BE185D; font-weight: 700;">Earn Pink Certificates per Module</span>
     </div>
@@ -1903,6 +2009,73 @@
           <img src="prism_data_science.jpg" alt="Biostatistics and Epidemiology" style="width: 100%; border-radius: 8px;" />
         </div>
       </div>
+
+      <!-- STUDENT USER GUIDE FLOWCHART -->
+      <div class="user-guide-section reveal-on-scroll">
+        <div class="user-guide-header">
+          <h3>📋 Student User Guide: How the PRISM Portal Works</h3>
+          <p>Follow this nine-step pathway from registration to your final Certificate of Competence. Each step unlocks the next — complete them in order to earn every Pink Certificate along the way.</p>
+        </div>
+        <div class="guide-flow">
+          <div class="guide-step">
+            <div class="guide-step-num">1</div>
+            <span class="guide-step-emoji">📝</span>
+            <h5>Register</h5>
+            <p>Click "Student Registration" at the top of the page and enter your name, email, program (MPH/MHA) and background. You'll receive a unique Student ID.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">2</div>
+            <span class="guide-step-emoji">🚪</span>
+            <h5>Start Module 1</h5>
+            <p>Open the "30-Day Learning Path" tab. Your sidebar unlocks and Day 1 of Module 1: Public Health Foundations loads automatically.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">3</div>
+            <span class="guide-step-emoji">📖</span>
+            <h5>Read Daily Lessons</h5>
+            <p>Work through each day's lesson text, objectives, tables and prescribed readings in order — one lesson per day, 30 days total.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">4</div>
+            <span class="guide-step-emoji">🎞️</span>
+            <h5>Watch Animated Explainers</h5>
+            <p>Step through the embedded animated diagrams inside each lesson to visualize key frameworks and processes.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">5</div>
+            <span class="guide-step-emoji">🧪</span>
+            <h5>Complete the Interactive Lab</h5>
+            <p>Each module includes a hands-on simulation lab — practice the module's core skill before attempting its quiz.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">6</div>
+            <span class="guide-step-emoji">✅</span>
+            <h5>Take the Module Quiz</h5>
+            <p>At the end of each module, answer the 5-question quiz. Score 80% or higher (4/5) to pass.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">7</div>
+            <span class="guide-step-emoji">🌸</span>
+            <h5>Earn Your Pink Certificate</h5>
+            <p>Passing a module quiz instantly issues a verified Pink Module Certificate in your name — check your inbox for a confirmation email.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">8</div>
+            <span class="guide-step-emoji">🔁</span>
+            <h5>Complete All 6 Modules</h5>
+            <p>Repeat Steps 3–7 for Modules 2 through 6, covering Leadership, Epidemiology, Biostatistics, Research Ethics, and Medical Terminology.</p>
+          </div>
+          <div class="guide-step">
+            <div class="guide-step-num">9</div>
+            <span class="guide-step-emoji">🎓</span>
+            <h5>Generate Your Final Certificate</h5>
+            <p>Visit "Course Certificate", enter your name, and generate your official PRISM Certificate of Competence — print or save it as a PDF.</p>
+          </div>
+        </div>
+        <div class="guide-final-note">
+          🔒 <strong>Note:</strong> The 30-Day Learning Path, labs and quizzes are locked until you complete Student Registration.
+        </div>
+      </div>
     </div>
 
     <!-- TAB 1: 30-DAY LEARNING PATH -->
@@ -1988,16 +2161,11 @@
               Date of Issue: <span id="certDate"></span> • Verification ID: <span id="certId" style="font-family: monospace; font-weight: 700; color: var(--rsph-crimson);"></span>
             </div>
 
-            <div class="cert-signatures">
+            <div class="cert-signatures" style="justify-content: center;">
               <div class="cert-sign-box">
                 <div style="height: 30px; font-family: cursive; font-size: 18px; color: #0F172A;">Dean RSPH</div>
                 <div class="sign-name">Dean &amp; Director</div>
                 <div class="sign-title">Ramaiah School of Public Health</div>
-              </div>
-              <div class="cert-sign-box">
-                <div style="height: 30px; font-family: cursive; font-size: 18px; color: #0F172A;">Registrar RUAS</div>
-                <div class="sign-name">Registrar</div>
-                <div class="sign-title">MSRUAS, Bengaluru</div>
               </div>
             </div>
           </div>
@@ -2199,6 +2367,10 @@
             <input type="text" id="regFullName" placeholder="e.g. Dr. Hariprakash M" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" />
           </div>
           <div>
+            <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Email Address (for automated progress &amp; certificate emails)*</label>
+            <input type="email" id="regEmail" placeholder="e.g. ananya.sharma@example.com" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" />
+          </div>
+          <div>
             <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Candidate Program (Exclusively MPH / MHA)*</label>
             <select id="regDiscipline" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px; font-weight: 600;">
               <option value="MPH Candidate (Master of Public Health)">🎓 Master of Public Health (MPH Candidate)</option>
@@ -2291,6 +2463,9 @@
               <button class="action-btn" style="background: var(--rsph-navy); padding: 8px 12px; font-size: 12.5px;" onclick="loadRosterFromFirestore()">
                 🔄 Refresh
               </button>
+              <button class="action-btn" style="background: #334155; padding: 8px 12px; font-size: 12.5px;" onclick="launchFacultyDemoMode()" title="Preview all 30 days and labs without registering a real student record">
+                🎓 Preview as Faculty
+              </button>
             </div>
           </div>
 
@@ -2302,22 +2477,54 @@
                   <th style="padding: 10px 12px;">Student ID</th>
                   <th style="padding: 10px 12px;">Full Scholar Name</th>
                   <th style="padding: 10px 12px;">Discipline</th>
-                  <th style="padding: 10px 12px;">Prior Degree</th>
-                  <th style="padding: 10px 12px;">Affiliation</th>
+                  <th style="padding: 10px 12px; text-align: center;">Lessons Done</th>
                   <th style="padding: 10px 12px; text-align: center;">Quizzes Passed</th>
                   <th style="padding: 10px 12px; text-align: center;">Pink Certs</th>
-                  <th style="padding: 10px 12px;">Registered</th>
+                  <th style="padding: 10px 12px; text-align: center;">Final Cert</th>
+                  <th style="padding: 10px 12px;">Last Active</th>
+                  <th style="padding: 10px 12px; text-align: center;">Details</th>
                 </tr>
               </thead>
               <tbody id="rosterTableBody">
                 <tr>
-                  <td colspan="8" style="padding: 24px; text-align: center; color: #64748B;">Connecting to RSPH Central Firestore Database...</td>
+                  <td colspan="9" style="padding: 24px; text-align: center; color: #64748B;">Connecting to RSPH Central Firestore Database...</td>
                 </tr>
               </tbody>
             </table>
           </div>
+
+          <!-- EXPECTED ADMISSIONS COHORT (reference list — cross-checked against live registrations) -->
+          <div style="margin-top: 26px;">
+            <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 4px;">📋 Expected PRISM 2026 Admissions Cohort</h4>
+            <p style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
+              Reference list from the Admissions Office (<span id="cohortRegisteredCount">0</span> / <span id="cohortTotalCount">0</span> registered so far). This is a name checklist only — each scholar must still complete Student Registration with their own email to unlock modules.
+            </p>
+            <div style="overflow-x: auto; border: 1px solid var(--rsph-border); border-radius: 8px; background: #FFFFFF; max-height: 320px; overflow-y: auto;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+                <thead style="position: sticky; top: 0;">
+                  <tr style="background: #F1F5F9; border-bottom: 2px solid var(--rsph-border); color: #334155; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;">
+                    <th style="padding: 8px 12px;">Name</th>
+                    <th style="padding: 8px 12px;">Discipline</th>
+                    <th style="padding: 8px 12px; text-align: center;">Registration Status</th>
+                  </tr>
+                </thead>
+                <tbody id="cohortChecklistBody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- STUDENT PROGRESS DETAIL MODAL (Faculty/Admin Dashboard drill-down) -->
+  <div class="lab-modal-backdrop" id="studentDetailModal">
+    <div class="lab-modal-card" style="max-width: 720px;">
+      <div class="lab-modal-header" style="background: var(--rsph-navy);">
+        <h3 id="studentDetailTitle" style="color: #FFFFFF;">Scholar Progress Detail</h3>
+        <button class="close-icon" style="color: #FFFFFF;" onclick="closeStudentDetailModal()">&times;</button>
+      </div>
+      <div class="lab-modal-body" id="studentDetailBody" style="padding: 20px;"></div>
     </div>
   </div>
 
@@ -2458,6 +2665,7 @@
         </div>
         <div class="footer-bottom-links">
           <span>Public Health</span> • <span>Research Methods</span> • <span>Informatics</span> • <span>Statistics</span> • <span>Management</span>
+          &nbsp;•&nbsp;<a href="javascript:void(0)" onclick="openRosterModal()" style="color: #64748B; text-decoration: none; font-weight: 600;" title="Faculty &amp; Administrative Access">Faculty Portal</a>
         </div>
       </div>
     </div>
@@ -2765,9 +2973,20 @@
     let currentLessonDay = 1;
     let completedLessons = new Set();
     let passedQuizzes = new Set();
+    let facultyDemoMode = false;
+
+    // Registration gate: real registered scholars OR the Faculty Demo Preview may access modules/quizzes
+    function isRegistered() {
+      return !!(typeof studentProfile !== 'undefined' && studentProfile && studentProfile.id) || facultyDemoMode;
+    }
 
     // Tab switching
     function switchTab(tabId) {
+      if (tabId === 'learning' && !isRegistered()) {
+        alert('🔒 Registration Required\n\nYou must complete Student Registration before accessing the 30-Day Learning Path, daily lessons, and module quizzes.\n\nClick "📝 Student Registration" at the top of the page to get your Student ID — it only takes a minute and unlocks all lessons, interactive labs, quizzes, and Pink Certificates.');
+        openStudentModal();
+        return;
+      }
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
       const activeTabBtn = Array.from(document.querySelectorAll('.nav-tab')).find(b => b.getAttribute('onclick').includes(tabId));
       if (activeTabBtn) activeTabBtn.classList.add('active');
@@ -2996,12 +3215,21 @@
     }
 
     function markLessonComplete(day) {
+      if (!isRegistered()) {
+        alert('🔒 Registration Required\n\nPlease complete Student Registration before marking lessons complete.');
+        openStudentModal();
+        return;
+      }
       completedLessons.add(day);
       updateProgress();
       initSidebar();
       const mod = courseData.modules[currentModuleIndex];
       const lesson = mod.lessons.find(l => l.day === day);
       renderLesson(mod, lesson);
+      // Cloud sync of lesson-level progress (skipped for the Faculty Demo profile)
+      if (studentProfile && studentProfile.id && !studentProfile.isDemo) {
+        syncStudentToFirestore(studentProfile);
+      }
     }
 
     function updateProgress() {
@@ -3021,6 +3249,11 @@
 
     // MODULE EVALUATION (QUIZ & ASSIGNMENT)
     function openModuleEvaluation(mIdx) {
+      if (!isRegistered()) {
+        alert('🔒 Registration Required\n\nPlease complete Student Registration before attempting a module quiz.');
+        openStudentModal();
+        return;
+      }
       currentModuleIndex = mIdx;
       const mod = courseData.modules[mIdx];
       const viewer = document.getElementById('lessonViewer');
@@ -3093,6 +3326,11 @@
     }
 
     function submitModuleQuiz(mIdx) {
+      if (!isRegistered()) {
+        alert('🔒 Registration Required\n\nPlease complete Student Registration before submitting a module quiz.');
+        openStudentModal();
+        return;
+      }
       const mod = courseData.modules[mIdx];
       let score = 0;
       mod.quiz.forEach((q, qIdx) => {
@@ -3120,8 +3358,8 @@
           pinkCertArea.innerHTML = generatePinkModuleCert(mIdx);
           pinkCertArea.scrollIntoView({ behavior: 'smooth' });
         }
-        // Cloud Firestore progress sync
-        if (studentProfile && studentProfile.id && db) {
+        // Cloud Firestore progress sync (skipped for the Faculty Demo profile)
+        if (studentProfile && studentProfile.id && db && !studentProfile.isDemo) {
           const modUpdate = {
             passedQuizzes: Array.from(passedQuizzes),
             lastActive: new Date().toISOString()
@@ -3133,6 +3371,15 @@
             completedAt: new Date().toISOString()
           };
           db.collection('students').doc(studentProfile.id).set(modUpdate, { merge: true }).catch(console.warn);
+        }
+        // Automated module completion / Pink Certificate email
+        if (!studentProfile.isDemo) {
+          sendPrismEmail('module_complete', studentProfile, {
+            module_number: mod.module_number,
+            module_name: mod.name,
+            score: score,
+            percent: score * 20
+          });
         }
       } else {
         box.innerHTML += ` • <span style="color: var(--rsph-crimson); font-weight: 700;">Score under 80%. Review readings and re-attempt.</span>`;
@@ -4327,16 +4574,25 @@
       document.getElementById('certContainer').style.display = 'block';
       document.getElementById('certContainer').scrollIntoView({ behavior: 'smooth' });
 
-      // Dual-write final course certificate to Firestore
-      if (studentProfile && studentProfile.id && db) {
-        const certDateVal = document.getElementById('certDate').innerText;
-        const certIdVal = document.getElementById('certId').innerText;
+      // Dual-write final course certificate to Firestore (skipped for the Faculty Demo profile)
+      const certDateVal = document.getElementById('certDate').innerText;
+      const certIdVal = document.getElementById('certId').innerText;
+      if (studentProfile && studentProfile.id && db && !studentProfile.isDemo) {
         db.collection('students').doc(studentProfile.id).set({
           finalCertificateAwarded: true,
           finalCertificateId: certIdVal,
           finalCertificateDate: certDateVal,
           lastActive: new Date().toISOString()
         }, { merge: true }).catch(console.warn);
+      }
+
+      // Automated final course-completion email
+      if (!studentProfile.isDemo) {
+        sendPrismEmail('final_certificate', studentProfile, {
+          student_name: name,
+          cert_id: certIdVal,
+          cert_date: certDateVal
+        });
       }
     }
 // RAG CHATBOT - RSPH RAG AI TUTOR RETRIEVAL & INTELLIGENCE ENGINE (CLAUDE / CHATGPT STYLE)
@@ -4674,12 +4930,83 @@
       console.warn('PRISM Firestore init note:', e);
     }
 
+    // ==========================================
+    // AUTOMATED EMAIL INTEGRATION (EmailJS — client-side, no backend server required)
+    // ==========================================
+    // TO ACTIVATE: 1) Create a free account at https://www.emailjs.com/
+    //              2) Add an Email Service (e.g. Gmail/Outlook) and note its Service ID
+    //              3) Create three Email Templates (Registration Confirmation, Module/Pink
+    //                 Certificate Award, Final Course Completion) and note each Template ID.
+    //                 Each template should accept variables: {{to_name}}, {{to_email}},
+    //                 {{student_id}}, {{discipline}}, {{message}} (see sendPrismEmail below
+    //                 for the exact variables passed per email type).
+    //              4) Copy your Public Key from EmailJS Account > API Keys.
+    //              5) Replace the four placeholder strings below. Until replaced, emails
+    //                 are safely skipped (logged to console only) — nothing else breaks.
+    const EMAILJS_CONFIG = {
+      publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
+      serviceId: 'YOUR_EMAILJS_SERVICE_ID',
+      templates: {
+        registration: 'YOUR_EMAILJS_TEMPLATE_ID_REGISTRATION',
+        module_complete: 'YOUR_EMAILJS_TEMPLATE_ID_MODULE_COMPLETE',
+        final_certificate: 'YOUR_EMAILJS_TEMPLATE_ID_FINAL_CERTIFICATE'
+      }
+    };
+    const EMAILJS_READY = typeof emailjs !== 'undefined'
+      && EMAILJS_CONFIG.publicKey && !EMAILJS_CONFIG.publicKey.startsWith('YOUR_');
+    if (EMAILJS_READY) {
+      try { emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey }); }
+      catch (e) { console.warn('EmailJS init note:', e); }
+    }
+
+    function sendPrismEmail(type, profile, extra) {
+      extra = extra || {};
+      if (!profile || !profile.name) return;
+      if (!EMAILJS_READY) {
+        console.log(`✉️ [EmailJS not configured] Would send "${type}" email to ${profile.name} (${profile.email || 'no email on file'}).`, extra);
+        return;
+      }
+      if (!profile.email) {
+        console.warn(`✉️ Cannot send "${type}" email: no email address on file for ${profile.name}.`);
+        return;
+      }
+      const templateId = EMAILJS_CONFIG.templates[type];
+      if (!templateId || templateId.startsWith('YOUR_')) return;
+
+      let subject = 'RSPH PRISM Bridge Course Update';
+      let message = '';
+      if (type === 'registration') {
+        subject = 'Welcome to the RSPH PRISM Bridge Course';
+        message = `Dear ${profile.name}, your registration is confirmed. Your Student ID is ${profile.id}. You now have full access to all 30 daily lessons, interactive labs, quizzes and Pink Certificates.`;
+      } else if (type === 'module_complete') {
+        subject = `Module ${extra.module_number} Complete — Pink Certificate Awarded`;
+        message = `Dear ${profile.name}, congratulations on passing the Module ${extra.module_number} (${extra.module_name}) quiz with a score of ${extra.percent}%. Your Pink Certificate of Module Mastery has been issued.`;
+      } else if (type === 'final_certificate') {
+        subject = 'PRISM Course Completion Certificate Issued';
+        message = `Dear ${extra.student_name || profile.name}, congratulations on completing the full 30-Day PRISM Bridge Course. Your official Certificate of Competence (ID: ${extra.cert_id}) was issued on ${extra.cert_date}.`;
+      }
+
+      emailjs.send(EMAILJS_CONFIG.serviceId, templateId, {
+        to_name: profile.name,
+        to_email: profile.email,
+        student_id: profile.id || '',
+        discipline: profile.discipline || '',
+        subject: subject,
+        message: message
+      }).then(() => {
+        console.log(`✉️ "${type}" email sent to ${profile.email}.`);
+      }).catch((err) => {
+        console.warn(`✉️ "${type}" email failed to send:`, err);
+      });
+    }
+
     // STUDENT REGISTRATION MANAGEMENT (DUAL-WRITE: LOCALSTORAGE + FIRESTORE)
     let studentProfile = {
       name: localStorage.getItem('rsph_student_name') || '',
       discipline: localStorage.getItem('rsph_student_discipline') || '',
       prior: localStorage.getItem('rsph_student_prior') || '',
       college: localStorage.getItem('rsph_student_college') || '',
+      email: localStorage.getItem('rsph_student_email') || '',
       id: localStorage.getItem('rsph_student_id') || '',
       registeredAt: localStorage.getItem('rsph_student_registered_at') || ''
     };
@@ -4691,7 +5018,9 @@
 
       if (studentProfile.name) {
         nameDisp.innerHTML = `Student: <strong>${studentProfile.name}</strong> (${studentProfile.discipline || 'PRISM Scholar'})`;
-        idDisp.innerText = `ID: ${studentProfile.id} • ☁️ Central Cloud Synced`;
+        idDisp.innerText = studentProfile.isDemo
+          ? `ID: ${studentProfile.id} • 🎓 Faculty Demo Preview (not saved)`
+          : `ID: ${studentProfile.id} • ☁️ Central Cloud Synced`;
         if (certInput && !certInput.value) {
           certInput.value = studentProfile.name;
         }
@@ -4703,6 +5032,7 @@
 
     function openStudentModal() {
       document.getElementById('regFullName').value = studentProfile.name || '';
+      document.getElementById('regEmail').value = studentProfile.email || '';
       document.getElementById('regDiscipline').value = studentProfile.discipline || 'MPH Candidate (Master of Public Health)';
       if (document.getElementById('regPriorDegree') && studentProfile.prior) {
         document.getElementById('regPriorDegree').value = studentProfile.prior;
@@ -4725,6 +5055,7 @@
       const payload = {
         id: profile.id,
         name: profile.name || '',
+        email: profile.email || '',
         discipline: profile.discipline || '',
         prior: profile.prior || '',
         college: profile.college || '',
@@ -4750,12 +5081,20 @@
         alert('Please enter your full legal name.');
         return;
       }
+      const email = document.getElementById('regEmail').value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        alert('Please enter a valid email address — it is used to send your automated progress and certificate updates.');
+        return;
+      }
+      const wasAlreadyRegistered = !!studentProfile.id;
       studentProfile.name = name;
+      studentProfile.email = email;
       studentProfile.discipline = document.getElementById('regDiscipline').value;
       const priorElem = document.getElementById('regPriorDegree');
       studentProfile.prior = priorElem ? priorElem.value : '';
       studentProfile.college = document.getElementById('regCollege').value.trim() || 'Ramaiah School of Public Health, MSRUAS';
-      
+      studentProfile.isDemo = false;
+
       if (!studentProfile.id) {
         studentProfile.id = (studentProfile.discipline.includes('MPH') ? 'MPH-2026-' : 'MHA-2026-') + Math.floor(1000 + Math.random() * 9000);
       }
@@ -4765,6 +5104,7 @@
 
       // 1. Dual-Write to LocalStorage
       localStorage.setItem('rsph_student_name', studentProfile.name);
+      localStorage.setItem('rsph_student_email', studentProfile.email);
       localStorage.setItem('rsph_student_discipline', studentProfile.discipline);
       localStorage.setItem('rsph_student_prior', studentProfile.prior);
       localStorage.setItem('rsph_student_college', studentProfile.college);
@@ -4776,7 +5116,12 @@
 
       updateStudentHeaderUI();
       closeStudentModal();
-      alert(`Registration Successful!\nWelcome, ${studentProfile.name}.\nStudent ID: ${studentProfile.id}\nYour profile is now registered in the Central RSPH Database. Pink Certificates will be issued in your name!`);
+      alert(`Registration Successful!\nWelcome, ${studentProfile.name}.\nStudent ID: ${studentProfile.id}\nYour profile is now registered in the Central RSPH Database. Pink Certificates will be issued in your name, and progress updates will be emailed to ${studentProfile.email}.`);
+
+      // 3. Automated registration confirmation email (only on first-time registration)
+      if (!wasAlreadyRegistered) {
+        sendPrismEmail('registration', studentProfile);
+      }
     }
 
     // ==========================================
@@ -4784,6 +5129,92 @@
     // ==========================================
     let allRosterStudents = [];
     let rosterAuthenticated = false;
+
+    // EXPECTED PRISM 2026 ADMISSIONS COHORT — reference checklist supplied by the
+    // Admissions Office (name + program only; no email on file for these entries).
+    // Used purely to show faculty who from the admitted list has self-registered —
+    // it does NOT create student accounts or send any email on its own.
+    const expectedCohortRoster = [
+      { name: 'Sadiya Marziya', discipline: 'MPH' }, { name: 'Anagha R', discipline: 'MPH' },
+      { name: 'Meenakshi P', discipline: 'MPH' }, { name: 'Kavya.N', discipline: 'MPH' },
+      { name: 'Bhumika', discipline: 'MPH' }, { name: 'N Vishwas', discipline: 'MPH' },
+      { name: 'Neha Kumari', discipline: 'MPH' }, { name: 'N G Vyvidhya', discipline: 'MPH' },
+      { name: 'Gabriella Dondor Kharrubon', discipline: 'MPH' }, { name: 'Geetanjali D', discipline: 'MPH' },
+      { name: 'Shivani Suresh', discipline: 'MPH' }, { name: 'Renie Trisha', discipline: 'MPH' },
+      { name: 'Rashmi R', discipline: 'MPH' },
+      { name: 'Harshitha HR', discipline: 'MHA' }, { name: 'Moumita Barik', discipline: 'MHA' },
+      { name: 'Ramyashree K R', discipline: 'MHA' }, { name: 'Kajal TP', discipline: 'MHA' },
+      { name: 'Suprith', discipline: 'MHA' }, { name: 'Neha Pujari', discipline: 'MHA' },
+      { name: 'Raina Jesica', discipline: 'MHA' }, { name: 'Madivalappa Sajjan', discipline: 'MHA' },
+      { name: 'Owiaz Khan', discipline: 'MHA' }, { name: 'Dr. Archana', discipline: 'MHA' },
+      { name: 'Samiksha G M', discipline: 'MHA' }, { name: 'Afiya Fathima', discipline: 'MHA' },
+      { name: 'Kuruba Supriya', discipline: 'MHA' }, { name: 'Jayeta Roy', discipline: 'MHA' },
+      { name: 'Simran Grace Kujur', discipline: 'MHA' }, { name: 'Sanjana R', discipline: 'MHA' },
+      { name: 'Faiza Shirin Abul Fazal', discipline: 'MHA' }, { name: 'Jahanvi Sinha', discipline: 'MHA' }
+    ];
+
+    function normalizeName(n) {
+      return (n || '').toLowerCase().replace(/[^a-z]/g, '');
+    }
+
+    function renderCohortChecklist() {
+      const tbody = document.getElementById('cohortChecklistBody');
+      if (!tbody) return;
+
+      const registeredNames = new Set((allRosterStudents || []).map(s => normalizeName(s.name)));
+      let registeredCount = 0;
+
+      const rowsHtml = expectedCohortRoster.map(entry => {
+        const isRegistered = registeredNames.has(normalizeName(entry.name));
+        if (isRegistered) registeredCount++;
+        const discBadge = entry.discipline === 'MPH'
+          ? `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:11px;">🎓 MPH</span>`
+          : `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#F0FDF4; color:#15803D; font-weight:700; font-size:11px;">🏥 MHA</span>`;
+        const statusBadge = isRegistered
+          ? `<span style="color:#15803D; font-weight:700;">✓ Registered</span>`
+          : `<span style="color:#94A3B8;">— Not yet registered</span>`;
+        return `
+          <tr style="border-bottom: 1px solid #F1F5F9;">
+            <td style="padding: 7px 12px; color: #0F172A; font-weight: 600;">${entry.name}</td>
+            <td style="padding: 7px 12px;">${discBadge}</td>
+            <td style="padding: 7px 12px; text-align: center;">${statusBadge}</td>
+          </tr>
+        `;
+      }).join('');
+
+      tbody.innerHTML = rowsHtml;
+      const regCountEl = document.getElementById('cohortRegisteredCount');
+      const totCountEl = document.getElementById('cohortTotalCount');
+      if (regCountEl) regCountEl.innerText = registeredCount;
+      if (totCountEl) totCountEl.innerText = expectedCohortRoster.length;
+    }
+
+    // FACULTY DEMO PREVIEW — lets faculty review all 30 days, labs and quizzes
+    // without registering (or affecting) a real student record. Session-only:
+    // not written to localStorage, and excluded from the roster / Firestore writes.
+    function launchFacultyDemoMode() {
+      if (facultyDemoMode) {
+        alert('Faculty Demo Preview is already active for this session.\nStudent ID: DEMO-FACULTY-2026 — all modules, labs and quizzes are unlocked for review.');
+        return;
+      }
+      const ok = confirm('Launch Faculty Demo Preview?\n\nThis unlocks the full 30-Day Learning Path, labs and quizzes for review using a shared demo profile (DEMO-FACULTY-2026). No real student data is created or affected, and demo activity is never written to the Central Registry.');
+      if (!ok) return;
+
+      facultyDemoMode = true;
+      studentProfile = {
+        name: 'Faculty Demo Reviewer',
+        email: '',
+        discipline: 'Faculty Preview',
+        prior: '',
+        college: 'Ramaiah School of Public Health, MSRUAS',
+        id: 'DEMO-FACULTY-2026',
+        registeredAt: new Date().toISOString(),
+        isDemo: true
+      };
+      updateStudentHeaderUI();
+      alert('🎓 Faculty Demo Preview activated.\nAll 30 daily lessons, interactive labs and module quizzes are now unlocked for review. Nothing you do in this mode is saved to the real student registry.');
+      switchTab('learning');
+    }
 
     function openRosterModal() {
       document.getElementById('rosterModal').classList.add('open');
@@ -4821,7 +5252,7 @@
       tbody.innerHTML = `<tr><td colspan="8" style="padding: 24px; text-align: center; color: #64748B;">Connecting to Central Cloud Firestore...</td></tr>`;
 
       if (!db) {
-        if (studentProfile.name) {
+        if (studentProfile.name && !studentProfile.isDemo) {
           allRosterStudents = [studentProfile];
           renderRosterList(allRosterStudents);
         } else {
@@ -4833,18 +5264,20 @@
       db.collection('students').get().then((snapshot) => {
         allRosterStudents = [];
         snapshot.forEach((doc) => {
-          allRosterStudents.push(doc.data());
+          const data = doc.data();
+          if (!data || (data.id || '').startsWith('DEMO-')) return;
+          allRosterStudents.push(data);
         });
 
         // Ensure current active student is reflected if cloud hasn't populated yet
-        if (allRosterStudents.length === 0 && studentProfile.name) {
+        if (allRosterStudents.length === 0 && studentProfile.name && !studentProfile.isDemo) {
           allRosterStudents.push(studentProfile);
         }
 
         renderRosterList(allRosterStudents);
       }).catch((err) => {
         console.warn('Firestore roster fetch fallback:', err);
-        if (studentProfile.name) {
+        if (studentProfile.name && !studentProfile.isDemo) {
           allRosterStudents = [studentProfile];
           renderRosterList(allRosterStudents);
         } else {
@@ -4853,19 +5286,29 @@
       });
     }
 
+    function countPinkCerts(s) {
+      let pinkCount = 0;
+      Object.keys(s).forEach(k => {
+        if (k.startsWith('pinkCert_') || k.startsWith('pink_certificate_')) pinkCount++;
+      });
+      return pinkCount;
+    }
+
     function renderRosterList(students) {
       const tbody = document.getElementById('rosterTableBody');
       if (!tbody) return;
 
       if (!students || students.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="8" style="padding: 24px; text-align: center; color: #64748B;">No enrolled scholars found matching the selected filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="9" style="padding: 24px; text-align: center; color: #64748B;">No enrolled scholars found matching the selected filter.</td></tr>`;
         updateRosterStats(0, 0, 0, 0);
+        renderCohortChecklist();
         return;
       }
 
       let mphCount = 0;
       let mhaCount = 0;
       let totalPinkCerts = 0;
+      const totalLessons = courseData && courseData.modules ? courseData.modules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0) : 30;
 
       let rowsHtml = '';
       students.forEach((s) => {
@@ -4875,40 +5318,118 @@
         if (isMha) mhaCount++;
 
         const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : (passedQuizzes && s.id === studentProfile.id ? passedQuizzes.size : 0);
+        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
 
-        let pinkCount = 0;
-        Object.keys(s).forEach(k => {
-          if (k.startsWith('pinkCert_') || k.startsWith('pink_certificate_')) pinkCount++;
-        });
+        let pinkCount = countPinkCerts(s);
         if (pinkCount === 0 && passedCount > 0) pinkCount = passedCount;
         totalPinkCerts += pinkCount;
 
-        const discBadge = isMph 
+        const discBadge = isMph
           ? `<span style="display:inline-block; padding:3px 8px; border-radius:12px; background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:11px;">🎓 MPH</span>`
           : `<span style="display:inline-block; padding:3px 8px; border-radius:12px; background:#F0FDF4; color:#15803D; font-weight:700; font-size:11px;">🏥 MHA</span>`;
 
-        const regDateStr = s.registeredAt ? new Date(s.registeredAt).toLocaleDateString('en-GB') : 'Recently';
+        const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : (s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : 'Recently');
+        const finalCertBadge = s.finalCertificateAwarded
+          ? `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#DCFCE7; color:#15803D; font-weight:700; font-size:11.5px;">🎓 Issued</span>`
+          : `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#F1F5F9; color:#64748B; font-weight:700; font-size:11.5px;">— Pending</span>`;
 
         rowsHtml += `
           <tr style="border-bottom: 1px solid #F1F5F9;">
             <td style="padding: 10px 12px; font-weight: 700; color: var(--rsph-navy); font-family: monospace;">${s.id || 'N/A'}</td>
             <td style="padding: 10px 12px; font-weight: 600; color: #0F172A;">${s.name || 'Anonymous Scholar'}</td>
             <td style="padding: 10px 12px;">${discBadge}</td>
-            <td style="padding: 10px 12px; color: #475569;">${s.prior || 'Clinical / Allied'}</td>
-            <td style="padding: 10px 12px; color: #64748B; font-size: 11.5px;">${s.college || 'Ramaiah School of Public Health'}</td>
+            <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: #1E40AF;">${lessonsDone} / ${totalLessons}</td>
             <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: #059669;">${passedCount} / ${courseData.modules.length}</td>
             <td style="padding: 10px 12px; text-align: center;">
               <span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#FDF2F8; color:#BE185D; font-weight:700; font-size:11.5px;">
                 🌸 ${pinkCount} Certs
               </span>
             </td>
-            <td style="padding: 10px 12px; color: #64748B;">${regDateStr}</td>
+            <td style="padding: 10px 12px; text-align: center;">${finalCertBadge}</td>
+            <td style="padding: 10px 12px; color: #64748B; font-size: 11.5px;">${lastActiveStr}</td>
+            <td style="padding: 10px 12px; text-align: center;">
+              <button type="button" class="action-btn" style="width: auto; padding: 5px 10px; font-size: 11.5px; background: var(--rsph-navy);" onclick="viewStudentDetail('${(s.id || '').replace(/'/g, "\\'")}')">🔍 View</button>
+            </td>
           </tr>
         `;
       });
 
       tbody.innerHTML = rowsHtml;
       updateRosterStats(students.length, mphCount, mhaCount, totalPinkCerts);
+      renderCohortChecklist();
+    }
+
+    // FULL PER-STUDENT PROGRESS DRILL-DOWN (Faculty/Admin Dashboard)
+    function viewStudentDetail(studentId) {
+      const s = allRosterStudents.find(x => x.id === studentId);
+      if (!s) { alert('Scholar record not found.'); return; }
+
+      const totalLessons = courseData && courseData.modules ? courseData.modules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0) : 30;
+      const completed = new Set(Array.isArray(s.completedLessons) ? s.completedLessons : []);
+
+      // Day-by-day lesson completion grid
+      let dayBadges = '';
+      for (let d = 1; d <= totalLessons; d++) {
+        const done = completed.has(d);
+        dayBadges += `<span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin:2px; border-radius:6px; font-size:11px; font-weight:700; ${done ? 'background:#DCFCE7; color:#15803D; border:1px solid #86EFAC;' : 'background:#F1F5F9; color:#94A3B8; border:1px solid #E2E8F0;'}">${done ? '✓' : d}</span>`;
+      }
+
+      // Module-by-module quiz + Pink Certificate breakdown
+      let moduleRows = '';
+      (courseData.modules || []).forEach((mod, mIdx) => {
+        const quiz = s[`quiz_mod_${mIdx + 1}`];
+        const cert = s[`pinkCert_mod_${mIdx + 1}`];
+        moduleRows += `
+          <tr style="border-bottom: 1px solid #F1F5F9;">
+            <td style="padding: 8px 10px; font-weight: 600; color: #0F172A;">Module ${mod.module_number}: ${mod.name}</td>
+            <td style="padding: 8px 10px; text-align: center;">${quiz ? `${quiz.score} / ${quiz.total} (${Math.round((quiz.score / quiz.total) * 100)}%)` : '—'}</td>
+            <td style="padding: 8px 10px; text-align: center;">${quiz && quiz.passed ? '<span style="color:#15803D; font-weight:700;">✓ Passed</span>' : '<span style="color:#94A3B8;">Not yet</span>'}</td>
+            <td style="padding: 8px 10px; text-align: center; font-family: monospace; font-size: 11.5px; color: #BE185D;">${cert ? cert.code : '—'}</td>
+            <td style="padding: 8px 10px; color: #64748B; font-size: 11.5px;">${cert ? cert.awardedDate : '—'}</td>
+          </tr>
+        `;
+      });
+
+      const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : '—';
+      const regStr = s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : '—';
+
+      document.getElementById('studentDetailTitle').innerText = `${s.name || 'Anonymous Scholar'} — Progress Detail`;
+      document.getElementById('studentDetailBody').innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:18px; font-size:12.5px;">
+          <div><strong style="color:#64748B;">Student ID:</strong><br>${s.id}</div>
+          <div><strong style="color:#64748B;">Discipline:</strong><br>${s.discipline || '—'}</div>
+          <div><strong style="color:#64748B;">Prior Background:</strong><br>${s.prior || '—'}</div>
+          <div><strong style="color:#64748B;">Affiliation:</strong><br>${s.college || '—'}</div>
+          <div><strong style="color:#64748B;">Email:</strong><br>${s.email || '—'}</div>
+          <div><strong style="color:#64748B;">Registered:</strong><br>${regStr}</div>
+          <div><strong style="color:#64748B;">Last Active:</strong><br>${lastActiveStr}</div>
+          <div><strong style="color:#64748B;">Final Certificate:</strong><br>${s.finalCertificateAwarded ? `🎓 Issued (${s.finalCertificateId || ''}, ${s.finalCertificateDate || ''})` : '— Not yet issued'}</div>
+        </div>
+
+        <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📅 Lesson Completion (${completed.size} / ${totalLessons} Days)</h4>
+        <div style="margin-bottom: 18px; line-height: 1.4;">${dayBadges}</div>
+
+        <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📝 Module Quizzes &amp; Pink Certificates</h4>
+        <div style="overflow-x:auto; border:1px solid var(--rsph-border); border-radius:8px;">
+          <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left;">
+            <thead>
+              <tr style="background:#F1F5F9; color:#334155; font-size:11px; text-transform:uppercase;">
+                <th style="padding:8px 10px;">Module</th>
+                <th style="padding:8px 10px; text-align:center;">Quiz Score</th>
+                <th style="padding:8px 10px; text-align:center;">Status</th>
+                <th style="padding:8px 10px; text-align:center;">Pink Cert Code</th>
+                <th style="padding:8px 10px;">Awarded</th>
+              </tr>
+            </thead>
+            <tbody>${moduleRows}</tbody>
+          </table>
+        </div>
+      `;
+      document.getElementById('studentDetailModal').classList.add('open');
+    }
+
+    function closeStudentDetailModal() {
+      document.getElementById('studentDetailModal').classList.remove('open');
     }
 
     function updateRosterStats(total, mph, mha, certs) {
@@ -4927,9 +5448,10 @@
       const discFilter = document.getElementById('rosterDisciplineFilter').value;
 
       const filtered = allRosterStudents.filter(s => {
-        const matchesQuery = !query || 
+        const matchesQuery = !query ||
           (s.name && s.name.toLowerCase().includes(query)) ||
           (s.id && s.id.toLowerCase().includes(query)) ||
+          (s.email && s.email.toLowerCase().includes(query)) ||
           (s.prior && s.prior.toLowerCase().includes(query)) ||
           (s.college && s.college.toLowerCase().includes(query));
         
@@ -4952,28 +5474,29 @@
         return;
       }
 
-      const headers = ['Student ID', 'Full Name', 'Discipline', 'Prior Academic Background', 'College / Institution', 'Registration Date', 'Passed Quizzes Count', 'Pink Certificates Issued', 'Final Certificate Status'];
-      
+      const headers = ['Student ID', 'Full Name', 'Email', 'Discipline', 'Prior Academic Background', 'College / Institution', 'Registration Date', 'Lessons Completed', 'Passed Quizzes Count', 'Pink Certificates Issued', 'Final Certificate Status', 'Last Active'];
+
       const csvRows = [headers.join(',')];
 
       allRosterStudents.forEach(s => {
         const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : (passedQuizzes && s.id === studentProfile.id ? passedQuizzes.size : 0);
-        let pinkCount = 0;
-        Object.keys(s).forEach(k => {
-          if (k.startsWith('pinkCert_') || k.startsWith('pink_certificate_')) pinkCount++;
-        });
+        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
+        let pinkCount = countPinkCerts(s);
         if (pinkCount === 0 && passedCount > 0) pinkCount = passedCount;
 
         const row = [
           `"${(s.id || '').replace(/"/g, '""')}"`,
           `"${(s.name || '').replace(/"/g, '""')}"`,
+          `"${(s.email || '').replace(/"/g, '""')}"`,
           `"${(s.discipline || '').replace(/"/g, '""')}"`,
           `"${(s.prior || '').replace(/"/g, '""')}"`,
           `"${(s.college || '').replace(/"/g, '""')}"`,
           `"${(s.registeredAt || '').replace(/"/g, '""')}"`,
+          lessonsDone,
           passedCount,
           pinkCount,
-          s.finalCertificateAwarded ? 'Awarded' : 'Pending'
+          s.finalCertificateAwarded ? 'Awarded' : 'Pending',
+          `"${(s.lastActive || '').replace(/"/g, '""')}"`
         ];
         csvRows.push(row.join(','));
       });
@@ -5377,8 +5900,8 @@ function initScrollReveal() {
       const certDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
       const certCode = 'RSPH-MOD' + (mIdx + 1) + '-' + Math.random().toString(36).substring(2, 7).toUpperCase();
 
-      // Dual-write Pink Certificate record to Firestore
-      if (studentProfile && studentProfile.id && db) {
+      // Dual-write Pink Certificate record to Firestore (skipped for the Faculty Demo profile)
+      if (studentProfile && studentProfile.id && db && !studentProfile.isDemo) {
         const certUpdate = {
           lastActive: new Date().toISOString()
         };
