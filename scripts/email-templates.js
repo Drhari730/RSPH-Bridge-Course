@@ -203,4 +203,38 @@ function digestEmail({ name, studentId, lessonsDone, totalLessons, quizzesPassed
   return shell({ bodyHtml: body, footerNote: 'This is an automated daily progress digest. It only arrives on days you have activity to report.' });
 }
 
-module.exports = { registrationEmail, moduleCertEmail, finalCertEmail, digestEmail };
+function nudgeEmail({ name, studentId, lessonsDone, totalLessons }) {
+  const remaining = Math.max(0, totalLessons - lessonsDone);
+  const pct = Math.round((lessonsDone / totalLessons) * 100);
+  const body = `
+    <tr><td style="padding:26px 26px 8px;">
+      <p style="margin:0 0 4px;font-size:15px;color:#0f172a;">Dear ${esc(name)},</p>
+      <p style="margin:0;font-size:13px;color:#475569;line-height:1.6;">We noticed you haven't opened a PRISM lesson yet today — just a friendly nudge before the day closes out.</p>
+    </td></tr>
+    <tr><td style="padding:14px 26px 4px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FFFBEB;border:1.5px dashed #F59E0B;border-radius:14px;">
+        <tr><td style="padding:20px 22px;text-align:center;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:1.5px;color:#B45309;text-transform:uppercase;">${remaining} Lesson${remaining === 1 ? '' : 's'} Remaining</div>
+          <div style="font-size:34px;font-weight:800;color:#0f172a;line-height:1.1;margin:6px 0 2px;">${pct}<span style="font-size:18px;color:#64748b;font-weight:700;">% complete</span></div>
+          <div style="margin-top:14px;background:#ffffff;border-radius:999px;height:10px;overflow:hidden;">
+            <div style="width:${Math.max(2, Math.min(100, pct))}%;background:linear-gradient(90deg,#F59E0B,#A82042);height:10px;border-radius:999px;"></div>
+          </div>
+        </td></tr>
+      </table>
+    </td></tr>
+    <tr><td style="padding:16px 26px 4px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;">
+        <tr>
+          <td style="padding:14px 16px;font-size:26px;vertical-align:top;width:44px;">⏰</td>
+          <td style="padding:14px 8px 14px 0;">
+            <div style="font-size:14px;font-weight:800;color:#0f172a;">Keep the streak alive</div>
+            <div style="font-size:12.5px;color:#475569;line-height:1.55;margin-top:2px;">Even one lesson today keeps your momentum going. Log back in with Student ID <b>${esc(studentId)}</b> and pick up right where you left off — it only takes a few minutes.</div>
+          </td>
+        </tr>
+      </table>
+    </td></tr>
+  `;
+  return shell({ bodyHtml: body, footerNote: 'This is an automated end-of-day reminder, sent only on days you have not yet studied. It stops once you complete the course.' });
+}
+
+module.exports = { registrationEmail, moduleCertEmail, finalCertEmail, digestEmail, nudgeEmail };

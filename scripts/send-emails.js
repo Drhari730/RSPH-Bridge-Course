@@ -14,6 +14,9 @@
  *   2. Sends a module/Pink Certificate email for any newly-earned pinkCert_mod_N.
  *   3. Sends a final-certificate email the first time finalCertificateAwarded flips true.
  *   4. Once a day (around 08:00 IST), sends every active student a progress digest.
+ *   5. Once a day (around 21:00 IST), sends an end-of-day nudge to any student who
+ *      hasn't opened a lesson yet that day and hasn't finished all 30 lessons —
+ *      repeats every day until they either study or complete the course.
  * "Already notified" state is tracked in a single Firestore doc
  * (meta/emailAutomationState) so re-runs never double-send.
  */
@@ -27,7 +30,7 @@ const {
   getDoc,
   setDoc
 } = require('firebase/firestore');
-const { registrationEmail, moduleCertEmail, finalCertEmail, digestEmail } = require('./email-templates');
+const { registrationEmail, moduleCertEmail, finalCertEmail, digestEmail, nudgeEmail } = require('./email-templates');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDt2cIExr_hEK_q_b9HhtnzKzeSbXsqT_I',
@@ -42,6 +45,7 @@ const FROM_EMAIL = 'PRISM Bridge Course <prism@drhari.co.in>';
 const TOTAL_LESSONS = 30;
 const TOTAL_MODULES = 6;
 const DIGEST_HOUR_IST = 8; // send the daily digest during the 08:00 IST run
+const NUDGE_HOUR_IST = 21; // send the end-of-day "you haven't studied today" nudge during the 21:00 IST run
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 if (!RESEND_API_KEY) {
@@ -88,6 +92,7 @@ async function main() {
   const notifiedFinal = new Set(state.notifiedFinal || []);
   const notifiedCerts = state.notifiedCerts || {}; // { studentId: [moduleNum, ...] }
   const lastDigestDate = state.lastDigestDate || '';
+  const lastNudgeDate = state.lastNudgeDate || '';
 
   const snapshot = await getDocs(collection(db, 'students'));
   const students = snapshot.docs.map(d => d.data()).filter(s => s && !isDemoId(s.id));
@@ -194,6 +199,34 @@ async function main() {
       }
     }
     state.lastDigestDate = todayIST;
+  }
+
+  // 5) End-of-day "you haven't studied today" nudge — anyone registered, not yet
+  // finished all 30 lessons, and with no activity recorded today. `activeDateStamp`
+  // is written by index.html's client-side activity heartbeat; a student who never
+  // reaches that instrumentation (e.g. very short visit) falls back to comparing
+  // `lastActive` against today's date, which every page load already updates.
+  if (hourIST === NUDGE_HOUR_IST && todayIST !== lastNudgeDate) {
+    for (const s of students) {
+      if (!s.email || !s.id) continue;
+      const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
+      if (lessonsDone >= TOTAL_LESSONS) continue; // course already finished
+      const lastActiveDateIST = s.lastActive ? new Date(new Date(s.lastActive).getTime() + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10) : '';
+      const studiedToday = s.activeDateStamp === todayIST || lastActiveDateIST === todayIST;
+      if (studiedToday) continue;
+
+      try {
+        await sendEmail(
+          s.email,
+          "Don't lose your streak — finish today's PRISM lesson",
+          nudgeEmail({ name: s.name || 'Scholar', studentId: s.id, lessonsDone, totalLessons: TOTAL_LESSONS })
+        );
+        sentCount++;
+      } catch (err) {
+        console.error(`  nudge email failed for ${s.id}:`, err.message);
+      }
+    }
+    state.lastNudgeDate = todayIST;
   }
 
   state.notifiedRegistrations = Array.from(notifiedRegistrations);

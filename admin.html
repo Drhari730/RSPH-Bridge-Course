@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PRISM Faculty & Admin Console | Ramaiah School of Public Health</title>
+<link rel="icon" type="image/svg+xml" href="rsph_logo.svg" />
+<link rel="alternate icon" type="image/png" href="rsph_official_logo.png" />
+<style>
+  :root {
+    --rsph-crimson: #A82042;
+    --rsph-crimson-dark: #821531;
+    --rsph-orange: #CF3E30;
+    --rsph-navy: #021152;
+    --rsph-royal-blue: #1E40AF;
+    --rsph-border: #E2E8F0;
+    --rsph-bg: #F8FAFC;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--rsph-bg);
+    color: #0F172A;
+  }
+  a { color: inherit; }
+  .topbar {
+    background: linear-gradient(135deg, var(--rsph-navy) 0%, var(--rsph-royal-blue) 100%);
+    color: #FFFFFF;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .topbar h1 {
+    font-family: Georgia, serif;
+    font-size: 19px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .topbar .sub { font-size: 11.5px; color: #93C5FD; margin-top: 2px; }
+  .topbar a.portal-link {
+    background: rgba(255,255,255,0.14);
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .topbar a.portal-link:hover { background: rgba(255,255,255,0.24); }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* PASSCODE GATE */
+  #authLock {
+    max-width: 460px;
+    margin: 60px auto;
+    text-align: center;
+    background: #FFFFFF;
+    border: 1px solid var(--rsph-border);
+    border-radius: 14px;
+    padding: 36px 30px;
+    box-shadow: 0 8px 30px rgba(2,6,23,0.06);
+  }
+  #authLock .icon { font-size: 40px; margin-bottom: 10px; }
+  #authLock h2 { font-family: Georgia, serif; font-size: 19px; margin: 0 0 8px; color: var(--rsph-navy); }
+  #authLock p { font-size: 13px; color: #64748B; margin: 0 0 18px; line-height: 1.55; }
+  #authLock .row { display: flex; gap: 8px; }
+  #authLock input {
+    flex: 1; padding: 10px 12px; border: 1px solid var(--rsph-border);
+    border-radius: 8px; font-size: 13.5px;
+  }
+  #authLock button {
+    background: var(--rsph-navy); color: #fff; border: none; border-radius: 8px;
+    padding: 10px 18px; font-weight: 700; font-size: 13px; cursor: pointer;
+  }
+  #authLock button:hover { background: var(--rsph-royal-blue); }
+  #authErr { color: var(--rsph-crimson); font-size: 12px; margin-top: 10px; font-weight: 600; display: none; }
+
+  /* STAT CARDS */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .stat-card {
+    background: #FFFFFF;
+    border: 1px solid var(--rsph-border);
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+  }
+  .stat-card .num { font-size: 26px; font-weight: 800; color: var(--rsph-navy); line-height: 1.1; }
+  .stat-card .lbl { font-size: 10.5px; text-transform: uppercase; font-weight: 700; color: #64748B; letter-spacing: 0.5px; margin-top: 4px; }
+  .stat-card.live .num { color: #059669; }
+  .stat-card.live { border-color: #A7F3D0; background: #F0FDF4; }
+
+  .live-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11.5px; color: #64748B; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .live-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: #059669;
+    animation: livePulse 1.6s ease-in-out infinite;
+  }
+  @keyframes livePulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  .panel {
+    background: #FFFFFF;
+    border: 1px solid var(--rsph-border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 22px;
+  }
+  .panel h3 {
+    font-family: Georgia, serif; font-size: 16px; margin: 0 0 4px; color: var(--rsph-navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .panel .panel-sub { font-size: 12px; color: #64748B; margin: 0 0 14px; }
+
+  .controls-row {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px; margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .controls-row input[type="text"] {
+    padding: 8px 12px; border: 1px solid var(--rsph-border); border-radius: 6px;
+    font-size: 13px; min-width: 240px; flex: 1;
+  }
+  .controls-row select {
+    padding: 8px 12px; border: 1px solid var(--rsph-border); border-radius: 6px;
+    font-size: 12.5px; font-weight: 600;
+  }
+  .btn {
+    border: none; border-radius: 6px; padding: 8px 14px; font-size: 12.5px;
+    font-weight: 700; color: #fff; cursor: pointer; white-space: nowrap;
+  }
+  .btn:hover { opacity: 0.9; }
+  .btn.navy { background: var(--rsph-navy); }
+  .btn.green { background: #059669; }
+  .btn.crimson { background: var(--rsph-crimson); }
+  .btn.slate { background: #334155; }
+  .btn.outline { background: #F1F5F9; color: #334155; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left; }
+  thead tr { background: #F1F5F9; border-bottom: 2px solid var(--rsph-border); color: #334155; font-size: 11px; text-transform: uppercase; letter-spacing: 0.4px; }
+  th, td { padding: 9px 11px; }
+  tbody tr { border-bottom: 1px solid #F1F5F9; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--rsph-border); border-radius: 8px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-weight: 700; font-size: 11px; }
+  .badge.mph { background: #EFF6FF; color: #1D4ED8; }
+  .badge.mha { background: #F0FDF4; color: #15803D; }
+  .badge.done { background: #DCFCE7; color: #15803D; }
+  .badge.pending { background: #F1F5F9; color: #64748B; }
+  .badge.pink { background: #FDF2F8; color: #BE185D; }
+  .badge.now { background: #DCFCE7; color: #059669; }
+
+  .sig-row { display: flex; gap: 20px; flex-wrap: wrap; align-items: flex-start; }
+  .sig-preview {
+    width: 220px; height: 90px; border: 1.5px dashed var(--rsph-border);
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    background: #F8FAFC; overflow: hidden;
+  }
+  .sig-preview img { max-width: 90%; max-height: 80%; object-fit: contain; }
+  .sig-preview .placeholder { font-size: 12px; color: #94A3B8; }
+  .sig-controls { flex: 1; min-width: 220px; }
+  .sig-controls input[type="file"] { font-size: 12.5px; margin-bottom: 10px; }
+  .sig-note { font-size: 11.5px; color: #64748B; margin-top: 8px; line-height: 1.5; }
+
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0; background: rgba(2,17,82,0.55);
+    z-index: 5000; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal-card { background: #fff; border-radius: 14px; max-width: 720px; width: 100%; max-height: 88vh; overflow: hidden; display: flex; flex-direction: column; }
+  .modal-header { background: var(--rsph-navy); color: #fff; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; }
+  .modal-header h3 { margin: 0; font-family: Georgia, serif; font-size: 16px; }
+  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+  .close-icon { background: none; border: none; color: inherit; font-size: 22px; cursor: pointer; line-height: 1; }
+
+  /* NOTICE OVERLAY */
+  .notice-overlay {
+    position: fixed; inset: 0; z-index: 200000;
+    background: rgba(2, 17, 82, 0.55);
+    display: flex; align-items: center; justify-content: center; padding: 20px;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s ease;
+  }
+  .notice-overlay.open { opacity: 1; pointer-events: auto; }
+  .notice-card {
+    background: #fff; border-radius: 16px; border-top: 5px solid var(--rsph-crimson);
+    padding: 30px 26px; max-width: 400px; width: 100%; text-align: center;
+    box-shadow: 0 28px 64px rgba(2,6,23,0.38);
+    transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.16,1,0.3,1);
+  }
+  .notice-overlay.open .notice-card { transform: scale(1); }
+  .notice-card.tone-success { border-top-color: #15803D; }
+  .notice-card.tone-warning { border-top-color: #D97706; }
+  .notice-icon { font-size: 40px; margin-bottom: 10px; }
+  .notice-title { font-family: Georgia, serif; font-size: 17px; margin: 0 0 8px; }
+  .notice-message { font-size: 13px; color: #475569; line-height: 1.6; margin: 0 0 20px; white-space: pre-line; }
+  .notice-actions { display: flex; gap: 10px; justify-content: center; }
+  .notice-btn { padding: 9px 18px; border-radius: 7px; border: none; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+  .notice-btn.primary { background: var(--rsph-crimson); color: #fff; }
+  .notice-btn.secondary { background: #F1F5F9; color: #334155; }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div>
+      <h1>🔐 PRISM Faculty &amp; Admin Console</h1>
+      <div class="sub">Ramaiah School of Public Health &middot; Central Firebase Firestore Registry</div>
+    </div>
+    <a class="portal-link" href="index.html" target="_blank" rel="noopener">🎓 Open Student Portal ↗</a>
+  </div>
+
+  <div class="wrap">
+
+    <div id="authLock">
+      <div class="icon">🔐</div>
+      <h2>Faculty &amp; Administrative Verification</h2>
+      <p>Access to student registrations, live activity, progress records and the certificate signature requires an authorized RSPH passcode.</p>
+      <div class="row">
+        <input type="password" id="passcodeInput" placeholder="Enter Faculty Passcode (rsph2026)" onkeyup="if(event.key==='Enter') verifyAccess()" />
+        <button onclick="verifyAccess()">Unlock</button>
+      </div>
+      <div id="authErr">Incorrect passcode. Please try again (default: rsph2026).</div>
+    </div>
+
+    <div id="dashboard" style="display:none;">
+
+      <div class="live-badge"><span class="live-dot"></span> <span id="liveStatusText">Connecting to live registry…</span></div>
+
+      <div class="stat-grid">
+        <div class="stat-card"><div class="num" id="statTotal">0</div><div class="lbl">Total Enrolled</div></div>
+        <div class="stat-card live"><div class="num" id="statActiveNow">0</div><div class="lbl">🟢 Active Now</div></div>
+        <div class="stat-card"><div class="num" id="statActiveToday">0</div><div class="lbl">Logged In Today</div></div>
+        <div class="stat-card"><div class="num" id="statAvgMinutes">0</div><div class="lbl">Avg Min. Active Today</div></div>
+        <div class="stat-card"><div class="num" id="statAllComplete">0</div><div class="lbl">Finished All 30 Days</div></div>
+        <div class="stat-card"><div class="num" id="statPinkCerts">0</div><div class="lbl">Pink Certs Earned</div></div>
+      </div>
+
+      <div class="panel">
+        <h3>📋 Enrolled Scholars &amp; Live Progress</h3>
+        <p class="panel-sub">Updates automatically as students study — no manual refresh needed. "Active Now" = activity in the last 5 minutes.</p>
+
+        <div class="controls-row">
+          <input type="text" id="searchInput" placeholder="🔍 Search by name, ID, or prior degree…" oninput="filterTable()" />
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <select id="disciplineFilter" onchange="filterTable()">
+              <option value="ALL">All Cohorts (MPH &amp; MHA)</option>
+              <option value="MPH">MPH</option>
+              <option value="MHA">MHA</option>
+            </select>
+            <button class="btn green" onclick="exportCSV()">📥 Export CSV</button>
+            <button class="btn slate" onclick="previewAsStudent()">🎓 Preview as Student</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Student ID</th>
+                <th>Name</th>
+                <th>Discipline</th>
+                <th style="text-align:center;">Lessons</th>
+                <th style="text-align:center;">Quizzes</th>
+                <th style="text-align:center;">Pink Certs</th>
+                <th style="text-align:center;">Final Cert</th>
+                <th style="text-align:center;">Min. Active Today</th>
+                <th>Last Active</th>
+                <th style="text-align:center;">Details</th>
+              </tr>
+            </thead>
+            <tbody id="rosterBody">
+              <tr><td colspan="10" style="padding:24px; text-align:center; color:#64748B;">Enter the passcode to load the registry.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>📇 Expected PRISM 2026 Admissions Cohort</h3>
+        <p class="panel-sub"><span id="cohortRegCount">0</span> / <span id="cohortTotal">0</span> registered so far. Reference checklist only — each scholar must still self-register with their own email.</p>
+        <div class="table-wrap" style="max-height: 300px; overflow-y: auto;">
+          <table>
+            <thead><tr><th>Name</th><th>Discipline</th><th style="text-align:center;">Status</th></tr></thead>
+            <tbody id="cohortBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>✍️ Certificate of Competence — Dean Signature</h3>
+        <p class="panel-sub">Upload once here; it appears on every student's final certificate on the student portal automatically. Near-white background pixels are made transparent client-side so it sits cleanly on the certificate.</p>
+        <div class="sig-row">
+          <div class="sig-preview" id="sigPreviewWrap">
+            <span class="placeholder" id="sigPlaceholder">No signature saved yet</span>
+            <img id="sigPreviewImg" style="display:none;" alt="Saved signature preview" />
+          </div>
+          <div class="sig-controls">
+            <input type="file" id="sigFileInput" accept="image/*" onchange="handleSignatureFile(event)" />
+            <div>
+              <button class="btn crimson" id="sigSaveBtn" onclick="saveSignature()" disabled>💾 Save Signature</button>
+              <button class="btn outline" onclick="removeSignature()">🗑 Remove</button>
+            </div>
+            <div class="sig-note">Best results: a signature scanned/photographed on plain white or light paper, cropped fairly tight. JPG or PNG, any size.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>⏰ Automated Email Status</h3>
+        <p class="panel-sub">Sent by the GitHub Actions worker (<code>scripts/send-emails.js</code>, runs every 15 min) — registration confirmations, Pink Certificate &amp; final certificate emails, an 08:00 IST daily digest, and a 21:00 IST "you haven't studied today" nudge that repeats until each student finishes the course.</p>
+        <div id="emailStatusBody" style="font-size:13px; color:#334155; line-height:1.8;">Loading…</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- STUDENT DETAIL MODAL -->
+  <div class="modal-backdrop" id="detailModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="detailTitle">Scholar Progress Detail</h3>
+        <button class="close-icon" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+    </div>
+  </div>
+
+  <!-- NOTICE OVERLAY -->
+  <div class="notice-overlay" id="noticeOverlay" onclick="if(event.target===this) closeNotice();">
+    <div class="notice-card" id="noticeCard">
+      <div class="notice-icon" id="noticeIcon">ℹ️</div>
+      <h3 class="notice-title" id="noticeTitle"></h3>
+      <p class="notice-message" id="noticeMessage"></p>
+      <div class="notice-actions" id="noticeActions"></div>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDt2cIExr_hEK_q_b9HhtnzKzeSbXsqT_I",
+      authDomain: "rsph-prism-2026-8d817.firebaseapp.com",
+      projectId: "rsph-prism-2026-8d817",
+      storageBucket: "rsph-prism-2026-8d817.firebasestorage.app",
+      messagingSenderId: "535427084339",
+      appId: "1:535427084339:web:10de0e7d86fd6ff591f346"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    const TOTAL_LESSONS = 30;
+    const TOTAL_MODULES = 6;
+    const ACTIVE_NOW_WINDOW_MS = 5 * 60 * 1000;
+
+    const expectedCohortRoster = [
+      { name: 'Sadiya Marziya', discipline: 'MPH' }, { name: 'Anagha R', discipline: 'MPH' },
+      { name: 'Meenakshi P', discipline: 'MPH' }, { name: 'Kavya.N', discipline: 'MPH' },
+      { name: 'Bhumika', discipline: 'MPH' }, { name: 'N Vishwas', discipline: 'MPH' },
+      { name: 'Neha Kumari', discipline: 'MPH' }, { name: 'N G Vyvidhya', discipline: 'MPH' },
+      { name: 'Gabriella Dondor Kharrubon', discipline: 'MPH' }, { name: 'Geetanjali D', discipline: 'MPH' },
+      { name: 'Shivani Suresh', discipline: 'MPH' }, { name: 'Renie Trisha', discipline: 'MPH' },
+      { name: 'Rashmi R', discipline: 'MPH' },
+      { name: 'Harshitha HR', discipline: 'MHA' }, { name: 'Moumita Barik', discipline: 'MHA' },
+      { name: 'Ramyashree K R', discipline: 'MHA' }, { name: 'Kajal TP', discipline: 'MHA' },
+      { name: 'Suprith', discipline: 'MHA' }, { name: 'Neha Pujari', discipline: 'MHA' },
+      { name: 'Raina Jesica', discipline: 'MHA' }, { name: 'Madivalappa Sajjan', discipline: 'MHA' },
+      { name: 'Owiaz Khan', discipline: 'MHA' }, { name: 'Dr. Archana', discipline: 'MHA' },
+      { name: 'Samiksha G M', discipline: 'MHA' }, { name: 'Afiya Fathima', discipline: 'MHA' },
+      { name: 'Kuruba Supriya', discipline: 'MHA' }, { name: 'Jayeta Roy', discipline: 'MHA' },
+      { name: 'Simran Grace Kujur', discipline: 'MHA' }, { name: 'Sanjana R', discipline: 'MHA' },
+      { name: 'Faiza Shirin Abul Fazal', discipline: 'MHA' }, { name: 'Jahanvi Sinha', discipline: 'MHA' }
+    ];
+
+    function normalizeName(n) { return (n || '').toLowerCase().replace(/[^a-z]/g, ''); }
+    function isDemoId(id) { return typeof id === 'string' && id.startsWith('DEMO-'); }
+
+    // ---------- NOTICE SYSTEM ----------
+    function showNotice(opts) {
+      opts = opts || {};
+      const overlay = document.getElementById('noticeOverlay');
+      const card = document.getElementById('noticeCard');
+      card.className = 'notice-card tone-' + (opts.tone || 'info');
+      document.getElementById('noticeIcon').textContent = opts.icon || 'ℹ️';
+      document.getElementById('noticeTitle').textContent = opts.title || '';
+      document.getElementById('noticeMessage').textContent = opts.message || '';
+      const actions = document.getElementById('noticeActions');
+      actions.innerHTML = '';
+      const okBtn = document.createElement('button');
+      okBtn.className = 'notice-btn primary';
+      okBtn.textContent = opts.okText || 'OK';
+      okBtn.onclick = () => { closeNotice(); if (opts.onOk) opts.onOk(); };
+      actions.appendChild(okBtn);
+      overlay.classList.add('open');
+    }
+    function showConfirmNotice(opts) {
+      opts = opts || {};
+      const overlay = document.getElementById('noticeOverlay');
+      const card = document.getElementById('noticeCard');
+      card.className = 'notice-card tone-' + (opts.tone || 'warning');
+      document.getElementById('noticeIcon').textContent = opts.icon || '❓';
+      document.getElementById('noticeTitle').textContent = opts.title || '';
+      document.getElementById('noticeMessage').textContent = opts.message || '';
+      const actions = document.getElementById('noticeActions');
+      actions.innerHTML = '';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'notice-btn secondary';
+      cancelBtn.textContent = opts.cancelText || 'Cancel';
+      cancelBtn.onclick = () => { closeNotice(); if (opts.onCancel) opts.onCancel(); };
+      const confirmBtn = document.createElement('button');
+      confirmBtn.className = 'notice-btn primary';
+      confirmBtn.textContent = opts.confirmText || 'Confirm';
+      confirmBtn.onclick = () => { closeNotice(); if (opts.onConfirm) opts.onConfirm(); };
+      actions.appendChild(cancelBtn);
+      actions.appendChild(confirmBtn);
+      overlay.classList.add('open');
+    }
+    function closeNotice() { document.getElementById('noticeOverlay').classList.remove('open'); }
+
+    // ---------- AUTH ----------
+    function verifyAccess() {
+      const code = (document.getElementById('passcodeInput').value || '').trim().toLowerCase();
+      if (code === 'rsph2026' || code === 'admin' || code === 'faculty') {
+        document.getElementById('authLock').style.display = 'none';
+        document.getElementById('dashboard').style.display = 'block';
+        startLiveRoster();
+        loadEmailAutomationStatus();
+        loadSignatureConfig();
+      } else {
+        document.getElementById('authErr').style.display = 'block';
+      }
+    }
+
+    // ---------- LIVE ROSTER (real-time onSnapshot) ----------
+    let allStudents = [];
+    function startLiveRoster() {
+      db.collection('students').onSnapshot((snapshot) => {
+        allStudents = [];
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          if (!data || isDemoId(data.id)) return;
+          allStudents.push(data);
+        });
+        document.getElementById('liveStatusText').textContent =
+          'Live — last update ' + new Date().toLocaleTimeString('en-GB');
+        filterTable();
+        renderCohortChecklist();
+      }, (err) => {
+        console.error('Roster live listener error:', err);
+        document.getElementById('liveStatusText').textContent = 'Connection error: ' + err.message;
+      });
+    }
+
+    function countPinkCerts(s) {
+      return Object.keys(s).filter(k => k.startsWith('pinkCert_') || k.startsWith('pink_certificate_')).length;
+    }
+
+    function computeStats(students) {
+      const now = Date.now();
+      const todayIST = new Date(now + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      let activeNow = 0, activeToday = 0, allComplete = 0, totalPink = 0, minutesSum = 0, minutesCount = 0;
+      students.forEach((s) => {
+        const lastActiveMs = s.lastActive ? new Date(s.lastActive).getTime() : 0;
+        if (lastActiveMs && (now - lastActiveMs) <= ACTIVE_NOW_WINDOW_MS) activeNow++;
+        const lastActiveIST = lastActiveMs ? new Date(lastActiveMs + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10) : '';
+        const studiedToday = s.activeDateStamp === todayIST || lastActiveIST === todayIST;
+        if (studiedToday) activeToday++;
+        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
+        if (lessonsDone >= TOTAL_LESSONS) allComplete++;
+        let pink = countPinkCerts(s);
+        const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : 0;
+        if (pink === 0 && passedCount > 0) pink = passedCount;
+        totalPink += pink;
+        if (s.activeDateStamp === todayIST && typeof s.activeSecondsToday === 'number') {
+          minutesSum += s.activeSecondsToday / 60;
+          minutesCount++;
+        }
+      });
+      return {
+        total: students.length, activeNow, activeToday, allComplete, totalPink,
+        avgMinutes: minutesCount ? Math.round(minutesSum / minutesCount) : 0
+      };
+    }
+
+    function renderStats(students) {
+      const stats = computeStats(students);
+      document.getElementById('statTotal').textContent = stats.total;
+      document.getElementById('statActiveNow').textContent = stats.activeNow;
+      document.getElementById('statActiveToday').textContent = stats.activeToday;
+      document.getElementById('statAvgMinutes').textContent = stats.avgMinutes;
+      document.getElementById('statAllComplete').textContent = stats.allComplete;
+      document.getElementById('statPinkCerts').textContent = stats.totalPink;
+    }
+
+    function renderRoster(students) {
+      const tbody = document.getElementById('rosterBody');
+      if (!students || students.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" style="padding:24px; text-align:center; color:#64748B;">No enrolled scholars found.</td></tr>';
+        renderStats([]);
+        return;
+      }
+      const now = Date.now();
+      const todayIST = new Date(now + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
+      let rows = '';
+      students.forEach((s) => {
+        const isMph = (s.discipline || '').includes('MPH');
+        const discBadge = isMph
+          ? '<span class="badge mph">🎓 MPH</span>'
+          : '<span class="badge mha">🏥 MHA</span>';
+        const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : 0;
+        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
+        let pinkCount = countPinkCerts(s);
+        if (pinkCount === 0 && passedCount > 0) pinkCount = passedCount;
+        const finalBadge = s.finalCertificateAwarded
+          ? '<span class="badge done">🎓 Issued</span>'
+          : '<span class="badge pending">— Pending</span>';
+        const lastActiveMs = s.lastActive ? new Date(s.lastActive).getTime() : 0;
+        const isActiveNow = lastActiveMs && (now - lastActiveMs) <= ACTIVE_NOW_WINDOW_MS;
+        const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : (s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : 'Recently');
+        const minutesToday = (s.activeDateStamp === todayIST && typeof s.activeSecondsToday === 'number') ? Math.round(s.activeSecondsToday / 60) : 0;
+        rows += `
+          <tr>
+            <td style="font-weight:700; color:var(--rsph-navy); font-family:monospace;">${s.id || 'N/A'}</td>
+            <td style="font-weight:600;">${s.name || 'Anonymous Scholar'}</td>
+            <td>${discBadge}</td>
+            <td style="text-align:center; font-weight:700; color:#1E40AF;">${lessonsDone} / ${TOTAL_LESSONS}</td>
+            <td style="text-align:center; font-weight:700; color:#059669;">${passedCount} / ${TOTAL_MODULES}</td>
+            <td style="text-align:center;"><span class="badge pink">🌸 ${pinkCount}</span></td>
+            <td style="text-align:center;">${finalBadge}</td>
+            <td style="text-align:center; font-weight:700;">${minutesToday}m</td>
+            <td style="color:#64748B; font-size:11.5px;">${isActiveNow ? '<span class="badge now">🟢 Active now</span><br>' : ''}${lastActiveStr}</td>
+            <td style="text-align:center;">
+              <button class="btn navy" style="padding:5px 10px; font-size:11px;" onclick="viewDetail('${(s.id || '').replace(/'/g, "\\'")}')">🔍 View</button>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = rows;
+      renderStats(students);
+    }
+
+    function filterTable() {
+      const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+      const discFilter = document.getElementById('disciplineFilter').value;
+      const filtered = allStudents.filter((s) => {
+        const matchesQuery = !query ||
+          (s.name && s.name.toLowerCase().includes(query)) ||
+          (s.id && s.id.toLowerCase().includes(query)) ||
+          (s.email && s.email.toLowerCase().includes(query)) ||
+          (s.prior && s.prior.toLowerCase().includes(query)) ||
+          (s.college && s.college.toLowerCase().includes(query));
+        let matchesDisc = true;
+        if (discFilter === 'MPH') matchesDisc = (s.discipline || '').includes('MPH');
+        else if (discFilter === 'MHA') matchesDisc = (s.discipline || '').includes('MHA');
+        return matchesQuery && matchesDisc;
+      });
+      renderRoster(filtered);
+    }
+
+    function renderCohortChecklist() {
+      const tbody = document.getElementById('cohortBody');
+      const registeredNames = new Set(allStudents.map((s) => normalizeName(s.name)));
+      let registeredCount = 0;
+      const rows = expectedCohortRoster.map((entry) => {
+        const isRegistered = registeredNames.has(normalizeName(entry.name));
+        if (isRegistered) registeredCount++;
+        const discBadge = entry.discipline === 'MPH' ? '<span class="badge mph">🎓 MPH</span>' : '<span class="badge mha">🏥 MHA</span>';
+        const statusBadge = isRegistered ? '<span style="color:#15803D; font-weight:700;">✓ Registered</span>' : '<span style="color:#94A3B8;">— Not yet</span>';
+        return `<tr><td style="font-weight:600;">${entry.name}</td><td>${discBadge}</td><td style="text-align:center;">${statusBadge}</td></tr>`;
+      }).join('');
+      tbody.innerHTML = rows;
+      document.getElementById('cohortRegCount').textContent = registeredCount;
+      document.getElementById('cohortTotal').textContent = expectedCohortRoster.length;
+    }
+
+    // ---------- STUDENT DETAIL MODAL ----------
+    function viewDetail(studentId) {
+      const s = allStudents.find((x) => x.id === studentId);
+      if (!s) { showNotice({ tone: 'error', icon: '❌', title: 'Not Found', message: 'Scholar record not found.' }); return; }
+      const completed = new Set(Array.isArray(s.completedLessons) ? s.completedLessons : []);
+      let dayBadges = '';
+      for (let d = 1; d <= TOTAL_LESSONS; d++) {
+        const done = completed.has(d);
+        dayBadges += `<span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin:2px; border-radius:6px; font-size:11px; font-weight:700; ${done ? 'background:#DCFCE7; color:#15803D; border:1px solid #86EFAC;' : 'background:#F1F5F9; color:#94A3B8; border:1px solid #E2E8F0;'}">${done ? '✓' : d}</span>`;
+      }
+      let moduleRows = '';
+      for (let m = 1; m <= TOTAL_MODULES; m++) {
+        const quiz = s[`quiz_mod_${m}`];
+        const cert = s[`pinkCert_mod_${m}`];
+        moduleRows += `
+          <tr>
+            <td style="font-weight:600;">Module ${m}</td>
+            <td style="text-align:center;">${quiz ? `${quiz.score} / ${quiz.total} (${Math.round((quiz.score / quiz.total) * 100)}%)` : '—'}</td>
+            <td style="text-align:center;">${quiz && quiz.passed ? '<span style="color:#15803D; font-weight:700;">✓ Passed</span>' : '<span style="color:#94A3B8;">Not yet</span>'}</td>
+            <td style="text-align:center; font-family:monospace; font-size:11.5px; color:#BE185D;">${cert ? cert.code : '—'}</td>
+            <td style="color:#64748B; font-size:11.5px;">${cert ? cert.awardedDate : '—'}</td>
+          </tr>
+        `;
+      }
+      const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : '—';
+      const regStr = s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : '—';
+      const minutesToday = typeof s.activeSecondsToday === 'number' ? Math.round(s.activeSecondsToday / 60) : 0;
+      document.getElementById('detailTitle').textContent = `${s.name || 'Anonymous Scholar'} — Progress Detail`;
+      document.getElementById('detailBody').innerHTML = `
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:18px; font-size:12.5px;">
+          <div><strong style="color:#64748B;">Student ID:</strong><br>${s.id}</div>
+          <div><strong style="color:#64748B;">Discipline:</strong><br>${s.discipline || '—'}</div>
+          <div><strong style="color:#64748B;">Prior Background:</strong><br>${s.prior || '—'}</div>
+          <div><strong style="color:#64748B;">Affiliation:</strong><br>${s.college || '—'}</div>
+          <div><strong style="color:#64748B;">Email:</strong><br>${s.email || '—'}</div>
+          <div><strong style="color:#64748B;">Registered:</strong><br>${regStr}</div>
+          <div><strong style="color:#64748B;">Last Active:</strong><br>${lastActiveStr}</div>
+          <div><strong style="color:#64748B;">Active Today:</strong><br>${minutesToday} minutes</div>
+        </div>
+        <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📅 Lesson Completion (${completed.size} / ${TOTAL_LESSONS} Days)</h4>
+        <div style="margin-bottom: 18px; line-height: 1.4;">${dayBadges}</div>
+        <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📝 Module Quizzes &amp; Pink Certificates</h4>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Module</th><th style="text-align:center;">Quiz Score</th><th style="text-align:center;">Status</th><th style="text-align:center;">Pink Cert Code</th><th>Awarded</th></tr></thead>
+            <tbody>${moduleRows}</tbody>
+          </table>
+        </div>
+      `;
+      document.getElementById('detailModal').classList.add('open');
+    }
+    function closeDetailModal() { document.getElementById('detailModal').classList.remove('open'); }
+
+    // ---------- CSV EXPORT ----------
+    function exportCSV() {
+      if (!allStudents || allStudents.length === 0) {
+        showNotice({ tone: 'warning', icon: '📭', title: 'Nothing to Export', message: 'No roster data to export yet.' });
+        return;
+      }
+      const headers = ['Student ID', 'Full Name', 'Email', 'Discipline', 'Prior Academic Background', 'College / Institution', 'Registration Date', 'Lessons Completed', 'Passed Quizzes Count', 'Pink Certificates Issued', 'Final Certificate Status', 'Minutes Active Today', 'Last Active'];
+      const rows = [headers.join(',')];
+      allStudents.forEach((s) => {
+        const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : 0;
+        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
+        let pinkCount = countPinkCerts(s);
+        if (pinkCount === 0 && passedCount > 0) pinkCount = passedCount;
+        const minutesToday = typeof s.activeSecondsToday === 'number' ? Math.round(s.activeSecondsToday / 60) : 0;
+        const row = [
+          `"${(s.id || '').replace(/"/g, '""')}"`,
+          `"${(s.name || '').replace(/"/g, '""')}"`,
+          `"${(s.email || '').replace(/"/g, '""')}"`,
+          `"${(s.discipline || '').replace(/"/g, '""')}"`,
+          `"${(s.prior || '').replace(/"/g, '""')}"`,
+          `"${(s.college || '').replace(/"/g, '""')}"`,
+          `"${(s.registeredAt || '').replace(/"/g, '""')}"`,
+          lessonsDone, passedCount, pinkCount,
+          s.finalCertificateAwarded ? 'Awarded' : 'Pending',
+          minutesToday,
+          `"${(s.lastActive || '').replace(/"/g, '""')}"`
+        ];
+        rows.push(row.join(','));
+      });
+      const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(rows.join('\n'));
+      const link = document.createElement('a');
+      link.setAttribute('href', csvContent);
+      link.setAttribute('download', `RSPH_PRISM_2026_Student_Roster_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function previewAsStudent() {
+      window.open('index.html?facultyDemo=1', '_blank');
+    }
+
+    // ---------- CERTIFICATE SIGNATURE ----------
+    let pendingSignatureDataUrl = null;
+
+    function handleSignatureFile(evt) {
+      const file = evt.target.files && evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235) data[i + 3] = 0;
+          }
+          ctx.putImageData(imageData, 0, 0);
+          pendingSignatureDataUrl = canvas.toDataURL('image/png');
+          document.getElementById('sigPreviewImg').src = pendingSignatureDataUrl;
+          document.getElementById('sigPreviewImg').style.display = 'block';
+          document.getElementById('sigPlaceholder').style.display = 'none';
+          document.getElementById('sigSaveBtn').disabled = false;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveSignature() {
+      if (!pendingSignatureDataUrl) return;
+      db.collection('meta').doc('certificateConfig').set({
+        signatureDataUrl: pendingSignatureDataUrl,
+        updatedAt: new Date().toISOString()
+      }, { merge: true }).then(() => {
+        showNotice({ tone: 'success', icon: '✅', title: 'Signature Saved', message: 'This signature will now appear on every student\'s final certificate.' });
+        document.getElementById('sigSaveBtn').disabled = true;
+      }).catch((err) => {
+        showNotice({ tone: 'error', icon: '❌', title: 'Save Failed', message: err.message });
+      });
+    }
+
+    function removeSignature() {
+      showConfirmNotice({
+        tone: 'warning', icon: '🗑', title: 'Remove Signature?',
+        message: 'Certificates will fall back to the cursive "Dean RSPH" placeholder text.',
+        confirmText: 'Remove', cancelText: 'Cancel',
+        onConfirm: () => {
+          db.collection('meta').doc('certificateConfig').set({ signatureDataUrl: '' }, { merge: true }).then(() => {
+            pendingSignatureDataUrl = null;
+            document.getElementById('sigPreviewImg').style.display = 'none';
+            document.getElementById('sigPlaceholder').style.display = 'block';
+            document.getElementById('sigSaveBtn').disabled = true;
+            showNotice({ tone: 'success', icon: '✅', title: 'Removed', message: 'Certificates will use the default placeholder again.' });
+          });
+        }
+      });
+    }
+
+    function loadSignatureConfig() {
+      db.collection('meta').doc('certificateConfig').get().then((snap) => {
+        if (!snap.exists) return;
+        const data = snap.data();
+        if (data && data.signatureDataUrl) {
+          document.getElementById('sigPreviewImg').src = data.signatureDataUrl;
+          document.getElementById('sigPreviewImg').style.display = 'block';
+          document.getElementById('sigPlaceholder').style.display = 'none';
+        }
+      }).catch((err) => console.warn('Signature load note:', err));
+    }
+
+    // ---------- EMAIL AUTOMATION STATUS ----------
+    function loadEmailAutomationStatus() {
+      db.collection('meta').doc('emailAutomationState').get().then((snap) => {
+        const body = document.getElementById('emailStatusBody');
+        if (!snap.exists) {
+          body.innerHTML = 'No automation runs recorded yet.';
+          return;
+        }
+        const d = snap.data();
+        const regCount = (d.notifiedRegistrations || []).length;
+        const finalCount = (d.notifiedFinal || []).length;
+        body.innerHTML = `
+          <div>📧 Registration emails sent: <strong>${regCount}</strong></div>
+          <div>🎓 Final certificate emails sent: <strong>${finalCount}</strong></div>
+          <div>☀️ Last 08:00 IST daily digest: <strong>${d.lastDigestDate || 'never yet'}</strong></div>
+          <div>🌙 Last 21:00 IST completion nudge: <strong>${d.lastNudgeDate || 'never yet'}</strong></div>
+        `;
+      }).catch((err) => {
+        document.getElementById('emailStatusBody').innerHTML = 'Unable to load: ' + err.message;
+      });
+    }
+  </script>
+</body>
+</html>

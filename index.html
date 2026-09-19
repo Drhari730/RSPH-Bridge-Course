@@ -604,6 +604,50 @@
       font-style: italic;
     }
 
+    .day-visual-banner {
+      margin: 20px 0 26px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--rsph-border);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      background: #FAFAFA;
+      animation: dayVisualIn 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .day-visual-banner svg { width: 100%; height: auto; display: block; }
+    .day-visual-banner .day-visual-icon {
+      animation: dayIconFloat 3.2s ease-in-out infinite;
+      transform-origin: center;
+    }
+    .day-visual-banner .caption {
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #64748B;
+      background: #F8FAFC;
+      border-top: 1px solid #E2E8F0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-style: italic;
+    }
+    .day-visual-banner .caption .dv-link {
+      font-weight: 700;
+      font-style: normal;
+      color: var(--rsph-crimson);
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .day-visual-banner .caption .dv-link:hover { text-decoration: underline; }
+    @keyframes dayVisualIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes dayIconFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+
     .lesson-body {
       font-size: 14.5px;
       color: #334155;
@@ -2499,7 +2543,8 @@
 
             <div class="cert-signatures" style="justify-content: center;">
               <div class="cert-sign-box">
-                <div style="height: 30px; font-family: cursive; font-size: 18px; color: #0F172A;">Dean RSPH</div>
+                <img id="certSignatureImg" src="" alt="Dean Signature" style="display:none; max-height:44px; margin: 0 auto 4px; object-fit:contain;" />
+                <div id="certSignatureText" style="height: 30px; font-family: cursive; font-size: 18px; color: #0F172A;">Dean RSPH</div>
                 <div class="sign-name">Dean &amp; Director</div>
                 <div class="sign-title">Ramaiah School of Public Health</div>
               </div>
@@ -2738,135 +2783,9 @@
     </div>
   </div>
 
-  <!-- FACULTY / ADMIN ROSTER MODAL -->
-  <div class="lab-modal-backdrop" id="rosterModal">
-    <div class="lab-modal-card" style="max-width: 980px; width: 95vw; max-height: 90vh; display: flex; flex-direction: column;">
-      <div class="lab-modal-header" style="background: linear-gradient(135deg, #021152 0%, #1E40AF 100%); color: #FFFFFF; padding: 16px 20px;">
-        <div>
-          <h3 style="color: #FFFFFF; font-family: 'Georgia', serif; margin-bottom: 2px;">📋 RSPH PRISM 2026 — Enrolled Scholars & Progress Roster</h3>
-          <p style="font-size: 12px; color: #93C5FD; margin: 0;">Central Firebase Firestore Database • Ramaiah School of Public Health</p>
-        </div>
-        <button class="close-icon" style="color: #FFFFFF;" onclick="closeRosterModal()">&times;</button>
-      </div>
-
-      <div class="lab-modal-body" style="padding: 20px; overflow-y: auto; flex: 1;">
-        <!-- PASSCODE SCREEN (if locked) -->
-        <div id="rosterAuthLock" style="text-align: center; padding: 30px 10px;">
-          <div style="font-size: 40px; margin-bottom: 12px;">🔐</div>
-          <h4 style="color: var(--rsph-navy); margin-bottom: 8px; font-size: 18px;">Faculty & Administrative Verification</h4>
-          <p style="font-size: 13px; color: #64748B; max-width: 440px; margin: 0 auto 16px;">
-            Access to central student registrations, progress records, and Pink Certificates requires authorized RSPH academic credentials.
-          </p>
-          <div style="display: inline-flex; gap: 8px; align-items: center; max-width: 380px; width: 100%;">
-            <input type="password" id="rosterPasscode" placeholder="Enter Faculty Passcode (rsph2026)" style="flex: 1; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" onkeyup="if(event.key==='Enter') verifyRosterAccess()" />
-            <button class="action-btn" style="background: var(--rsph-navy); padding: 9px 16px;" onclick="verifyRosterAccess()">Unlock Roster</button>
-          </div>
-          <div id="rosterAuthErr" style="color: var(--rsph-crimson); font-size: 12px; margin-top: 8px; display: none; font-weight: 600;">Incorrect passcode. Please try again (default: rsph2026).</div>
-        </div>
-
-        <!-- ROSTER CONTENT (hidden until unlocked) -->
-        <div id="rosterContent" style="display: none;">
-          <!-- METRIC STATS -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 20px;">
-            <div style="background: #F8FAFC; border: 1px solid var(--rsph-border); border-radius: 8px; padding: 12px; text-align: center;">
-              <div style="font-size: 24px; font-weight: 800; color: var(--rsph-navy);" id="statTotalStudents">0</div>
-              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #64748B; letter-spacing: 0.5px;">Total Enrolled</div>
-            </div>
-            <div style="background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px; padding: 12px; text-align: center;">
-              <div style="font-size: 24px; font-weight: 800; color: #1D4ED8;" id="statMphCount">0</div>
-              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #1E40AF; letter-spacing: 0.5px;">MPH Candidates</div>
-            </div>
-            <div style="background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 12px; text-align: center;">
-              <div style="font-size: 24px; font-weight: 800; color: #15803D;" id="statMhaCount">0</div>
-              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #166534; letter-spacing: 0.5px;">MHA Candidates</div>
-            </div>
-            <div style="background: #FDF2F8; border: 1px solid #FBCFE8; border-radius: 8px; padding: 12px; text-align: center;">
-              <div style="font-size: 24px; font-weight: 800; color: #BE185D;" id="statPinkCerts">0</div>
-              <div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #9D174D; letter-spacing: 0.5px;">Pink Certs Earned</div>
-            </div>
-          </div>
-
-          <!-- CONTROLS ROW -->
-          <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; flex-wrap: wrap;">
-            <div style="display: flex; gap: 8px; align-items: center; flex: 1; min-width: 260px;">
-              <input type="text" id="rosterSearchInput" placeholder="🔍 Search by name, ID, or prior degree..." style="width: 100%; padding: 8px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" oninput="filterRosterTable()" />
-            </div>
-            <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-              <select id="rosterDisciplineFilter" style="padding: 8px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 12.5px; font-weight: 600;" onchange="filterRosterTable()">
-                <option value="ALL">All Cohorts (MPH &amp; MHA)</option>
-                <option value="MPH">Master of Public Health (MPH)</option>
-                <option value="MHA">Master of Hospital Administration (MHA)</option>
-              </select>
-              <button class="action-btn" style="background: #059669; padding: 8px 14px; font-size: 12.5px;" onclick="exportRosterCSV()">
-                📥 Export CSV Roster
-              </button>
-              <button class="action-btn" style="background: var(--rsph-navy); padding: 8px 12px; font-size: 12.5px;" onclick="loadRosterFromFirestore()">
-                🔄 Refresh
-              </button>
-              <button class="action-btn" style="background: #334155; padding: 8px 12px; font-size: 12.5px;" onclick="launchFacultyDemoMode()" title="Preview all 30 days and labs without registering a real student record">
-                🎓 Preview as Faculty
-              </button>
-            </div>
-          </div>
-
-          <!-- ROSTER TABLE -->
-          <div style="overflow-x: auto; border: 1px solid var(--rsph-border); border-radius: 8px; background: #FFFFFF;">
-            <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
-              <thead>
-                <tr style="background: #F1F5F9; border-bottom: 2px solid var(--rsph-border); color: #334155; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;">
-                  <th style="padding: 10px 12px;">Student ID</th>
-                  <th style="padding: 10px 12px;">Full Scholar Name</th>
-                  <th style="padding: 10px 12px;">Discipline</th>
-                  <th style="padding: 10px 12px; text-align: center;">Lessons Done</th>
-                  <th style="padding: 10px 12px; text-align: center;">Quizzes Passed</th>
-                  <th style="padding: 10px 12px; text-align: center;">Pink Certs</th>
-                  <th style="padding: 10px 12px; text-align: center;">Final Cert</th>
-                  <th style="padding: 10px 12px;">Last Active</th>
-                  <th style="padding: 10px 12px; text-align: center;">Details</th>
-                </tr>
-              </thead>
-              <tbody id="rosterTableBody">
-                <tr>
-                  <td colspan="9" style="padding: 24px; text-align: center; color: #64748B;">Connecting to RSPH Central Firestore Database...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <!-- EXPECTED ADMISSIONS COHORT (reference list — cross-checked against live registrations) -->
-          <div style="margin-top: 26px;">
-            <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 4px;">📋 Expected PRISM 2026 Admissions Cohort</h4>
-            <p style="font-size: 12px; color: #64748B; margin-bottom: 10px;">
-              Reference list from the Admissions Office (<span id="cohortRegisteredCount">0</span> / <span id="cohortTotalCount">0</span> registered so far). This is a name checklist only — each scholar must still complete Student Registration with their own email to unlock modules.
-            </p>
-            <div style="overflow-x: auto; border: 1px solid var(--rsph-border); border-radius: 8px; background: #FFFFFF; max-height: 320px; overflow-y: auto;">
-              <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
-                <thead style="position: sticky; top: 0;">
-                  <tr style="background: #F1F5F9; border-bottom: 2px solid var(--rsph-border); color: #334155; font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;">
-                    <th style="padding: 8px 12px;">Name</th>
-                    <th style="padding: 8px 12px;">Discipline</th>
-                    <th style="padding: 8px 12px; text-align: center;">Registration Status</th>
-                  </tr>
-                </thead>
-                <tbody id="cohortChecklistBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- STUDENT PROGRESS DETAIL MODAL (Faculty/Admin Dashboard drill-down) -->
-  <div class="lab-modal-backdrop" id="studentDetailModal">
-    <div class="lab-modal-card" style="max-width: 720px;">
-      <div class="lab-modal-header" style="background: var(--rsph-navy);">
-        <h3 id="studentDetailTitle" style="color: #FFFFFF;">Scholar Progress Detail</h3>
-        <button class="close-icon" style="color: #FFFFFF;" onclick="closeStudentDetailModal()">&times;</button>
-      </div>
-      <div class="lab-modal-body" id="studentDetailBody" style="padding: 20px;"></div>
-    </div>
-  </div>
+  <!-- Faculty/Admin dashboard (roster, live monitoring, Pink Certs, signature
+       upload) now lives in its own page: admin.html — see the "Faculty Portal"
+       footer link. Moved out of this file in favor of a full dedicated page. -->
 
   <!-- INTERACTIVE SIMULATOR MODAL -->
   <div class="lab-modal-backdrop" id="labModal">
@@ -3006,7 +2925,7 @@
         </div>
         <div class="footer-bottom-links">
           <span>Public Health</span> • <span>Research Methods</span> • <span>Informatics</span> • <span>Statistics</span> • <span>Management</span>
-          &nbsp;•&nbsp;<a href="javascript:void(0)" onclick="openRosterModal()" style="color: #64748B; text-decoration: none; font-weight: 600;" title="Faculty &amp; Administrative Access">Faculty Portal</a>
+          &nbsp;•&nbsp;<a href="admin.html" target="_blank" rel="noopener" style="color: #64748B; text-decoration: none; font-weight: 600;" title="Faculty &amp; Administrative Access">Faculty Portal ↗</a>
         </div>
       </div>
     </div>
@@ -3322,6 +3241,9 @@
       this.buildDots();
       this.bind();
       this.go(0);
+      // Auto-play on load — students shouldn't have to click to see it move;
+      // the Play/Pause button still lets them stop and re-read at their own pace.
+      this.play();
     }
     Explainer.prototype.buildDots = function() {
       const self = this;
@@ -3513,6 +3435,81 @@
       6: { src: "prism_mod6_art.jpg", caption: "Module 6 Infographic: Medical Terminology Deconstruction, Word Building, Systemic Pathology & ICD-10/11 Coding Architecture" }
     };
 
+    // Per-module gradient theme for the day-visual banners (distinct from the
+    // brand crimson/orange so each module reads as its own "zone" in the sidebar).
+    const MODULE_THEME_COLORS = {
+      1: ['#A82042', '#CF3E30'],
+      2: ['#021152', '#1D4ED8'],
+      3: ['#047857', '#0EA5A4'],
+      4: ['#5B21B6', '#9333EA'],
+      5: ['#B45309', '#F59E0B'],
+      6: ['#9D174D', '#DB2777']
+    };
+
+    // One distinctive icon + short concept tag per day — replaces the repeated
+    // module photo with something that actually differs lesson to lesson.
+    const DAY_VISUALS = {
+      1: { icon: '\u{1F9CA}', tag: 'The Iceberg Model' },
+      2: { icon: '\u{1F30D}', tag: 'Social Determinants' },
+      3: { icon: '\u{1F6E1}\u{FE0F}', tag: 'Levels of Prevention' },
+      4: { icon: '\u{1F3DB}\u{FE0F}', tag: 'IPHS 2022 Architecture' },
+      5: { icon: '\u{1F91D}', tag: 'Universal Coverage' },
+      6: { icon: '\u{1F41D}', tag: 'Complex Adaptive Systems' },
+      7: { icon: '\u{1F9ED}', tag: 'Situational Leadership' },
+      8: { icon: '\u{1F525}', tag: 'Motivation Theory' },
+      9: { icon: '\u{1F4E1}', tag: 'SBAR Handoff' },
+      10: { icon: '\u{267B}\u{FE0F}', tag: 'Biomedical Waste' },
+      11: { icon: '\u{1F4CA}', tag: 'Disease Frequency' },
+      12: { icon: '\u{1F52C}', tag: 'Study Designs' },
+      13: { icon: '\u{1F3AF}', tag: 'Screening Accuracy' },
+      14: { icon: '\u{1F575}\u{FE0F}', tag: 'Outbreak Investigation' },
+      15: { icon: '\u{1F33E}', tag: 'Environmental Epidemiology' },
+      16: { icon: '\u{1F4C8}', tag: 'Descriptive Statistics' },
+      17: { icon: '\u{1F514}', tag: 'The Normal Curve' },
+      18: { icon: '\u{2696}\u{FE0F}', tag: 'Hypothesis Testing' },
+      19: { icon: '\u{1F9EE}', tag: 'Non-Parametric Tests' },
+      20: { icon: '\u{23F3}', tag: 'Survival Analysis' },
+      21: { icon: '\u{2753}', tag: 'The PICO Question' },
+      22: { icon: '\u{2696}\u{FE0F}', tag: 'Research Ethics' },
+      23: { icon: '\u{1F4B3}', tag: 'ABDM Digital Highway' },
+      24: { icon: '\u{270D}\u{FE0F}', tag: 'Publication Ethics' },
+      25: { icon: '\u{1F4B0}', tag: 'Cost-Effectiveness' },
+      26: { icon: '\u{1F524}', tag: 'Word Building' },
+      27: { icon: '\u{2764}\u{FE0F}', tag: 'Cardio · Resp · Heme Terms' },
+      28: { icon: '\u{1F9E0}', tag: 'GI · Neuro · Endo · MSK Terms' },
+      29: { icon: '\u{1FA7A}', tag: 'Surgical & Oncology Terms' },
+      30: { icon: '\u{1F3F7}\u{FE0F}', tag: 'ICD-10/11 Coding' }
+    };
+
+    function buildDayVisualSVG(lesson, mod) {
+      const [c1, c2] = MODULE_THEME_COLORS[mod.module_number] || ['#A82042', '#CF3E30'];
+      const dv = DAY_VISUALS[lesson.day] || { icon: '\u{1F4D6}', tag: mod.name };
+      const gradId = 'dayGrad' + lesson.day;
+      return `
+        <svg viewBox="0 0 1200 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Day ${lesson.day} visual: ${escapeHtml(dv.tag)}">
+          <defs>
+            <linearGradient id="${gradId}" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="${c1}" />
+              <stop offset="100%" stop-color="${c2}" />
+            </linearGradient>
+          </defs>
+          <rect width="1200" height="460" fill="url(#${gradId})" />
+          <g opacity="0.10" stroke="#FFFFFF" stroke-width="14">
+            <line x1="-100" y1="500" x2="500" y2="-100" />
+            <line x1="200" y1="560" x2="800" y2="-100" />
+            <line x1="600" y1="560" x2="1200" y2="-60" />
+            <line x1="950" y1="560" x2="1450" y2="-60" />
+          </g>
+          <circle cx="1040" cy="120" r="150" fill="#FFFFFF" opacity="0.06" />
+          <circle cx="1040" cy="120" r="90" fill="#FFFFFF" opacity="0.07" />
+          <text x="80" y="90" font-family="Georgia, serif" font-size="26" font-weight="700" fill="#FFFFFF" opacity="0.92">DAY ${lesson.day} · MODULE ${mod.module_number}</text>
+          <text x="80" y="270" font-size="130" class="day-visual-icon">${dv.icon}</text>
+          <text x="260" y="230" font-family="Georgia, serif" font-size="42" font-weight="700" fill="#FFFFFF">${escapeHtml(dv.tag)}</text>
+          <text x="260" y="270" font-size="19" fill="#FFFFFF" opacity="0.85">${escapeHtml(mod.name)}</text>
+        </svg>
+      `;
+    }
+
     function renderLesson(mod, lesson) {
       const viewer = document.getElementById('lessonViewer');
       const isDone = completedLessons.has(lesson.day);
@@ -3589,16 +3586,13 @@
           </div>
         </div>
 
-        ${modArt ? `
-          <div class="module-infographic-banner" onclick="openLightbox('${modArt.src}', '${modArt.caption}')" title="Click to view full-screen high-resolution infographic">
-            <div class="zoom-hint-badge">🔍 Click to Expand High-Res Infographic</div>
-            <img src="${modArt.src}" alt="${modArt.caption}" onerror="this.parentElement.style.display='none'" />
-            <div class="caption">
-              <span>📊 ${modArt.caption}</span>
-              <span style="font-weight:700; color:var(--rsph-crimson);">🔍 Click to Enlarge Infographic (Full-Screen Lightbox)</span>
-            </div>
+        <div class="day-visual-banner">
+          ${buildDayVisualSVG(lesson, mod)}
+          <div class="caption">
+            <span>🎯 Day ${lesson.day} Concept: ${escapeHtml((DAY_VISUALS[lesson.day] || {}).tag || mod.name)}</span>
+            ${modArt ? `<span class="dv-link" onclick="openLightbox('${modArt.src}', '${modArt.caption}')">📊 View Full Module ${mod.module_number} Infographic</span>` : ''}
           </div>
-        ` : ''}
+        </div>
 
         ${lesson.scene ? `
           <div class="box scene">
@@ -5903,6 +5897,46 @@
         });
     }
 
+    // Live "minutes active" tracking for the Faculty Admin dashboard. Heartbeats
+    // every 30s while the tab is actually visible (not counted when backgrounded),
+    // and rolls over to 0 at local midnight. Per-device localStorage counter —
+    // a student studying from two devices the same day gets two counters merged
+    // by the last write, not summed; acceptable approximation for classroom use.
+    // Demo/faculty-preview profiles are never tracked, matching every other write.
+    let activityHeartbeatTimer = null;
+    function startActivityTracking() {
+      if (activityHeartbeatTimer) return;
+      activityHeartbeatTimer = setInterval(() => {
+        if (facultyDemoMode || !studentProfile || !studentProfile.id || studentProfile.isDemo) return;
+        if (document.visibilityState !== 'visible') return;
+        const todayStamp = new Date().toISOString().slice(0, 10);
+        const stampKey = 'prismActiveDateStamp_' + studentProfile.id;
+        const secKey = 'prismActiveSeconds_' + studentProfile.id;
+        let seconds = parseInt(localStorage.getItem(secKey) || '0', 10);
+        if (localStorage.getItem(stampKey) !== todayStamp) seconds = 0;
+        seconds += 30;
+        localStorage.setItem(stampKey, todayStamp);
+        localStorage.setItem(secKey, String(seconds));
+        syncStudentToFirestore(studentProfile, { activeDateStamp: todayStamp, activeSecondsToday: seconds });
+      }, 30000);
+    }
+
+    // Faculty-uploaded Dean signature for the Certificate of Competence (set via
+    // admin.html). Falls back to the cursive "Dean RSPH" text when none is saved.
+    function loadCertSignatureConfig() {
+      if (!db) return;
+      db.collection('meta').doc('certificateConfig').get().then((snap) => {
+        if (!snap.exists) return;
+        const data = snap.data();
+        if (data && data.signatureDataUrl) {
+          const img = document.getElementById('certSignatureImg');
+          const txt = document.getElementById('certSignatureText');
+          if (img) { img.src = data.signatureDataUrl; img.style.display = 'block'; }
+          if (txt) txt.style.display = 'none';
+        }
+      }).catch((err) => console.warn('Certificate signature load note:', err));
+    }
+
     function saveStudentRegistration() {
       const name = getSelectedRegName();
       if (!name) {
@@ -5940,6 +5974,7 @@
 
       // 2. Dual-Write to Cloud Firestore
       syncStudentToFirestore(studentProfile);
+      startActivityTracking();
 
       updateStudentHeaderUI();
       closeStudentModal();
@@ -5952,16 +5987,10 @@
       resetChat();
     }
 
-    // ==========================================
-    // FACULTY / ADMIN ROSTER CONTROLLER
-    // ==========================================
-    let allRosterStudents = [];
-    let rosterAuthenticated = false;
-
-    // EXPECTED PRISM 2026 ADMISSIONS COHORT — reference checklist supplied by the
-    // Admissions Office (name + program only; no email on file for these entries).
-    // Used purely to show faculty who from the admitted list has self-registered —
-    // it does NOT create student accounts or send any email on its own.
+    // EXPECTED PRISM 2026 ADMISSIONS COHORT — reference list used by the
+    // registration Name dropdown below. The full roster/live-monitoring
+    // dashboard that cross-checks this against registrations now lives in
+    // admin.html.
     const expectedCohortRoster = [
       { name: 'Sadiya Marziya', discipline: 'MPH' }, { name: 'Anagha R', discipline: 'MPH' },
       { name: 'Meenakshi P', discipline: 'MPH' }, { name: 'Kavya.N', discipline: 'MPH' },
@@ -5981,372 +6010,10 @@
       { name: 'Faiza Shirin Abul Fazal', discipline: 'MHA' }, { name: 'Jahanvi Sinha', discipline: 'MHA' }
     ];
 
-    function normalizeName(n) {
-      return (n || '').toLowerCase().replace(/[^a-z]/g, '');
-    }
-
-    function renderCohortChecklist() {
-      const tbody = document.getElementById('cohortChecklistBody');
-      if (!tbody) return;
-
-      const registeredNames = new Set((allRosterStudents || []).map(s => normalizeName(s.name)));
-      let registeredCount = 0;
-
-      const rowsHtml = expectedCohortRoster.map(entry => {
-        const isRegistered = registeredNames.has(normalizeName(entry.name));
-        if (isRegistered) registeredCount++;
-        const discBadge = entry.discipline === 'MPH'
-          ? `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:11px;">🎓 MPH</span>`
-          : `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#F0FDF4; color:#15803D; font-weight:700; font-size:11px;">🏥 MHA</span>`;
-        const statusBadge = isRegistered
-          ? `<span style="color:#15803D; font-weight:700;">✓ Registered</span>`
-          : `<span style="color:#94A3B8;">— Not yet registered</span>`;
-        return `
-          <tr style="border-bottom: 1px solid #F1F5F9;">
-            <td style="padding: 7px 12px; color: #0F172A; font-weight: 600;">${entry.name}</td>
-            <td style="padding: 7px 12px;">${discBadge}</td>
-            <td style="padding: 7px 12px; text-align: center;">${statusBadge}</td>
-          </tr>
-        `;
-      }).join('');
-
-      tbody.innerHTML = rowsHtml;
-      const regCountEl = document.getElementById('cohortRegisteredCount');
-      const totCountEl = document.getElementById('cohortTotalCount');
-      if (regCountEl) regCountEl.innerText = registeredCount;
-      if (totCountEl) totCountEl.innerText = expectedCohortRoster.length;
-    }
-
     // FACULTY DEMO PREVIEW — lets faculty review all 30 days, labs and quizzes
-    // without registering (or affecting) a real student record. Session-only:
-    // not written to localStorage, and excluded from the roster / Firestore writes.
-    function launchFacultyDemoMode() {
-      if (facultyDemoMode) {
-        showNotice({
-          tone: 'info', icon: '🎓', title: 'Demo Preview Already Active',
-          message: 'Faculty Demo Preview is already active for this session.\nStudent ID: DEMO-FACULTY-2026 — all modules, labs and quizzes are unlocked for review.'
-        });
-        return;
-      }
-      showConfirmNotice({
-        tone: 'warning', icon: '🎓', title: 'Launch Faculty Demo Preview?',
-        message: 'This unlocks the full 30-Day Learning Path, labs and quizzes for review using a shared demo profile (DEMO-FACULTY-2026). No real student data is created or affected, and demo activity is never written to the Central Registry.',
-        confirmText: 'Launch Preview', cancelText: 'Cancel',
-        onConfirm: () => {
-          facultyDemoMode = true;
-          studentProfile = {
-            name: 'Faculty Demo Reviewer',
-            email: '',
-            discipline: 'Faculty Preview',
-            prior: '',
-            college: 'Ramaiah School of Public Health, MSRUAS',
-            id: 'DEMO-FACULTY-2026',
-            registeredAt: new Date().toISOString(),
-            isDemo: true
-          };
-          updateStudentHeaderUI();
-          showNotice({
-            tone: 'success', icon: '🎓', title: 'Demo Preview Activated',
-            message: 'All 30 daily lessons, interactive labs and module quizzes are now unlocked for review. Nothing you do in this mode is saved to the real student registry.',
-            onOk: () => switchTab('learning')
-          });
-        }
-      });
-    }
-
-    function openRosterModal() {
-      document.getElementById('rosterModal').classList.add('open');
-      if (!rosterAuthenticated) {
-        document.getElementById('rosterAuthLock').style.display = 'block';
-        document.getElementById('rosterContent').style.display = 'none';
-        setTimeout(() => {
-          const passInput = document.getElementById('rosterPasscode');
-          if (passInput) passInput.focus();
-        }, 100);
-      } else {
-        loadRosterFromFirestore();
-      }
-    }
-
-    function closeRosterModal() {
-      document.getElementById('rosterModal').classList.remove('open');
-    }
-
-    function verifyRosterAccess() {
-      const code = (document.getElementById('rosterPasscode').value || '').trim().toLowerCase();
-      if (code === 'rsph2026' || code === 'admin' || code === 'faculty') {
-        rosterAuthenticated = true;
-        document.getElementById('rosterAuthLock').style.display = 'none';
-        document.getElementById('rosterContent').style.display = 'block';
-        loadRosterFromFirestore();
-      } else {
-        document.getElementById('rosterAuthErr').style.display = 'block';
-      }
-    }
-
-    function loadRosterFromFirestore() {
-      const tbody = document.getElementById('rosterTableBody');
-      if (!tbody) return;
-      tbody.innerHTML = `<tr><td colspan="8" style="padding: 24px; text-align: center; color: #64748B;">Connecting to Central Cloud Firestore...</td></tr>`;
-
-      if (!db) {
-        if (studentProfile.name && !studentProfile.isDemo) {
-          allRosterStudents = [studentProfile];
-          renderRosterList(allRosterStudents);
-        } else {
-          tbody.innerHTML = `<tr><td colspan="8" style="padding: 24px; text-align: center; color: #64748B;">No students registered yet.</td></tr>`;
-        }
-        return;
-      }
-
-      db.collection('students').get().then((snapshot) => {
-        allRosterStudents = [];
-        snapshot.forEach((doc) => {
-          const data = doc.data();
-          if (!data || (data.id || '').startsWith('DEMO-')) return;
-          allRosterStudents.push(data);
-        });
-
-        // Ensure current active student is reflected if cloud hasn't populated yet
-        if (allRosterStudents.length === 0 && studentProfile.name && !studentProfile.isDemo) {
-          allRosterStudents.push(studentProfile);
-        }
-
-        renderRosterList(allRosterStudents);
-      }).catch((err) => {
-        console.warn('Firestore roster fetch fallback:', err);
-        if (studentProfile.name && !studentProfile.isDemo) {
-          allRosterStudents = [studentProfile];
-          renderRosterList(allRosterStudents);
-        } else {
-          tbody.innerHTML = `<tr><td colspan="8" style="padding: 24px; text-align: center; color: var(--rsph-crimson);">Unable to load cloud roster: ${err.message}.</td></tr>`;
-        }
-      });
-    }
-
-    function countPinkCerts(s) {
-      let pinkCount = 0;
-      Object.keys(s).forEach(k => {
-        if (k.startsWith('pinkCert_') || k.startsWith('pink_certificate_')) pinkCount++;
-      });
-      return pinkCount;
-    }
-
-    function renderRosterList(students) {
-      const tbody = document.getElementById('rosterTableBody');
-      if (!tbody) return;
-
-      if (!students || students.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" style="padding: 24px; text-align: center; color: #64748B;">No enrolled scholars found matching the selected filter.</td></tr>`;
-        updateRosterStats(0, 0, 0, 0);
-        renderCohortChecklist();
-        return;
-      }
-
-      let mphCount = 0;
-      let mhaCount = 0;
-      let totalPinkCerts = 0;
-      const totalLessons = courseData && courseData.modules ? courseData.modules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0) : 30;
-
-      let rowsHtml = '';
-      students.forEach((s) => {
-        const isMph = (s.discipline || '').includes('MPH');
-        const isMha = (s.discipline || '').includes('MHA');
-        if (isMph) mphCount++;
-        if (isMha) mhaCount++;
-
-        const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : (passedQuizzes && s.id === studentProfile.id ? passedQuizzes.size : 0);
-        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
-
-        let pinkCount = countPinkCerts(s);
-        if (pinkCount === 0 && passedCount > 0) pinkCount = passedCount;
-        totalPinkCerts += pinkCount;
-
-        const discBadge = isMph
-          ? `<span style="display:inline-block; padding:3px 8px; border-radius:12px; background:#EFF6FF; color:#1D4ED8; font-weight:700; font-size:11px;">🎓 MPH</span>`
-          : `<span style="display:inline-block; padding:3px 8px; border-radius:12px; background:#F0FDF4; color:#15803D; font-weight:700; font-size:11px;">🏥 MHA</span>`;
-
-        const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : (s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : 'Recently');
-        const finalCertBadge = s.finalCertificateAwarded
-          ? `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#DCFCE7; color:#15803D; font-weight:700; font-size:11.5px;">🎓 Issued</span>`
-          : `<span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#F1F5F9; color:#64748B; font-weight:700; font-size:11.5px;">— Pending</span>`;
-
-        rowsHtml += `
-          <tr style="border-bottom: 1px solid #F1F5F9;">
-            <td style="padding: 10px 12px; font-weight: 700; color: var(--rsph-navy); font-family: monospace;">${s.id || 'N/A'}</td>
-            <td style="padding: 10px 12px; font-weight: 600; color: #0F172A;">${s.name || 'Anonymous Scholar'}</td>
-            <td style="padding: 10px 12px;">${discBadge}</td>
-            <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: #1E40AF;">${lessonsDone} / ${totalLessons}</td>
-            <td style="padding: 10px 12px; text-align: center; font-weight: 700; color: #059669;">${passedCount} / ${courseData.modules.length}</td>
-            <td style="padding: 10px 12px; text-align: center;">
-              <span style="display:inline-block; padding:2px 8px; border-radius:10px; background:#FDF2F8; color:#BE185D; font-weight:700; font-size:11.5px;">
-                🌸 ${pinkCount} Certs
-              </span>
-            </td>
-            <td style="padding: 10px 12px; text-align: center;">${finalCertBadge}</td>
-            <td style="padding: 10px 12px; color: #64748B; font-size: 11.5px;">${lastActiveStr}</td>
-            <td style="padding: 10px 12px; text-align: center;">
-              <button type="button" class="action-btn" style="width: auto; padding: 5px 10px; font-size: 11.5px; background: var(--rsph-navy);" onclick="viewStudentDetail('${(s.id || '').replace(/'/g, "\\'")}')">🔍 View</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      tbody.innerHTML = rowsHtml;
-      updateRosterStats(students.length, mphCount, mhaCount, totalPinkCerts);
-      renderCohortChecklist();
-    }
-
-    // FULL PER-STUDENT PROGRESS DRILL-DOWN (Faculty/Admin Dashboard)
-    function viewStudentDetail(studentId) {
-      const s = allRosterStudents.find(x => x.id === studentId);
-      if (!s) { showNotice({ tone: 'error', icon: '❌', title: 'Not Found', message: 'Scholar record not found.' }); return; }
-
-      const totalLessons = courseData && courseData.modules ? courseData.modules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0) : 30;
-      const completed = new Set(Array.isArray(s.completedLessons) ? s.completedLessons : []);
-
-      // Day-by-day lesson completion grid
-      let dayBadges = '';
-      for (let d = 1; d <= totalLessons; d++) {
-        const done = completed.has(d);
-        dayBadges += `<span style="display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; margin:2px; border-radius:6px; font-size:11px; font-weight:700; ${done ? 'background:#DCFCE7; color:#15803D; border:1px solid #86EFAC;' : 'background:#F1F5F9; color:#94A3B8; border:1px solid #E2E8F0;'}">${done ? '✓' : d}</span>`;
-      }
-
-      // Module-by-module quiz + Pink Certificate breakdown
-      let moduleRows = '';
-      (courseData.modules || []).forEach((mod, mIdx) => {
-        const quiz = s[`quiz_mod_${mIdx + 1}`];
-        const cert = s[`pinkCert_mod_${mIdx + 1}`];
-        moduleRows += `
-          <tr style="border-bottom: 1px solid #F1F5F9;">
-            <td style="padding: 8px 10px; font-weight: 600; color: #0F172A;">Module ${mod.module_number}: ${mod.name}</td>
-            <td style="padding: 8px 10px; text-align: center;">${quiz ? `${quiz.score} / ${quiz.total} (${Math.round((quiz.score / quiz.total) * 100)}%)` : '—'}</td>
-            <td style="padding: 8px 10px; text-align: center;">${quiz && quiz.passed ? '<span style="color:#15803D; font-weight:700;">✓ Passed</span>' : '<span style="color:#94A3B8;">Not yet</span>'}</td>
-            <td style="padding: 8px 10px; text-align: center; font-family: monospace; font-size: 11.5px; color: #BE185D;">${cert ? cert.code : '—'}</td>
-            <td style="padding: 8px 10px; color: #64748B; font-size: 11.5px;">${cert ? cert.awardedDate : '—'}</td>
-          </tr>
-        `;
-      });
-
-      const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : '—';
-      const regStr = s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : '—';
-
-      document.getElementById('studentDetailTitle').innerText = `${s.name || 'Anonymous Scholar'} — Progress Detail`;
-      document.getElementById('studentDetailBody').innerHTML = `
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:18px; font-size:12.5px;">
-          <div><strong style="color:#64748B;">Student ID:</strong><br>${s.id}</div>
-          <div><strong style="color:#64748B;">Discipline:</strong><br>${s.discipline || '—'}</div>
-          <div><strong style="color:#64748B;">Prior Background:</strong><br>${s.prior || '—'}</div>
-          <div><strong style="color:#64748B;">Affiliation:</strong><br>${s.college || '—'}</div>
-          <div><strong style="color:#64748B;">Email:</strong><br>${s.email || '—'}</div>
-          <div><strong style="color:#64748B;">Registered:</strong><br>${regStr}</div>
-          <div><strong style="color:#64748B;">Last Active:</strong><br>${lastActiveStr}</div>
-          <div><strong style="color:#64748B;">Final Certificate:</strong><br>${s.finalCertificateAwarded ? `🎓 Issued (${s.finalCertificateId || ''}, ${s.finalCertificateDate || ''})` : '— Not yet issued'}</div>
-        </div>
-
-        <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📅 Lesson Completion (${completed.size} / ${totalLessons} Days)</h4>
-        <div style="margin-bottom: 18px; line-height: 1.4;">${dayBadges}</div>
-
-        <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📝 Module Quizzes &amp; Pink Certificates</h4>
-        <div style="overflow-x:auto; border:1px solid var(--rsph-border); border-radius:8px;">
-          <table style="width:100%; border-collapse:collapse; font-size:12.5px; text-align:left;">
-            <thead>
-              <tr style="background:#F1F5F9; color:#334155; font-size:11px; text-transform:uppercase;">
-                <th style="padding:8px 10px;">Module</th>
-                <th style="padding:8px 10px; text-align:center;">Quiz Score</th>
-                <th style="padding:8px 10px; text-align:center;">Status</th>
-                <th style="padding:8px 10px; text-align:center;">Pink Cert Code</th>
-                <th style="padding:8px 10px;">Awarded</th>
-              </tr>
-            </thead>
-            <tbody>${moduleRows}</tbody>
-          </table>
-        </div>
-      `;
-      document.getElementById('studentDetailModal').classList.add('open');
-    }
-
-    function closeStudentDetailModal() {
-      document.getElementById('studentDetailModal').classList.remove('open');
-    }
-
-    function updateRosterStats(total, mph, mha, certs) {
-      const elTot = document.getElementById('statTotalStudents');
-      const elMph = document.getElementById('statMphCount');
-      const elMha = document.getElementById('statMhaCount');
-      const elCert = document.getElementById('statPinkCerts');
-      if (elTot) elTot.innerText = total;
-      if (elMph) elMph.innerText = mph;
-      if (elMha) elMha.innerText = mha;
-      if (elCert) elCert.innerText = certs;
-    }
-
-    function filterRosterTable() {
-      const query = (document.getElementById('rosterSearchInput').value || '').toLowerCase().trim();
-      const discFilter = document.getElementById('rosterDisciplineFilter').value;
-
-      const filtered = allRosterStudents.filter(s => {
-        const matchesQuery = !query ||
-          (s.name && s.name.toLowerCase().includes(query)) ||
-          (s.id && s.id.toLowerCase().includes(query)) ||
-          (s.email && s.email.toLowerCase().includes(query)) ||
-          (s.prior && s.prior.toLowerCase().includes(query)) ||
-          (s.college && s.college.toLowerCase().includes(query));
-        
-        let matchesDisc = true;
-        if (discFilter === 'MPH') {
-          matchesDisc = (s.discipline || '').includes('MPH');
-        } else if (discFilter === 'MHA') {
-          matchesDisc = (s.discipline || '').includes('MHA');
-        }
-
-        return matchesQuery && matchesDisc;
-      });
-
-      renderRosterList(filtered);
-    }
-
-    function exportRosterCSV() {
-      if (!allRosterStudents || allRosterStudents.length === 0) {
-        showNotice({ tone: 'warning', icon: '📭', title: 'Nothing to Export', message: 'No roster data to export.' });
-        return;
-      }
-
-      const headers = ['Student ID', 'Full Name', 'Email', 'Discipline', 'Prior Academic Background', 'College / Institution', 'Registration Date', 'Lessons Completed', 'Passed Quizzes Count', 'Pink Certificates Issued', 'Final Certificate Status', 'Last Active'];
-
-      const csvRows = [headers.join(',')];
-
-      allRosterStudents.forEach(s => {
-        const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : (passedQuizzes && s.id === studentProfile.id ? passedQuizzes.size : 0);
-        const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
-        let pinkCount = countPinkCerts(s);
-        if (pinkCount === 0 && passedCount > 0) pinkCount = passedCount;
-
-        const row = [
-          `"${(s.id || '').replace(/"/g, '""')}"`,
-          `"${(s.name || '').replace(/"/g, '""')}"`,
-          `"${(s.email || '').replace(/"/g, '""')}"`,
-          `"${(s.discipline || '').replace(/"/g, '""')}"`,
-          `"${(s.prior || '').replace(/"/g, '""')}"`,
-          `"${(s.college || '').replace(/"/g, '""')}"`,
-          `"${(s.registeredAt || '').replace(/"/g, '""')}"`,
-          lessonsDone,
-          passedCount,
-          pinkCount,
-          s.finalCertificateAwarded ? 'Awarded' : 'Pending',
-          `"${(s.lastActive || '').replace(/"/g, '""')}"`
-        ];
-        csvRows.push(row.join(','));
-      });
-
-      const csvContent = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvRows.join('\n'));
-      const link = document.createElement('a');
-      link.setAttribute('href', csvContent);
-      link.setAttribute('download', `RSPH_PRISM_2026_Student_Roster_${new Date().toISOString().slice(0,10)}.csv`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    }
+    // without registering (or affecting) a real student record. Triggered from
+    // admin.html via the ?facultyDemo=1 query param (see DOMContentLoaded above);
+    // session-only, never written to localStorage or the Firestore roster.
 
     // SCROLL REVEAL OBSERVER
     
@@ -6791,16 +6458,32 @@ function initScrollReveal() {
 
     // Boot on load
     window.addEventListener('DOMContentLoaded', () => {
+      // Faculty admin dashboard (admin.html) links here with ?facultyDemo=1 for
+      // an instant, already-authorized preview — skips the in-app confirm dialog
+      // since the admin passcode already gated that action on the previous page.
+      if (new URLSearchParams(location.search).get('facultyDemo') === '1' && !facultyDemoMode) {
+        facultyDemoMode = true;
+        studentProfile = {
+          name: 'Faculty Demo Reviewer', email: '', discipline: 'Faculty Preview', prior: '',
+          college: 'Ramaiah School of Public Health, MSRUAS', id: 'DEMO-FACULTY-2026',
+          registeredAt: new Date().toISOString(), isDemo: true
+        };
+      }
+
       initSidebar();
       selectLesson(0, 1);
       updateStudentHeaderUI();
       initScrollReveal();
       resetChat();
+      loadCertSignatureConfig();
 
       // Sync active student profile to cloud on boot
-      if (studentProfile && studentProfile.id) {
+      if (studentProfile && studentProfile.id && !studentProfile.isDemo) {
         setTimeout(() => syncStudentToFirestore(studentProfile), 800);
+        startActivityTracking();
       }
+
+      if (facultyDemoMode) switchTab('learning');
     });
   </script>
 
