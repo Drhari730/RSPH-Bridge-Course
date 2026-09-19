@@ -1,0 +1,206 @@
+/**
+ * RSPH PRISM Bridge Course — email worker.
+ *
+ * Runs on a GitHub Actions schedule (see .github/workflows/prism-emails.yml).
+ * Deliberately avoids Firebase Cloud Functions (which require the paid
+ * Blaze plan) — instead it reads Firestore directly with the same public
+ * web config already embedded in index.html (Firestore rules allow open
+ * read/write, so no service-account secret is needed) and sends mail via
+ * the Resend REST API using RESEND_API_KEY from the environment (set as a
+ * GitHub Actions repository secret — never committed to git).
+ *
+ * Each run:
+ *   1. Sends a registration-confirmation email for any student not yet notified.
+ *   2. Sends a module/Pink Certificate email for any newly-earned pinkCert_mod_N.
+ *   3. Sends a final-certificate email the first time finalCertificateAwarded flips true.
+ *   4. Once a day (around 08:00 IST), sends every active student a progress digest.
+ * "Already notified" state is tracked in a single Firestore doc
+ * (meta/emailAutomationState) so re-runs never double-send.
+ */
+
+const { initializeApp } = require('firebase/app');
+const {
+  initializeFirestore,
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  setDoc
+} = require('firebase/firestore');
+
+const firebaseConfig = {
+  apiKey: 'AIzaSyDt2cIExr_hEK_q_b9HhtnzKzeSbXsqT_I',
+  authDomain: 'rsph-prism-2026-8d817.firebaseapp.com',
+  projectId: 'rsph-prism-2026-8d817',
+  storageBucket: 'rsph-prism-2026-8d817.firebasestorage.app',
+  messagingSenderId: '535427084339',
+  appId: '1:535427084339:web:10de0e7d86fd6ff591f346'
+};
+
+const FROM_EMAIL = 'PRISM Bridge Course <prism@drhari.co.in>';
+const TOTAL_LESSONS = 30;
+const TOTAL_MODULES = 6;
+const DIGEST_HOUR_IST = 8; // send the daily digest during the 08:00 IST run
+
+const RESEND_API_KEY = process.env.RESEND_API_KEY;
+if (!RESEND_API_KEY) {
+  console.error('RESEND_API_KEY is not set — nothing to do.');
+  process.exit(1);
+}
+
+const app = initializeApp(firebaseConfig);
+const db = initializeFirestore(app, { experimentalForceLongPolling: true });
+
+function isDemoId(id) {
+  return typeof id === 'string' && id.startsWith('DEMO-');
+}
+
+function countPinkCerts(data) {
+  return Object.keys(data).filter(k => k.startsWith('pinkCert_')).length;
+}
+
+function nowIST() {
+  return new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+}
+
+async function sendEmail(to, subject, html) {
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_API_KEY}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ from: FROM_EMAIL, to, subject, html })
+  });
+  if (!res.ok) {
+    const body = await res.text().catch(() => '');
+    throw new Error(`Resend API ${res.status}: ${body}`);
+  }
+  console.log(`  sent: "${subject}" -> ${to}`);
+}
+
+async function main() {
+  const stateRef = doc(db, 'meta', 'emailAutomationState');
+  const stateSnap = await getDoc(stateRef);
+  const state = stateSnap.exists() ? stateSnap.data() : {};
+  const notifiedRegistrations = new Set(state.notifiedRegistrations || []);
+  const notifiedFinal = new Set(state.notifiedFinal || []);
+  const notifiedCerts = state.notifiedCerts || {}; // { studentId: [moduleNum, ...] }
+  const lastDigestDate = state.lastDigestDate || '';
+
+  const snapshot = await getDocs(collection(db, 'students'));
+  const students = snapshot.docs.map(d => d.data()).filter(s => s && !isDemoId(s.id));
+
+  let sentCount = 0;
+
+  for (const s of students) {
+    if (!s.email || !s.id) continue;
+
+    // 1) Registration confirmation
+    if (!notifiedRegistrations.has(s.id)) {
+      try {
+        await sendEmail(
+          s.email,
+          'Welcome to the RSPH PRISM Bridge Course',
+          `<p>Dear ${s.name || 'Scholar'},</p>
+           <p>Your registration for the <strong>RSPH PRISM 30-Day Bridge Course</strong> is confirmed.</p>
+           <p><strong>Student ID:</strong> ${s.id}<br/><strong>Program:</strong> ${s.discipline || ''}</p>
+           <p>You now have full access to all 30 daily lessons, interactive labs, quizzes and Pink Certificates.</p>
+           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+        );
+        notifiedRegistrations.add(s.id);
+        sentCount++;
+      } catch (err) {
+        console.error(`  registration email failed for ${s.id}:`, err.message);
+      }
+    }
+
+    // 2) Module / Pink Certificate emails
+    const alreadyNotifiedMods = new Set(notifiedCerts[s.id] || []);
+    for (const key of Object.keys(s)) {
+      if (!key.startsWith('pinkCert_mod_')) continue;
+      const cert = s[key];
+      if (!cert || alreadyNotifiedMods.has(cert.moduleNum)) continue;
+      try {
+        await sendEmail(
+          s.email,
+          `Module ${cert.moduleNum} Complete — Pink Certificate Awarded`,
+          `<p>Dear ${s.name || 'Scholar'},</p>
+           <p>Congratulations! You've passed the quiz for <strong>Module ${cert.moduleNum}: ${cert.moduleName}</strong> and earned your Pink Certificate of Module Mastery.</p>
+           <p><strong>Certificate Code:</strong> ${cert.code}<br/><strong>Awarded:</strong> ${cert.awardedDate}</p>
+           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+        );
+        alreadyNotifiedMods.add(cert.moduleNum);
+        sentCount++;
+      } catch (err) {
+        console.error(`  module cert email failed for ${s.id} module ${cert.moduleNum}:`, err.message);
+      }
+    }
+    notifiedCerts[s.id] = Array.from(alreadyNotifiedMods);
+
+    // 3) Final certificate
+    if (s.finalCertificateAwarded && !notifiedFinal.has(s.id)) {
+      try {
+        await sendEmail(
+          s.email,
+          'PRISM Course Completion Certificate Issued',
+          `<p>Dear ${s.name || 'Scholar'},</p>
+           <p>Congratulations on completing the full 30-Day PRISM Bridge Course!</p>
+           <p>Your official <strong>Certificate of Competence</strong> has been issued.</p>
+           <p><strong>Certificate ID:</strong> ${s.finalCertificateId || ''}<br/><strong>Date:</strong> ${s.finalCertificateDate || ''}</p>
+           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+        );
+        notifiedFinal.add(s.id);
+        sentCount++;
+      } catch (err) {
+        console.error(`  final certificate email failed for ${s.id}:`, err.message);
+      }
+    }
+  }
+
+  // 4) Daily progress digest
+  const ist = nowIST();
+  const todayIST = ist.toISOString().slice(0, 10);
+  const hourIST = ist.getUTCHours();
+  if (hourIST === DIGEST_HOUR_IST && todayIST !== lastDigestDate) {
+    for (const s of students) {
+      if (!s.email || !s.id) continue;
+      const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
+      const quizzesPassed = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : 0;
+      if (lessonsDone === 0 && quizzesPassed === 0) continue; // skip day-zero registrants
+
+      try {
+        await sendEmail(
+          s.email,
+          'Your RSPH PRISM Daily Progress Update',
+          `<p>Dear ${s.name || 'Scholar'},</p>
+           <p>Here's where you stand in the 30-Day PRISM Bridge Course:</p>
+           <ul>
+             <li><strong>Lessons completed:</strong> ${lessonsDone} / ${TOTAL_LESSONS}</li>
+             <li><strong>Module quizzes passed:</strong> ${quizzesPassed} / ${TOTAL_MODULES}</li>
+             <li><strong>Pink Certificates earned:</strong> ${countPinkCerts(s)}</li>
+             <li><strong>Final Certificate:</strong> ${s.finalCertificateAwarded ? 'Issued 🎓' : 'Not yet issued'}</li>
+           </ul>
+           <p>Keep up the momentum — log back in to continue your next lesson.</p>
+           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+        );
+        sentCount++;
+      } catch (err) {
+        console.error(`  digest email failed for ${s.id}:`, err.message);
+      }
+    }
+    state.lastDigestDate = todayIST;
+  }
+
+  state.notifiedRegistrations = Array.from(notifiedRegistrations);
+  state.notifiedFinal = Array.from(notifiedFinal);
+  state.notifiedCerts = notifiedCerts;
+  await setDoc(stateRef, state, { merge: true });
+
+  console.log(`Done. ${sentCount} email(s) sent this run.`);
+}
+
+main().catch(err => {
+  console.error('Email worker failed:', err);
+  process.exit(1);
+});

@@ -1,0 +1,12 @@
+{
+  "name": "rsph-prism-email-worker",
+  "description": "Scheduled GitHub Actions worker that sends PRISM course email via Resend, reading progress straight from the public Firestore database (no Firebase Functions / Blaze plan required).",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "firebase": "^10.14.1"
+  }
+}
