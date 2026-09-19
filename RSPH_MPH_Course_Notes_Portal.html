@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>MPH Course Notes &amp; Lecture Standardization | Ramaiah School of Public Health</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&amp;family=Source+Serif+4:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..500,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            "rsph-bg":        "#FBF6F1",
+            "rsph-surface":   "#FFFFFF",
+            "rsph-surface-alt":"#FBF3EF",
+            "rsph-border":    "#EADFDA",
+            "rsph-ink":       "#3D2B49",
+            "rsph-ink-soft":  "#7A6C7D",
+            "rsph-indigo":    "#381A6B",
+            "rsph-indigo-deep":"#241146",
+            "rsph-wine":      "#9E2A57",
+            "rsph-coral":     "#DE4421",
+            "rsph-coral-deep":"#C0383A",
+            "rsph-peach":     "#EDCEC3"
+          },
+          fontFamily: {
+            display: ["'Playfair Display'","Georgia","serif"],
+            serif:   ["'Source Serif 4'","Georgia","serif"]
+          }
+        }
+      }
+    }
+</script>
+<style>
+  body { font-family: 'Source Serif 4', Georgia, serif; }
+  h1,h2,h3,.font-display { font-family: 'Playfair Display', Georgia, serif; }
+  details > summary { list-style: none; cursor: pointer; }
+  details > summary::-webkit-details-marker { display: none; }
+  details[open] .chev { transform: rotate(180deg); }
+  html { scroll-behavior: smooth; }
+  .hero-gradient { background: linear-gradient(120deg, #DF4421 0%, #C23A3E 45%, #A22755 100%); }
+  .card-gradient { background: linear-gradient(135deg, #DC4226, #BC3440); }
+  .smallcaps { letter-spacing: 0.09em; text-transform: uppercase; }
+  @media print {
+    aside, #searchWrap, .no-print { display: none !important; }
+    main { padding: 0 !important; }
+    .course-card { break-inside: avoid; box-shadow: none !important; }
+    body { background: #fff !important; }
+  }
+</style>
+</head>
+<body class="bg-rsph-bg text-rsph-ink min-h-screen flex flex-col antialiased selection:bg-rsph-peach selection:text-rsph-wine">
+
+<!-- ============ TOP NAV ============ -->
+<header class="bg-rsph-bg sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-space-lg py-4 max-w-[1600px] mx-auto gap-4" style="padding-left:1.5rem;padding-right:1.5rem;">
+<div class="flex items-center gap-3 shrink-0">
+<img src="rsph_logo.png" alt="Ramaiah School of Public Health" class="h-9 md:h-10 w-auto"/>
+<div class="hidden md:block h-8 w-px bg-rsph-border mx-1"></div>
+<span class="hidden md:block text-[13px] font-serif text-rsph-ink-soft leading-tight">MPH Course Notes<br/>&amp; Lecture Standardization</span>
+</div>
+<div id="searchWrap" class="hidden md:flex items-center flex-1 max-w-md">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-rsph-ink-soft text-lg">search</span>
+<input id="searchInput" class="w-full pl-9 pr-3 py-2 bg-rsph-surface text-rsph-ink placeholder:text-rsph-ink-soft/70 font-serif text-sm rounded-full border border-rsph-border focus:outline-none focus:border-rsph-coral focus:ring-2 focus:ring-rsph-coral/15 transition-all" placeholder="Search course, module or topic..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-2 shrink-0 no-print">
+<span class="hidden xl:inline-flex items-center smallcaps text-[11px] font-semibold text-rsph-coral-deep tracking-widest">Faculty Reference &middot; For Internal Use</span>
+<button onclick="expandAll(true)" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rsph-border text-rsph-ink-soft hover:border-rsph-indigo hover:text-rsph-indigo text-sm transition-colors">
+<span class="material-symbols-outlined text-base">unfold_more</span><span>Expand all</span>
+</button>
+<button onclick="expandAll(false)" class="hidden lg:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-rsph-border text-rsph-ink-soft hover:border-rsph-indigo hover:text-rsph-indigo text-sm transition-colors">
+<span class="material-symbols-outlined text-base">unfold_less</span><span>Collapse all</span>
+</button>
+<button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full card-gradient text-white hover:opacity-90 text-sm font-semibold transition-opacity shadow-sm">
+<span class="material-symbols-outlined text-base">picture_as_pdf</span><span class="hidden sm:inline">Print / Save PDF</span>
+</button>
+</div>
+</div>
+<div class="h-[3px] hero-gradient w-full"></div>
+</header>
+
+<div class="flex-1 flex max-w-[1600px] w-full mx-auto">
+<!-- ============ SIDEBAR ============ -->
+<aside class="hidden lg:flex flex-col h-[calc(100vh-61px)] sticky top-[61px] w-[268px] shrink-0 border-r border-rsph-border bg-rsph-surface-alt p-5 gap-6 overflow-y-auto">
+<div class="flex flex-col gap-1 px-1">
+<span class="smallcaps text-[11px] font-semibold text-rsph-ink-soft tracking-widest">Batch 2022 &middot; Approved Curriculum</span>
+<span class="font-display font-bold text-lg text-rsph-indigo leading-tight">MPH Course Notes</span>
+</div>
+<nav id="semesterNav" class="flex flex-col gap-1"></nav>
+<div class="p-4 rounded-xl bg-rsph-surface border border-rsph-border flex flex-col gap-2">
+<div class="flex items-center gap-1.5 smallcaps text-[11px] font-semibold text-rsph-coral-deep tracking-widest">
+<span class="material-symbols-outlined text-sm">groups</span>
+<span>For Guest &amp; Visiting Faculty</span>
+</div>
+<p class="text-[13.5px] text-rsph-ink-soft leading-relaxed">Every course card sets out the approved module sequence and topic list so any faculty &mdash; core or guest &mdash; delivers a consistent syllabus across cohorts and years.</p>
+</div>
+<div class="flex flex-col gap-1 pt-1">
+<a href="#electives" class="flex items-center gap-2 text-rsph-ink-soft hover:text-rsph-indigo hover:bg-rsph-surface rounded-lg px-3 py-2 text-[14px] transition-all">
+<span class="material-symbols-outlined text-base text-rsph-coral">tune</span><span>Elective Course Pools</span>
+</a>
+<a href="#programme" class="flex items-center gap-2 text-rsph-ink-soft hover:text-rsph-indigo hover:bg-rsph-surface rounded-lg px-3 py-2 text-[14px] transition-all">
+<span class="material-symbols-outlined text-base text-rsph-coral">school</span><span>Programme Snapshot</span>
+</a>
+</div>
+<div class="mt-auto pt-4 border-t border-rsph-border px-1 text-[11px] text-rsph-ink-soft leading-relaxed">
+Ramaiah School of Public Health<br/>M.S. Ramaiah University of Applied Sciences
+</div>
+</aside>
+
+<!-- ============ MAIN ============ -->
+<main class="flex-1 p-4 md:p-8 lg:p-12 overflow-y-auto max-w-full">
+<div class="max-w-[1180px] mx-auto flex flex-col gap-14">
+
+<!-- HERO -->
+<section id="programme" class="rounded-2xl overflow-hidden shadow-sm scroll-mt-24">
+<div class="hero-gradient px-6 md:px-12 py-10 md:py-14">
+<span class="smallcaps text-[12px] font-semibold text-white/85 tracking-widest">Ramaiah School of Public Health</span>
+<h1 class="font-display font-bold text-white text-[28px] md:text-[42px] leading-tight mt-2 max-w-3xl">MPH Course-wise &amp; Topic-wise<br/>Lecture Reference</h1>
+<p class="text-white/90 text-[15.5px] md:text-base max-w-2xl leading-relaxed mt-4">A single, semester-organised reference drawn from the approved MPH Course &amp; Programme Specifications, Batch 2022 &mdash; giving every core, elective and practicum course its standardized module sequence and lecture-wise topic list, so teaching stays consistent whether delivered by core faculty or invited guest lecturers.</p>
+</div>
+<div class="bg-rsph-surface px-6 md:px-12 py-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="card-gradient rounded-xl p-4 flex flex-col text-white shadow-sm">
+<span class="font-display font-bold text-3xl">4</span>
+<span class="smallcaps text-[10.5px] font-semibold tracking-widest mt-1 text-white/90">Semesters</span>
+<span class="text-[12px] text-white/75 mt-0.5">Full-Time, 2 Years</span>
+</div>
+<div class="rounded-xl p-4 flex flex-col border border-rsph-border">
+<span class="font-display font-bold text-3xl text-rsph-indigo">80</span>
+<span class="smallcaps text-[10.5px] font-semibold tracking-widest mt-1 text-rsph-ink-soft">Total Credits</span>
+<span class="text-[12px] text-rsph-ink-soft mt-0.5">20+20+21+19 &middot; Max Marks 2500</span>
+</div>
+<div class="rounded-xl p-4 flex flex-col border border-rsph-border">
+<span class="font-display font-bold text-3xl text-rsph-wine" id="statCourseCount">21</span>
+<span class="smallcaps text-[10.5px] font-semibold tracking-widest mt-1 text-rsph-ink-soft">Courses Documented</span>
+<span class="text-[12px] text-rsph-ink-soft mt-0.5">Core, elective &amp; practicum</span>
+</div>
+<div class="rounded-xl p-4 flex flex-col border border-rsph-border">
+<span class="font-display font-bold text-3xl text-rsph-indigo">2022</span>
+<span class="smallcaps text-[10.5px] font-semibold tracking-widest mt-1 text-rsph-ink-soft">Source Document</span>
+<span class="text-[12px] text-rsph-ink-soft mt-0.5">MPH Course Specifications, Approved</span>
+</div>
+</div>
+</section>
+
+<!-- SEMESTER SECTIONS INJECTED HERE -->
+<div id="semesterContainer" class="flex flex-col gap-14"></div>
+
+<!-- ELECTIVES -->
+<section id="electives" class="scroll-mt-24">
+<div class="flex items-baseline gap-3 pb-3 border-b-2 border-rsph-border">
+<span class="font-display font-bold text-2xl text-rsph-coral-deep">&sect;</span>
+<h2 class="font-display font-bold text-2xl text-rsph-indigo tracking-tight">Elective Course Pools</h2>
+</div>
+<p class="text-[14.5px] text-rsph-ink-soft mt-3 max-w-3xl leading-relaxed">Three Major Discipline Elective Courses (MDEC-1, 2, 3) are chosen each year from the pool below by the Head of Institute in consultation with NGOs, academia, government and research partners. Two Open/Generic Elective Courses (O/GEC-1, O/GEC-2) may be fulfilled via SWAYAM/Coursera, another RUAS faculty offering, or the RSPH list below.</p>
+<div class="grid md:grid-cols-2 gap-8 mt-6">
+<div>
+<h3 class="font-display font-semibold text-lg text-rsph-indigo mb-3">Major Discipline Elective Courses</h3>
+<ul id="mdecList" class="flex flex-col gap-2.5"></ul>
+</div>
+<div>
+<h3 class="font-display font-semibold text-lg text-rsph-indigo mb-3">Open / Generic Elective Courses</h3>
+<ul id="ogecList" class="flex flex-wrap gap-2"></ul>
+</div>
+</div>
+</section>
+
+</div>
+</main>
+</div>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-rsph-surface-alt border-t border-rsph-border no-print">
+<div class="h-[3px] hero-gradient w-full"></div>
+<div class="max-w-[1600px] mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-3">
+<div class="flex items-center gap-2">
+<img src="rsph_logo.png" alt="RSPH" class="h-6 w-auto opacity-80"/>
+<span class="text-[13px] text-rsph-ink-soft">Ramaiah School of Public Health &middot; M.S. Ramaiah University of Applied Sciences</span>
+</div>
+<span class="smallcaps text-[10.5px] text-rsph-ink-soft tracking-widest">Source: MPH Course &amp; Programme Specifications, Batch 2022 (Approved) &middot; Course Notes Portal v2.0</span>
+</div>
+</footer>
+
+<script>
+/* ===================== DATA ===================== */
+const SEMESTERS = [
+  {num:1, marks:550, credits:20, blurb:`Foundations: public health principles, systems &amp; policy, epidemiology, healthcare management/leadership and biostatistics.`},
+  {num:2, marks:550, credits:20, blurb:`India's public health priorities (communicable/MNCH and NCD/nutrition), research methodology, health behaviour, ethics and MDEC-1.`},
+  {num:3, marks:750, credits:21, blurb:`Global health, health technology, programme planning &amp; evaluation, demography, project work, MDEC-2 and Dissertation Part 1.`},
+  {num:4, marks:650, credits:19, blurb:`MDEC-3, O/GEC-2, Dissertation Part 2 and the field Internship.`}
+];
+
+const ELECTIVES = {
+  mdec: [
+    `Qualitative Research Methods (Semester 2) &mdash; documented below as PHE501A`,
+    `Environment and Health (Semester 2)`,
+    `Implementation Research Methods (Semester 3) &mdash; documented below as PHE601A`,
+    `Health Economics (Semester 3)`,
+    `Evidence Synthesis (Semester 4) &mdash; documented below as PHE602A`,
+    `Population Microbiology (Semester 4)`
+  ],
+  ogec: [
+    `Infectious Disease Epidemiology`, `Cancer Epidemiology`, `Advanced Epidemiology in Health Sciences`,
+    `Advanced Bio-statistics in Health Sciences`, `Health Insurance and Health Financing`, `Health Technology Assessment`,
+    `Cluster Randomized Controlled Trials`, `Nutritional Epidemiology / Public Health Nutrition`, `Social Marketing and Public Health`,
+    `Quality Improvement and Management in Public Health`, `Health Inequity and Social Determinants`, `Integrative Health Research Methods`,
+    `Mixed Methods Research`, `One-Health Approach`, `Integrative Disease Surveillance`, `Concurrent Monitoring and Evaluation of Health Programmes`,
+    `Oral Health Promotion`, `Public Health Nursing`, `Community Optometry`
+  ]
+};
+
+const COURSES = [
+// ---------------- SEMESTER 1 ----------------
+{sem:1, code:`PHC501A`, title:`Principles and Practice of Public Health`, credits:`3`, hours:`30`, type:`core`,
+ aim:`Provides broad perspectives of public health principles, concepts, and functions &mdash; prevention, disease control measures, and health determinants &mdash; and trains students to appraise resources for public health interventions, apply measures of health, and assess healthcare needs in a community.`,
+ outcomes:[`Explain the need for and importance of public health`,`Explain the core functions of public health`,`Discuss the concepts of health, illness, and disease`,`Discuss the concepts of prevention and control measures in public health`,`Analyze the resources required to practice and develop interventions in public health, keeping ethical aspects in view`,`Apply measures of health and assess healthcare needs in a community`],
+ modules:[
+  {name:`Introduction to Public Health`, topics:[`Definition of health and public health`,`Public health as a system`,`Unique features of public health`,`Scope of public health`,`History and development of public health in developed countries`,`History and development of public health in low- and middle-income countries`,`Development of public health in emerging economies: India, Brazil, China`,`Impact of public health in global society`,`Functions of public health`]},
+  {name:`Concept of Health, Illness, Diseases`, topics:[`Health, illness, disease`,`Determinants of health`,`Dimensions of health`,`Concepts of health and healthcare`,`Concepts of diseases`,`Spectrum of health and iceberg phenomenon`,`Natural history of disease`]},
+  {name:`Measures of Health`, topics:[`Health indicators`,`Assessing the health needs &mdash; priorities, health status assessment, health needs assessment, health impact assessment, analyzing health problems for causative factors (risk factors)`,`Economic dimensions of health impact`]},
+  {name:`Health Inequalities`, topics:[`Health inequalities`,`Socio-economic inequalities in health in high- and low-income countries`,`Health equity and equality`,`Reducing health inequalities`]},
+  {name:`Disease Prevention and Control`, topics:[`Concept of prevention and control`,`Levels of prevention`,`Modes of intervention`,`Prevention of communicable and non-communicable diseases`,`Prevention and control of public health hazards &mdash; tobacco, drug abuse, injury prevention and violence`]},
+  {name:`Public Health Resources`, topics:[`Infrastructure`,`Indian Public health standards`,`Human resources`,`Organizational resources`,`Financial resources`,`Informational resources`]}
+ ],
+ readings:`Oxford Textbook of Public Health (6th Ed., 2015); Gluckman, Developmental Origins of Health and Disease (2016); K. Park, Park's Textbook of Community Medicine (2017); Mary-Jane, Introduction to Public Health (5th Ed., 2016)`},
+
+{sem:1, code:`PHC502A`, title:`Public Health Systems &amp; Health Policy`, credits:`4`, hours:`45`, type:`core`,
+ aim:`Provides a basic understanding of health systems (evolution, levels, functions, types, building blocks) and the structure/functions of Indian health systems; covers healthcare institutions, international public health organizations, and health policy formulation, planning, review and impact.`,
+ outcomes:[`Discuss the basics of health systems and organization of public health system in India`,`Discuss the role of healthcare institutions in improving community health`,`Critically review the national health programmes and schemes in India`,`Analyze the role of international public health organizations in guiding and improving health at population level`,`Discuss and generate ideas to improve the existing public health system in India`,`Explain the need for policies in public health`,`Discuss the process, development and implementation of a health policy`,`Analyze policy issues pertaining to public health with a special focus on India`,`Conduct a comparative analysis on various international health policies and critically review a health policy`],
+ modules:[
+  {name:`Health Systems Overview`, topics:[`Definitions, evolution, functions and types of health systems`,`Health system framework and its applications &mdash; WHO building blocks of health systems and their linkages`,`Van Olmen health system framework`,`Health policy and systems framework: levels of health system &mdash; Micro (individual interactions), Meso (organizational structure and community), Macro (policy)`]},
+  {name:`Public Health System in India`, topics:[`Sub-centres, PHCs, CHCs, HWC, rural hospitals, district hospitals, and tertiary care hospitals`,`AYUSH and role of Central and State Governments in healthcare delivery in India`]},
+  {name:`Private (For and Not-for-Profit) Health System in India`, topics:[`Private or corporate health sector`,`Corporate social responsibility and healthcare (CSR)`,`Non-Governmental Organizations / Voluntary Organization and private informal sector`]},
+  {name:`National Health Programmes, Initiatives and Schemes in India`, topics:[`Communicable diseases programmes`,`Non-communicable diseases programmes`,`Nutritional related health programmes and Pradhan Mantri Arogya Yojana (Ayushman Bharat)`,`RMNCH+A, NHM, IMNCI, IDSP`]},
+  {name:`International Public Health Organizations / Institutions`, topics:[`WHO, ILO, World Bank, FAO, CDC-USA, UNFPA, UNICEF, UNESCO and United Nations`]},
+  {name:`Health Systems of Different Countries`, topics:[`Developed countries: UK, US, UAE, Germany, Scandinavian countries, Australia and Canada`,`Developing countries: Brazil, China, Thailand`,`Underdeveloped countries: African countries`]},
+  {name:`Public Policy Including Health Policy`, topics:[`Introduction to policy and public policy`,`Policy making process, policy development and implementation`,`Health policy, agenda setting in health policy`,`Public health policy reforms, health policy analysis, advocating policy change`,`Normative and value-based policy and evidence-based policy`,`Health policy and systems research (HPSR)`]}
+ ],
+ readings:`Gilson L., Health Policy and Systems Research: A Methodology Reader (2012); Henderson, Consuming Health (2004); Sujatha Rao, Do We Care? India's Health System (2017); Jahangir Moini, Fundamentals of U.S. Health Care (2018)`},
+
+{sem:1, code:`PHC503A`, title:`Epidemiology`, credits:`3`, hours:`30`, type:`core`,
+ aim:`Introduces the principles and concepts of epidemiology, trains students in the epidemiology of major communicable and non-communicable diseases, and enables application of tools, techniques and study designs to identify and address public health problems.`,
+ outcomes:[`Explain the principles and concepts of epidemiology`,`Describe the epidemiology of major communicable and non-communicable diseases`,`Discuss the types of epidemiological designs`,`Choose appropriate tools and techniques of epidemiology for identifying and addressing public health problems`,`Design an epidemiological study for a given scenario`,`Develop a plan for investigation and prevention of a communicable and non-communicable disease`],
+ modules:[
+  {name:`Basic Epidemiology`, topics:[`Scope of epidemiology, measures of disease frequency and association`,`Ecological / geographical studies`,`Case control and cohort studies`,`Intervention studies and Randomised Controlled Trials`,`Data sources in epidemiology`,`Disease trends and standardization`,`Random error / chance`,`Bias and confounding`,`Interaction and effect modification`,`Association and causation`,`Validity and reliability`,`Screening`]},
+  {name:`Advanced Epidemiology`, topics:[`Epidemiology of chronic disease, including cancer, cardiovascular disease, diabetes`,`Epidemiology of infectious diseases`,`Nutritional and physical activity`,`Environment`,`Psychiatry`]}
+ ],
+ readings:`Rothman, Modern Epidemiology (2012); Leon Gordis, Epidemiology (5th Ed., 2013); Kestenbaum, Epidemiology and Biostatistics (2019); Merrill, Fundamentals of Epidemiology and Biostatistics (2012); Robert Friis, Epidemiology for Public Health Practice (5th Ed., 2013)`},
+
+{sem:1, code:`PHC504B`, title:`Healthcare Management and Leadership`, credits:`4`, hours:`45`, type:`core`,
+ aim:`Gives a basic understanding of management concepts, principles and functions relevant to the health sector, and introduces leadership traits demonstrated by leaders in healthcare, including POSDCORB concepts in health programme/project service delivery.`,
+ outcomes:[`Discuss the dynamics of healthcare organizations, processes, functions, culture, climate and organization behaviour as a whole`,`Sensitize to the emerging issues and challenges of leading teams and healthcare organizations in the contemporary context`,`Explain important management functions such as planning and organizing relevant to health organizations and programs`,`Apply management concepts and demonstrate leadership skills to manage health programs`,`Identify personal leadership styles and evaluate individual competencies and gaps`],
+ modules:[
+  {name:`Organization and Organizational Behaviour`, topics:[`Concepts and functions of organization, organization structure, organization behaviour, organization culture and climate`,`Team and team dynamics, personality traits`,`Organizational development and change management`]},
+  {name:`Management Functions`, topics:[`Planning as a management function; types of planning in general and in the healthcare sector`,`The planning process in general and planning in the Indian healthcare system`,`Steps in planning a health program`,`Organizing (organizing health programs in India)`]},
+  {name:`Leadership and Public Health`, topics:[`Concept of leadership, need for leadership in public health, role of a leader, leadership and motivation, traits of an effective leader`,`Leadership theories and application in public health: Great Man, Trait, Contingency, Situational and Behavioral theories`,`Concept of motivation, intrinsic vs. extrinsic motivation, theories of motivation (Maslow's need hierarchy, Herzberg's two-factor theory) and applicability in healthcare leadership`]},
+  {name:`Leadership Models`, topics:[`Concept and importance of self-leadership, self-motivation for leaders`,`Ruth-Seliger Model, Maxwell's Model, Models for Situational Leadership`,`Conflict management, Bagchi's model of platform vs purpose and sources of power`]},
+  {name:`Leadership Challenges in Public Health`, topics:[`Challenges in leadership; overcoming challenges in leadership`,`Role of communication in overcoming leadership challenges (case studies, expert experiences)`,`Change management through leadership`,`Leadership in a chaos environment and leadership in the face of adversity`]}
+ ],
+ readings:`Edmonstone, Systems Leadership in Health and Social Care (2019); Bhalwar et al., Textbook of Public Health and Community Medicine (2009); Lee, HBR's 10 Must Reads on Leadership for Healthcare (2018); Galer, Vriesendorp &amp; Ellis, Managers Who Lead (2005)`},
+
+{sem:1, code:`PHC505A`, title:`Biostatistics`, credits:`4`, hours:`45`, type:`core`,
+ aim:`Enables students to apply statistical concepts and techniques in public health, including sample size estimation, sampling techniques, scale construction/reliability/validity, data typing, univariate/bivariate/multivariate analyses, and use of statistical software (e.g., SPSS).`,
+ outcomes:[`Explain concepts of descriptive and inferential statistics, probability, random variation, and commonly used probability distributions`,`Apply concepts and methods from biostatistics and epidemiology disciplines jointly`,`Apply and interpret common univariate, bivariate and multivariate statistical analyses for inferences`,`Apply assumptions and limitations of common statistical tests and choose appropriate tests for analysis`,`Use appropriate statistical packages for data analysis and management`],
+ modules:[
+  {name:`Introduction`, topics:[`Definition of statistics, information and statistical methodology; significance and scope of statistics in public health`,`Overview of descriptive and inferential statistics`]},
+  {name:`Data and Data Collection`, topics:[`Meaning of data, types of data, scales of measurement, methods of construction of scales, reliability and validity`,`Classification and tabulation of data, graphical presentation of data`,`Data preparation prior to analysis (normality, outliers, treating missing values)`]},
+  {name:`Descriptive Statistics`, topics:[`Frequencies, proportion and percentage`,`Probability and probability distribution`,`Measures of central tendency (mean, median, mode) and dispersion (SD, mean deviation, variance, percentile, quartiles, interquartile range)`]},
+  {name:`Sampling and Sampling Methods`, topics:[`Sample size estimation, sampling methods (probabilistic and non-probabilistic) and their application in public health research`,`Probabilistic: simple random, systematic, stratified, clustered sampling`,`Non-probabilistic: convenience, quota, judgement (purposive), snowball sampling`]},
+  {name:`Analytical and Inferential Statistics`, topics:[`Hypothesis testing and p-value; confidence interval and confidence level`,`Comparison of continuous variables between two groups`,`Comparison of categorical variables between two groups`,`Comparison of variables between two groups using distribution-free methods`,`Correlation &mdash; Pearson's correlation, Spearman's rank correlation`,`Regression: linear and logistic (binary and multinomial) and applications in prediction`]}
+ ],
+ readings:`Sunder, Fundamentals of Epidemiology and Biostatistics (2020); Lisa Marie Sullivan, Biostatistics for Public Health: A Primer (2020) &amp; Essentials of Biostatistics in Public Health (2nd Ed., 2011); Gerstman, Basic Biostatistics (2nd Ed., 2014); Daniel W.W., Biostatistics: A Foundation for Analysis in the Health Sciences`},
+
+// ---------------- SEMESTER 2 ----------------
+{sem:2, code:`PHC506A`, title:`Public Health Priorities in India &mdash; I`, subtitle:`Communicable Disease and MNCH`, credits:`4`, hours:`45`, type:`core`,
+ aim:`Provides an understanding of public health priorities in India focused on Communicable Diseases and Maternal, Neonatal and Child Health, training students to analyze existing public health programs, develop interventions, and critically analyze the role of public and private sectors using primary and secondary data.`,
+ outcomes:[`Discuss the public health priorities in relation to communicable diseases and MNCH in India`,`Explain the inequities that exist in communicable diseases and MNCH in India`,`Compare the role of public sector and private sector in addressing these challenges`,`Analyze data repositories to develop priority setting for addressing public health concerns`],
+ modules:[
+  {name:`Public Health Priorities`, topics:[`Communicable diseases &mdash; emergence of new pathogens causing epidemics and pandemics (e.g. coronaviruses), and diseases like HIV, TB, etc.`,`Maternal, neonatal and child health &mdash; causes of mortality, social determinants, services and programmes`,`Medical care (affordability, accessibility, efficiency, effectiveness, transparency) &mdash; Universal Health Coverage (UHC)`,`Population stabilization, globalization, unplanned/unregulated urbanization, changing lifestyles, environmental issues (climate change, air pollution), sanitation, waste management, safe drinking water, and influence of media/advertising`,`Addressing equity &mdash; welfare of the weakest and most vulnerable; barriers to equitable access; integrating equity goals in policy and programs; targeting resources to the poor and vulnerable; health budget allocation`]},
+  {name:`Adequacy of Public Health System and Facilities (MNCH and CD)`, topics:[`Analysis and review of evolution of national health programs related to MNCH and select communicable diseases (HIV, TB, pandemics)`,`Current gaps and challenges in programs; preparedness of health systems/facilities to achieve outcomes (SDG)`,`Importance of public health research for evidence-based programming focused on population outcomes; global best practices (program science and implementation research)`]},
+  {name:`Building Partnerships to Address Public Health Priorities`, topics:[`Building government &ndash; private partnerships for coordination and program implementation support`,`Building partnerships to improve evidence-based, outcome-focused programming`,`Role of engaging community structures and community-based organizations to address social determinants in MNCH and CD`]}
+ ],
+ readings:`Vynnycky, An Introduction to Infectious Disease Modelling (2010); Sue Roulstone, Prioritising Child Health (2006); Sandra Dawson, Future Public Health: Burdens, Challenges and Opportunities (2009); Ramesh et al., Maternal Newborn and Child Health Programmes in India: A Program Science Approach (2018)`},
+
+{sem:2, code:`PHC507A`, title:`Public Health Priorities in India &mdash; II`, subtitle:`NCDs and Nutrition`, credits:`4`, hours:`45`, type:`core`,
+ aim:`Exposes students to public health priorities affecting India's SDG health outcomes with particular reference to non-communicable diseases and nutrition, covering risk factors, determinants, prevention levels, health promotion strategies, and the role of nutrition in disease prevention.`,
+ outcomes:[`Describe public health priorities in relation to NCDs and malnutrition in the Indian context, risk factors and determinants`,`Explain upstream and downstream determinants of NCDs and the role of nutrition in disease development/prevention`,`Compare discrepancies between nutrition research and nutritional information conveyed to the public`,`Demonstrate methodological strategies, data analyses, policies, program planning and evaluation techniques used in public health nutrition initiatives`,`Evaluate public health interventions, programs and policies related to NCDs, recognizing environmental, socioeconomic, life-cycle, psychological and cultural influences`,`Design innovative health solutions to an identified public health priority`],
+ modules:[
+  {name:`Non-Communicable Diseases (NCD)`, topics:[`Epidemiology of chronic and non-communicable diseases, risk factors, global status, prevention and control, global initiatives`,`National strategies for NCD control &mdash; epidemiology, pathophysiology, clinical/diagnostic features, treatment and prevention for Diabetes, Cardiovascular diseases, Asthma &amp; COPD, Obesity, Cancer`,`Tobacco, obesity and other risk factors for NCDs`,`Unintentional injuries &mdash; prevention, control, global and national strategies`,`Introduction to mental health, health promotion, National Mental Health Policy of India`,`Epidemiology of major mental disorders; burden of mental morbidities; psycho-social etiology; depression, schizophrenia, Alzheimer's, Parkinson's, senile dementia, suicides`,`Population-based screening; surveillance of cancers including cancer registry`,`National Health Programmes for NCDs: NPCDCS, National Mental Health Programme`]},
+  {name:`Nutrition`, topics:[`Epidemiology, anthropology and public health nutrition; professional roles; nutrition assessment`,`Community needs assessment`,`Promoting nutritional health: children and adults`,`Assessing nutritional status, dietary guidelines`,`Nutrition and public policy`,`Designing and planning community nutrition intervention`,`Evaluating and managing community nutrition intervention`,`Public health nutrition: local, county and state levels`,`Public health nutrition: national and international issues`]}
+ ],
+ readings:`WHO, Global Report on Diabetes (2016); WHO, Global Status Report on Non-communicable Diseases (2014); WHO, Global Action Plan for the Prevention and Control of NCDs 2013&ndash;2020; Blank, Handbook of Foods and Nutrition (2010); Walter Willett, Nutritional Epidemiology (3rd Ed., 2012)`},
+
+{sem:2, code:`PHC508A`, title:`Research Methodology in Public Health`, credits:`4`, hours:`45`, type:`core`,
+ aim:`Gives a background of scientific research principles, emphasizing methodologies used to conduct public health research, including the research paradigm (ontology, epistemology, methodology and ethics), systematic literature review, and quantitative, qualitative and mixed-method approaches.`,
+ outcomes:[`Explain the principles, process and paradigm of research methodologies`,`Discuss the steps for conducting a systematic review of research literature`,`Apply principles and practice of ethics and evidence-based public health`,`Demonstrate skills and techniques for effective scientific communication`,`Demonstrate appropriate application of research methods, techniques and technologies for conducting research of public health importance`],
+ modules:[
+  {name:`Unit I &mdash; Overview of Research and Research Methods in Public Health`, topics:[`Concept and definition of research; types of research (basic, empirical, applied, action, policy)`,`Research paradigm (ontology, epistemology, axiology, ethics); types &mdash; positivist, post-positivist, pragmatism`,`Research approaches (induction, deduction); scientific process in research`,`Planning of research studies and steps &mdash; problem formation, research questions, aims/objectives, hypothesis, conceptual framework, method/design selection, data collection &amp; analysis, report writing and dissemination`]},
+  {name:`Unit II &mdash; Review of Literature`, topics:[`Importance of literature review; types of literature (peer-reviewed, grey); types of review (narrative, scoping, critical, systematic)`,`PRISMA reporting guidelines; constituents of a good literature review; search strategies`,`Referencing styles (Harvard, Vancouver, APA) and software (Mendeley, EndNote, Zotero)`,`Paraphrasing, synthesis, summarizing &mdash; scientific communication skills and techniques`]},
+  {name:`Unit III &mdash; Quantitative Methods in Public Health Research`, topics:[`Designs in quantitative research (cross-sectional, case control, cohort, RCTs)`,`Data collection techniques (survey, interviews); study variables (dependent, independent, controlled)`,`Tool development (questionnaire, interview schedule); translation and back-translation`,`Pilot testing of tools (reliability, validity); sample selection procedures, sample frame, sample size estimation for different designs`,`Demonstration of numeric data analysis &mdash; univariate, bivariate, multivariate`]},
+  {name:`Unit IV &mdash; Qualitative and Mixed-Method Research`, topics:[`Designs in qualitative research (case study, ethnography, participant observation, phenomenology)`,`Qualitative data collection techniques (in-depth interviews, FGDs) and tools`,`Sampling techniques and sample size`,`Mixed-method design (sequential and concurrent designs, data triangulation)`,`Qualitative data analysis approaches (framework, quasi-statistical, interpretative, socio-linguistic)`,`Rigour and trustworthiness &mdash; credibility, transferability, dependability, confirmability`]},
+  {name:`Unit V &mdash; Ethical Considerations in Research`, topics:[`Introduction; research misconduct (fabrication, falsification, plagiarism)`,`Publication ethics, informed consent, privacy and confidentiality`,`Research ethics in clinical trials; case study discussions`,`Human subject ethics review process; role of Institutional Human Ethics Committee (IHEC); research matrix`]},
+  {name:`Unit VI &mdash; Proposal Development, Research Report Writing and Dissemination`, topics:[`Components and format of a research proposal; research funding and funding organizations`,`Components of a research report; writing structured/unstructured abstracts`,`Developing a poster and research paper for conference presentation`,`Peer-reviewed publications &mdash; impact factor, citation, H-index, integrity, misconduct, conflict of interest, authorship`]}
+ ],
+ readings:`Jacobsen, Introduction to Health Research Methods (2nd Ed., 2016); Bryman, Social Research Methods (2016); Creswell &amp; Clark, Designing and Conducting Mixed Methods Research (2017); Saldaña &amp; Omasta, Qualitative Research: Analyzing Life (2016)`},
+
+{sem:2, code:`PHC509A`, title:`Health Behaviour and Health Promotion`, credits:`3`, hours:`30`, type:`core`,
+ aim:`Covers social and behavioural science concepts for application across community health settings, analyzing theories underpinning health education and their impact on health behaviour and promotion, and individual/interpersonal/community-based approaches to behavioural factors affecting health.`,
+ outcomes:[`Explain the role of behaviour and social sciences in understanding and intervening on current public health problems in community settings`,`Identify ethically appropriate, evidence/theory-based models or options for addressing a specific health behaviour in a specific population`,`Apply social and behavioural science theories/concepts to identify causes of health-related behaviours`,`Communicate social and behavioural science concepts with other practitioners and lay audiences`,`Design evidence-based health interventions adopting principles of health promotion for improving human health`],
+ modules:[
+  {name:`Course Contents`, topics:[`Introduction to health communication, its types and methods`,`Principles of learning`,`Health education &mdash; concepts, models, aids and approaches`,`Health promotion &mdash; principles, relevance in planning contextual interventions and methodological evaluation; milestones in health promotion; Ottawa Charter and its principles`,`Health and health behaviour; introduction to medical anthropology and sociological perspectives on health; key sociological concepts applied to health; social and cultural processes impacting health status and access to services`,`Theories, models and frameworks for public health interventions; community-based approaches to public health intervention`,`Implementing and managing social and behaviour change communication in public health`]}
+ ],
+ readings:`Romas, Theoretical Foundations of Health Education and Health Promotion (2nd Ed., 2010); Hamburg, Health and Behavior: Selected Perspective (2007); Effective Communication for Health Professionals (2nd Ed., 2019)`},
+
+{sem:2, code:`PHC510A`, title:`Ethics in Public Health`, credits:`2`, hours:`15`, type:`core`,
+ aim:`Equips students with the foundation and application of ethical concepts to real-world public health issues, enabling identification of critical ethical issues in public health practice and appraisal of the ethical responsibilities of key decision makers in developing countries.`,
+ outcomes:[`Identify critical ethical issues in the practice of public health (including research) in developing countries`,`Apply selected conceptual resources to elucidate key ethical concepts while operating in public health practice`,`Critically appraise the ethical responsibilities of actors with decision-making authority over public health practice in developing countries`,`Analyze key ethical concepts as applied to developing-country contexts`],
+ modules:[
+  {name:`Course Contents`, topics:[`Introduction to public health ethics`,`Foundations in ethics: theory and principles`,`Organizational influences and the ethical implications for healthcare`,`Ethics, social responsibility and technology`,`The ethics of quality, safety and patient care`,`Community and common good`,`Surveillance and privacy`,`Ethics, market forces and integrative medicine`,`Moral integrity and practicing as a public health administrator`,`Self-reflection, ethics and sources to expand one's ethical capacity`,`Ethics and health promotion`,`Balancing individual and community interests`,`Priority-setting and resource allocation at the micro level`,`Theories of justice and distribution of public health resources`,`Looming issues in public health`]}
+ ],
+ readings:`Arima Mishra, Ethics in Public Health Practice in India (2018); ICMR Ethical Guidelines for Biomedical and Health Research Involving Human Participants`},
+
+{sem:2, code:`PHE501A`, title:`Qualitative Research Methods`, subtitle:`Major Discipline Elective Course &ndash; 1`, credits:`3`, hours:`30`, type:`elective`,
+ aim:`Equips students with qualitative research skills &mdash; including data collection, description, analysis and interpretation &mdash; to enable independent conduct of qualitative research, analysis, and report writing, addressing "why" and "how" questions that quantitative methods cannot.`,
+ outcomes:[`Describe the basics of qualitative research`,`Explain different methods of qualitative research including an overview of phenomenology and ethnography approaches`,`Apply techniques of data analysis and interpretation`,`Develop skills to write a report based on qualitative data analysis`],
+ modules:[
+  {name:`Unit I &mdash; Philosophy of Qualitative Research`, topics:[`Epistemology and ontology`,`Research paradigms`,`Falsification`,`Philosophical positions`,`How to gain knowledge in qualitative research`]},
+  {name:`Unit II &mdash; Methods of Qualitative Data Collection`, topics:[`Developing questionnaires`,`Interviews`,`Focus group discussions`,`Observation`,`Taking and organizing field notes`]},
+  {name:`Unit III &mdash; Good Practices and Criteria`, topics:[`Flexibility`,`Triangulation`,`Abduction`,`Need for focusing on details and context`,`Contradiction and reflexivity`,`Theoretical saturation`,`Adhering to research quality`]},
+  {name:`Unit IV &mdash; Data Analysis and Interpretation`, topics:[`Transcription and validation of data`,`Codes and themes`,`Orientation to QDA Miner Lite 2.1 software`,`Thematic analysis using QDA Miner Lite 2.1`,`Interpretation and reporting`]}
+ ],
+ readings:`Core qualitative research method references (as prescribed in course reading list)`},
+
+// ---------------- SEMESTER 3 ----------------
+{sem:3, code:`PHC601A`, title:`Global Health`, credits:`2`, hours:`15`, type:`core`,
+ aim:`Improves students' understanding of global health perspectives through education, research and service using a population-based approach, relating 21st-century demographic patterns, disease burdens and health policies, and global best practices tied to MDGs/SDGs.`,
+ outcomes:[`Explain major issues in population and global health`,`Explain approaches to population health interventions around the world`,`Explain the health-intervention perspective on economic, social, political, cultural, and ethical considerations bearing on these issues`,`Critically analyze the policies that affect health and development`,`Discuss and generate ideas that improve the lives and health of people worldwide`],
+ modules:[
+  {name:`Course Contents`, topics:[`Definitions and scope of global/international health; vast diversity of determinants of health and disease`,`Emerging global health priorities &mdash; infectious diseases, poverty, conflicts and emergencies, health inequity, principles and impact of health systems reforms, major global initiatives for disease prevention and health promotion; global health challenges of coming decades and how science/technology can be harnessed through collective action`,`Sustainable Development Goals vs./and evolution from Millennium Development Goals; role of foreign policy and trade in global health`,`Healthcare systems in low- and middle-income countries`,`Global health issues and knowledge translation in global health`]}
+ ],
+ readings:`Birn, Pillay &amp; Holtz, Textbook of International Health: Global Health in a Dynamic World (3rd Ed., 2009); Murray, Shifting to Sustainable Development Goals &mdash; Implications for Global Health (2015); Merson, Black &amp; Mills, International Public Health (3rd Ed., 2012); Brown, Cueto &amp; Fee, The WHO and the Transition from "International" to "Global" Public Health (2006)`},
+
+{sem:3, code:`PHC602A`, title:`Technology in Public Health`, credits:`3`, hours:`30`, type:`core`,
+ aim:`Orients students to technology utilization in public health, including health technology and informatics tools (Health Information Systems, EMR, mHealth, telemedicine), technology-driven data for identifying unmet healthcare needs, and ICT integration opportunities.`,
+ outcomes:[`Explain the concepts of health technology and informatics and related tools of public health importance`,`Explain the role of technology in assessment of unmet health needs in the community`,`Explain the role of technology in planning and monitoring interventions for improving health outcomes`,`Demonstrate the ability to manage health data and information effectively and generate valuable insights for health decision-making using health analytics`],
+ modules:[
+  {name:`Introduction to Health Technology`, topics:[`Concepts and functions of health technology; overview of historical, current and emerging health information systems`,`Concept of data, information, knowledge and insight and its role in public health decision-making`,`Health information standards &mdash; systems, vocabulary, messaging, security standards; EHR Standards in India (ISO, DICOM, ICD-11, SNOMED)`,`Interoperability and levels &mdash; basic, technical, semantic`,`Health data security, privacy and confidentiality`]},
+  {name:`e-Health Tools and ICT in Public Health`, topics:[`Electronic Health Record (EHR), Electronic Medical Records (EMR), health information systems, repositories, registries and databases`,`Enterprise-wide systems, laboratory/radiology (PACS) systems, voice recognition, physician order entry, telemedicine, decision support systems and mHealth`]},
+  {name:`Health Information Management`, topics:[`Fundamentals of Health Information Management &mdash; historical milestones, key contributors, definitions, goals, characteristics, purpose and value to users`,`Numbering systems &mdash; Unit, Serial, Unit-Serial numbering (merits/demerits)`,`Filing systems &mdash; Straight, Middle and Terminal Digit filing (merits/demerits)`,`Formats &mdash; Source-oriented, Integrated, Problem-oriented records; contents and form design`,`Indexes and registers &mdash; Master Patient Index, Disease Index, Physician Index, Operation Index; hospital, population and disease-specific registries in India`,`Computerization of health information systems &mdash; needs, process, advantages and disadvantages`,`Introduction to health analytics &mdash; Big Data, importance of health analytics; Descriptive, Predictive and Prescriptive Analytics and applications in public health`]}
+ ],
+ readings:`Murthy, Technology and Global Public Health (2020); Health Information: Management of a Strategic Resource (4th Ed., 2011); Cook, Cook &amp; Hussey's Assistive Technologies (3rd Ed., 2007)`},
+
+{sem:3, code:`PHC603A`, title:`Programme Planning and Evaluation`, credits:`3`, hours:`30`, type:`core`,
+ aim:`Focuses on the fundamentals of health program planning, design, implementation, monitoring and evaluation, training students in needs assessment addressing health inequalities and in tools/techniques for implementing, monitoring and evaluating public health programmes.`,
+ outcomes:[`Describe and apply key approaches and methods for conducting a systematic health needs assessment`,`Discuss the key concepts of health programme planning, design, implementation, monitoring and evaluation`,`Devise an appropriate plan for monitoring and evaluating health programmes`],
+ modules:[
+  {name:`Introduction`, topics:[`Overview of programme planning, implementation, monitoring and evaluation`,`Setting the context of health programme planning`,`Relevance, diversity and disparities in health programmes`,`Logical framework and concepts related to monitoring and evaluation`,`Ethical considerations in programme planning and evaluation`]},
+  {name:`Defining Health Problems and Planning`, topics:[`Concept, definition of planning and types of planning`,`Approaches to health planning`,`Health planning cycle, steps and stages`]},
+  {name:`Community Health Assessment for Programme Planning`, topics:[`The ecological model`,`Epidemiological model`,`Social model`]},
+  {name:`Planning &mdash; Developing Initiatives`, topics:[`Goals, objectives, indicators and targets`,`Theories related to change`,`Purposes and process in planning`,`Setting up the intervention`,`Criteria of good intervention`,`Functions of programme theory`]},
+  {name:`Implementation, Monitoring and Evaluation of Health Programmes`, topics:[`Program implementation`,`Services orientation`,`Measuring inputs, process, output and outcome`,`Types of evaluation &mdash; formative, terminal and process evaluation`,`Assessing the implementation`]},
+  {name:`Outcome and Impact Evaluation of Health Programmes`, topics:[`Developing evaluation questions`,`Choosing appropriate design for effective evaluation`,`Application, sampling design and data sources for evaluation`,`Role and responsibilities of the health programme evaluator`]}
+ ],
+ readings:`Hodges &amp; Videto, Assessment and Planning in Health Programs (2005); Issel, Health Program Planning and Evaluation; Perrin, Essentials of Planning and Evaluation for Public Health; Green, An Introduction to Health Planning for Developing Health Systems; McKenzie, Neiger &amp; Thackeray, Planning, Implementing and Evaluating Health Promotion Programs (7th Ed., 2017)`},
+
+{sem:3, code:`PHC604A`, title:`Demography and Population Sciences`, credits:`2`, hours:`15`, type:`core`,
+ aim:`Equips students with understanding of the techniques and tools of demographic analysis and analytical skills on demography and vital statistics, covering past, present and future population scenarios of the world and India, and factors shaping population size and structure.`,
+ outcomes:[`Define the concepts in demography`,`Compare the demographic data and vital statistics of different countries`,`Select appropriate methods for data collection, analysis and interpretation of demographic data`,`Discuss the determinants and calculation of various measures of fertility, mortality, migration, urbanization and population projection`,`Critically analyze the challenges related to demography`],
+ modules:[
+  {name:`Introduction`, topics:[`Concepts of population and development`,`Meaning and components of demography and population science`,`Nature, concepts and scope of demography`,`Demographic profile of India`]},
+  {name:`Demographic Data (Vital Statistics)`, topics:[`Uses of vital statistics`,`Mechanism for collection of vital statistics`,`Census, vital statistics, sample registration system, sample surveys and demographic estimation`,`Basic formulae for calculation of vital statistics`,`Standardized death rates and life tables`]},
+  {name:`Demographic Growth and Change`, topics:[`Demographic transition`,`Demographic measures; population size, structure and composition`,`Growth, characteristics and distribution of population`,`Demographic trends in age and sex structure &mdash; world and India`,`Components of population change`,`Demographic problem and policy`]},
+  {name:`Fertility and Mortality Measures`, topics:[`Concepts, definitions, trends, determinants and measurement of fertility, mortality, migration, urbanization and population projection`,`Fertility and its measures`,`Mortality and its measures`,`Measures of population projection`,`Implications of fertility and mortality on population health`,`Ethical and legal aspects of health demography`]}
+ ],
+ readings:`Agarwal S.N., India's Population Problems; Rao NSN, Elements of Health Statistics; Park K, Textbook of Preventive and Social Medicine; Barclay G.W., Techniques of Population Analysis; Weinstein &amp; Pullai, Demography, the Science of Population`},
+
+{sem:3, code:`PHP605A`, title:`Project Work`, credits:`5`, hours:`150`, hoursLabel:`hrs field/practical`, type:`practicum`,
+ aim:`Applies and synergizes the learning outcomes of the MPH programme through a group project focused on community-based or health-facility survey work, exploring implementation of National Health Programs at the health-facility and household levels.`,
+ outcomes:[`Work in a team and undertake a project in the area of community-based or health-facility survey`,`Apply the principles and practice of public health in executing the project`,`Apply appropriate research methodology and techniques while formulating a project`,`Develop and implement the principles of planning and undertake a project while working in a group`,`Develop a report describing the project and work undertaken, followed by a presentation and documentation of the work`],
+ modules:[
+  {name:`Field Project Sequence`, topics:[`A National Health Program is assigned to each group (as per prior confirmation)`,`Visit to the primary health centre, district hospital, Anganwadi and school; interaction with staff, frontline workers and people at village/household level`,`Procurement of relevant data based on the respective National Health Program from records, registers and interviews`,`Critical evaluation of activities undertaken at various facilities in comparison to National Health Program guidelines`,`Preparation of recommendations based on comparison between collected data and evidence through literature review`]}
+ ],
+ readings:`Assigned reading relevant to the group's chosen National Health Programme (no fixed reading list)`},
+
+{sem:3, code:`PHE601A`, title:`Implementation Science`, subtitle:`Health Programme Design, Planning, Implementation, Monitoring &amp; Evaluation &middot; Major Discipline Elective Course &ndash; 2`, credits:`3`, hours:`30`, type:`elective`,
+ aim:`Presents the designing, planning, implementation, monitoring and evaluation of health programs in clinical and public health, introducing research frameworks, study designs and measures appropriate for implementation science in resource-constrained healthcare systems.`,
+ outcomes:[`Discuss implementation science as a field of practice and research, and its potential impact on improved health outcomes`,`Appraise the strengths and limitations of program design methods including participatory/co-design, and experimental/quasi-experimental trial designs when evaluating real-world strategies`,`Identify and use appropriate methods for evaluating implementation of evidence-based interventions in diverse settings and populations`,`Describe and develop research frameworks, study designs and measures appropriate for implementation science`,`Apply the development of research frameworks, study designs and measures for implementation science in National Health Program implementation`],
+ modules:[
+  {name:`1. Introduction to Implementation Science (incl. case study)`, topics:[`Process of translating research into practice (process models)`,`Factors influencing implementation outcomes (determinant frameworks, classic theories, implementation theories)`,`Evaluation of implementation (evaluation frameworks)`]},
+  {name:`2. Study Designs to Assess Impact and Measure Effectiveness`, topics:[`Simple pre-post designs, interrupted time series, difference-in-differences`,`Experimental designs in implementation science`,`Design, sample size and analysis considerations`]},
+  {name:`3. Qualitative Methods`, topics:[`Elicit stakeholder-centred perspectives`,`Inform design and implementation`,`Understand contexts across diverse settings`,`Provide documentation and encourage reflection on the implementation process`,`Gain insight into implementation effectiveness`,`Understand mechanisms of change`,`Contribute to theoretical development`]},
+  {name:`4. Operations Research as a Contributing Discipline`, topics:[`Structuring implementation problems`,`Prospective evaluation of improvement interventions`,`Strategic reconfiguration of health services`]},
+  {name:`5. Gap Analysis`, topics:[`Identifying and analyzing implementation gaps`]},
+  {name:`6. Developing Implementation Strategies`, topics:[`Evaluating implementation strategies`]}
+ ],
+ readings:`PhD, B.W.J., PhD, S.K. &amp; PhD, C.L.C., Practical Implementation Science: Moving Evidence into Action (2022); Linfield &amp; Posavac, Program Evaluation: Methods and Case Studies (9th Ed., 2018)`},
+
+{sem:3, code:`PHP606A`, title:`Dissertation &mdash; Part 1`, credits:`3`, hours:`90`, hoursLabel:`hrs practical/tutorial`, type:`practicum`,
+ aim:`Encourages and develops skills in identification of a research problem, application of principles of research methodology, and preparation of a research project proposal.`,
+ outcomes:[`Review scholarly literature collected from various sources critically for the dissertation project and formulate a research problem of public health importance`,`Prepare and present a research proposal (per the prescribed departmental format) in a scholarly seminar within the Department/Faculty`],
+ modules:[
+  {name:`Dissertation Proposal Sequence`, topics:[`Setting the context for research`,`Literature review`,`Problem formulation and statement`,`Developing research questions, objectives and hypotheses`]}
+ ],
+ readings:`A Guide to Writing Your Masters Dissertation (Heriot-Watt University); Writing a Dissertation (University of Leicester); plagiarism checkers (Grammarly, Duplichecker)`},
+
+// ---------------- SEMESTER 4 ----------------
+{sem:4, code:`PHE602A`, title:`Evidence Synthesis`, subtitle:`Systematic Review and Meta-Analysis &middot; Major Discipline Elective Course &ndash; 3`, credits:`3`, hours:`30`, type:`elective`,
+ aim:`Presents the scientific principles, methods, analysis, and reporting standards guiding evidence synthesis using systematic reviews, evidence gap maps, meta-analysis, meta-regression, and network meta-analysis, including registering titles/protocols and producing reviews for publication.`,
+ outcomes:[`Explain the principles and methods of research synthesis and the steps in conducting systematic reviews and meta-analysis`,`Explain common sources of bias and errors in research reviews and strategies for minimizing bias`,`Discuss problem formulation, developing review questions in the Indian and global context, and uses/misuses of research synthesis to inform policy, practice and further research`,`Discuss reporting standards and guidelines for systematic reviews, registering titles/protocols, and conducting reviews for publication`],
+ modules:[
+  {name:`Course Contents`, topics:[`Literature search strategy`,`Screening of studies`,`Data extraction`,`Use of Artificial Intelligence and Machine Learning in searching and screening studies`,`Critical appraisal`,`Critical appraisal case study`,`Data synthesis &mdash; introduction to meta-analysis, effect sizes, forest plots, testing for heterogeneity, SWiM guidelines`,`Exercise: creating and interpreting forest plots with Cochrane's RevMan software`,`Introduction to Network Meta-analysis`,`Writing a systematic review protocol`,`Group work on developing an SR protocol`]}
+ ],
+ readings:`Gough, Oliver &amp; Thomas, An Introduction to Systematic Reviews (2nd Ed., 2016); Patole S., Principles and Practice of Systematic Reviews and Meta-Analysis (2021); Jacobsen, Introduction to Health Research Methods (2nd Ed., 2016)`},
+
+{sem:4, code:`PHP607A`, title:`Dissertation &mdash; Part 2`, credits:`7`, hours:`210`, hoursLabel:`hrs practical/tutorial`, type:`practicum`,
+ aim:`Encourages and develops skills in research project management, execution of the research project, and effective technical communication and presentation.`,
+ outcomes:[`Conduct primary research to answer the research questions and attain the research objectives posed in the proposal`,`Propose new ideas, methodologies or procedures for further improvement of the research undertaken`,`Defend the research findings in a public seminar before a scholarly audience`,`Write a thesis and prepare a manuscript for publication in a journal, or present research findings at an academic/industry conference`],
+ modules:[
+  {name:`Dissertation Completion Sequence`, topics:[`Research methodology (paradigm, design, population, sampling)`,`Results and discussions`,`Conclusion and suggestions for further work`,`Thesis writing`,`Oral presentation`,`Authoring research paper`,`Capacity building to avoid plagiarism`]}
+ ],
+ readings:`A Guide to Writing Your Masters Dissertation (Heriot-Watt University); Writing a Dissertation (University of Leicester); plagiarism checkers (Grammarly, Duplichecker)`},
+
+{sem:4, code:`PHI608A`, title:`Internship`, credits:`6`, hours:`180`, hoursLabel:`hrs field/practical`, type:`practicum`,
+ aim:`Provides students the experience of an organizational/field/public health sector environment (outreach centres in rural and urban areas, NGOs, reputed health organizations), integrating theory learning with real-life work experience and experiential learning on social determinants and public health challenges.`,
+ outcomes:[`Identify, assess and present the organization structure, various departments, their activities and responsibilities to meet organization objectives`,`Analyze the roles and responsibilities of various professionals in the organization`,`Analyze the field/public health sector environment and activities in relation to the organization and evaluate the significance of their activities`,`Undertake projects and field work of relevance to public health assigned by the organization`,`Prepare a report of learning/experience at the organization in the prescribed format`],
+ modules:[
+  {name:`Internship Sequence`, topics:[`Objectives of the organization (vision, mission, goals, objectives); organization structure, departments and operational activities`,`Roles and responsibilities of various professionals in the organization`,`Field/public health sector environment and activities in relation to the organization`,`Leadership, professional ethics and personal/professional integrity`]}
+ ],
+ readings:`Organization website; discussions with managers/mentor/supervisor across departments (field-based course, no fixed bibliography)`}
+];
+
+/* ===================== RENDER ===================== */
+const typeMeta = {
+  core:      {label:'Core Course', barCls:'bg-rsph-indigo', pillBg:'#381A6B', pillFg:'#FFFFFF'},
+  elective:  {label:'Elective (MDEC)', barCls:'bg-rsph-wine', pillBg:'#9E2A57', pillFg:'#FFFFFF'},
+  practicum: {label:'Practicum / Field', barCls:'bg-rsph-coral', pillBg:'#EDCEC3', pillFg:'#8A2340'}
+};
+
+function html(tag, cls, innerHTML){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(innerHTML !== undefined) e.innerHTML = innerHTML;
+  return e;
+}
+
+function buildCourseCard(course){
+  const meta = typeMeta[course.type];
+  const card = document.createElement('article');
+  card.className = `course-card bg-rsph-surface rounded-2xl border border-rsph-border p-5 md:p-7 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden`;
+  const accent = document.createElement('div');
+  accent.className = `absolute left-0 top-0 bottom-0 w-[5px] ${meta.barCls}`;
+  card.appendChild(accent);
+
+  const searchBits = [course.code, course.title, course.subtitle||'', course.aim, course.outcomes.join(' '), course.modules.map(m=>m.name+' '+m.topics.join(' ')).join(' ')].join(' ').toLowerCase();
+  card.dataset.search = searchBits.replace(/<[^>]+>/g,'');
+
+  // header row
+  const headerRow = html('div','flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-rsph-border pl-2');
+  const left = html('div','flex flex-wrap items-center gap-2');
+  left.appendChild(html('span', `px-2.5 py-1 rounded-full font-serif text-[12px] font-semibold tracking-wide`, course.code));
+  left.lastChild.style.background = meta.pillBg; left.lastChild.style.color = meta.pillFg;
+  left.appendChild(html('span', `smallcaps text-[10.5px] font-semibold text-rsph-ink-soft tracking-widest`, meta.label));
+  headerRow.appendChild(left);
+  const right = html('div','text-[12.5px] text-rsph-ink-soft flex items-center gap-1.5');
+  right.innerHTML = `<span class="material-symbols-outlined text-[15px]">schedule</span><span>${course.hours} ${course.hoursLabel || 'classroom hrs'} &middot; ${course.credits} Credits</span>`;
+  headerRow.appendChild(right);
+  card.appendChild(headerRow);
+
+  // title
+  const titleWrap = html('div','mt-4 pl-2');
+  titleWrap.appendChild(html('h3','font-display font-bold text-rsph-indigo text-[21px] md:text-[23px] leading-snug', course.title));
+  if(course.subtitle) titleWrap.appendChild(html('p','text-[13.5px] italic text-rsph-wine font-medium mt-1', course.subtitle.replace(/<[^>]+>/g,'')));
+  titleWrap.appendChild(html('p','text-[14.5px] text-rsph-ink-soft mt-2 leading-relaxed', course.aim));
+  card.appendChild(titleWrap);
+
+  // outcomes
+  const codetails = document.createElement('details');
+  codetails.className = 'mt-4 ml-2 rounded-xl bg-rsph-surface-alt border border-rsph-border p-4';
+  const cosummary = document.createElement('summary');
+  cosummary.className = 'flex items-center justify-between text-[14px] font-semibold text-rsph-indigo';
+  cosummary.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined text-[17px] text-rsph-coral">checklist</span>Course Outcomes (${course.outcomes.length})</span><span class="material-symbols-outlined text-lg chev transition-transform text-rsph-ink-soft">expand_more</span>`;
+  codetails.appendChild(cosummary);
+  const coList = html('ul','mt-3 flex flex-col gap-2 text-[13.5px] text-rsph-ink-soft');
+  course.outcomes.forEach(o=>{
+    const li = document.createElement('li');
+    li.className = 'flex items-start gap-2';
+    li.innerHTML = `<span class="text-rsph-coral font-semibold mt-0.5">&check;</span><span>${o}</span>`;
+    coList.appendChild(li);
+  });
+  codetails.appendChild(coList);
+  card.appendChild(codetails);
+
+  // modules
+  const modWrap = html('div','mt-4 ml-2 flex flex-col gap-2');
+  const modLabel = html('div','flex items-center gap-1.5 smallcaps text-[10.5px] font-semibold text-rsph-ink-soft tracking-widest mb-0.5');
+  modLabel.innerHTML = `<span class="material-symbols-outlined text-[15px]">menu_book</span><span>Standardized Module Sequence &middot; ${course.modules.length} module${course.modules.length>1?'s':''}</span>`;
+  modWrap.appendChild(modLabel);
+  course.modules.forEach((m,i)=>{
+    const det = document.createElement('details');
+    det.className = 'module-details rounded-xl border border-rsph-border overflow-hidden';
+    if(i===0) det.open = true;
+    const sum = document.createElement('summary');
+    sum.className = 'flex items-center justify-between gap-2 px-4 py-2.5 bg-rsph-surface-alt hover:bg-rsph-peach/30 transition-colors';
+    sum.innerHTML = `<span class="flex items-center gap-2.5 text-[14.5px] font-semibold text-rsph-indigo"><span class="w-6 h-6 rounded-full bg-rsph-coral text-white flex items-center justify-center text-[11px] font-bold shrink-0 font-serif">${i+1}</span><span>${m.name}</span></span><span class="material-symbols-outlined text-lg text-rsph-ink-soft chev transition-transform shrink-0">expand_more</span>`;
+    det.appendChild(sum);
+    const ul = html('ul','px-5 py-3 flex flex-col gap-1.5 text-[13.5px] text-rsph-ink bg-rsph-surface');
+    m.topics.forEach(t=>{
+      const li = document.createElement('li');
+      li.className = 'flex items-start gap-2';
+      li.innerHTML = `<span class="text-rsph-wine mt-0.5">&bull;</span><span>${t}</span>`;
+      ul.appendChild(li);
+    });
+    det.appendChild(ul);
+    modWrap.appendChild(det);
+  });
+  card.appendChild(modWrap);
+
+  // readings + guest note
+  const footer = html('div','mt-5 ml-2 pt-4 border-t border-rsph-border flex flex-col gap-3');
+  const readRow = document.createElement('div');
+  readRow.className = 'text-[13px] text-rsph-ink-soft leading-relaxed';
+  readRow.innerHTML = `<span class="smallcaps text-[10.5px] font-semibold text-rsph-wine tracking-widest">Key Readings&nbsp;&mdash;&nbsp;</span>${course.readings}`;
+  footer.appendChild(readRow);
+  const note = document.createElement('div');
+  note.className = 'flex items-start gap-3 text-[13.5px] p-3.5 rounded-lg bg-rsph-surface border-l-[3px] border-rsph-coral';
+  note.innerHTML = `<span class="material-symbols-outlined text-base text-rsph-coral shrink-0 mt-0.5">groups</span><span class="text-rsph-ink-soft"><span class="font-semibold text-rsph-coral-deep smallcaps text-[11px] tracking-widest">Guest Faculty Note&nbsp;&nbsp;</span><br/>Follow the module sequence above to keep delivery consistent with the approved Course Outcomes and assessment mapping, regardless of who teaches this course in a given year.</span>`;
+  footer.appendChild(note);
+  card.appendChild(footer);
+
+  return card;
+}
+
+function buildSemesterSection(semMeta, courses){
+  const section = document.createElement('section');
+  section.id = `semester-${semMeta.num}`;
+  section.className = 'scroll-mt-24';
+  const totalCourses = courses.length;
+  const header = html('div','flex flex-col sm:flex-row sm:items-end justify-between gap-3 pb-3 mb-6 border-b-2 border-rsph-border');
+  header.innerHTML = `
+    <div class="flex items-baseline gap-3">
+      <span class="font-display font-bold text-rsph-coral-deep text-3xl leading-none">${semMeta.num}</span>
+      <div>
+        <h2 class="font-display font-bold text-rsph-indigo text-[24px] tracking-tight">Semester ${semMeta.num}</h2>
+        <p class="text-[13.5px] text-rsph-ink-soft mt-1 max-w-xl leading-relaxed">${semMeta.blurb}</p>
+      </div>
+    </div>
+    <div class="flex gap-5 shrink-0">
+      <div class="text-right"><div class="font-display font-bold text-xl text-rsph-indigo">${totalCourses}</div><div class="smallcaps text-[10px] text-rsph-ink-soft tracking-widest">Courses</div></div>
+      <div class="text-right"><div class="font-display font-bold text-xl text-rsph-indigo">${semMeta.credits}</div><div class="smallcaps text-[10px] text-rsph-ink-soft tracking-widest">Credits</div></div>
+      <div class="text-right"><div class="font-display font-bold text-xl text-rsph-indigo">${semMeta.marks}</div><div class="smallcaps text-[10px] text-rsph-ink-soft tracking-widest">Max Marks</div></div>
+    </div>`;
+  section.appendChild(header);
+  const grid = html('div','flex flex-col gap-5');
+  courses.forEach(c => grid.appendChild(buildCourseCard(c)));
+  section.appendChild(grid);
+  return section;
+}
+
+function renderAll(){
+  const container = document.getElementById('semesterContainer');
+  container.innerHTML = '';
+  SEMESTERS.forEach(sm => {
+    const courses = COURSES.filter(c => c.sem === sm.num);
+    container.appendChild(buildSemesterSection(sm, courses));
+  });
+  document.getElementById('statCourseCount').textContent = COURSES.length;
+
+  // sidebar nav
+  const nav = document.getElementById('semesterNav');
+  nav.innerHTML = '';
+  SEMESTERS.forEach(sm => {
+    const a = document.createElement('a');
+    a.href = `#semester-${sm.num}`;
+    a.dataset.sem = sm.num;
+    a.className = 'sem-link flex items-center justify-between gap-2 text-rsph-ink-soft hover:text-rsph-indigo hover:bg-rsph-surface rounded-lg px-3 py-2.5 text-[14.5px] transition-all';
+    a.innerHTML = `<span class="flex items-center gap-2"><span class="material-symbols-outlined text-rsph-coral text-lg">school</span><span>Semester ${sm.num}</span></span><span class="text-[11.5px] font-serif text-rsph-ink-soft">${COURSES.filter(c=>c.sem===sm.num).length}</span>`;
+    nav.appendChild(a);
+  });
+
+  // electives — MDEC as colored gradient blocks
+  const mdecGrads = [
+    'linear-gradient(135deg,#381A6B,#4E2670)',
+    'linear-gradient(135deg,#4E2670,#7A2E70)',
+    'linear-gradient(135deg,#7A2E70,#9E2A57)',
+    'linear-gradient(135deg,#9E2A57,#C0383A)',
+    'linear-gradient(135deg,#C0383A,#DE4421)',
+    'linear-gradient(135deg,#381A6B,#9E2A57)'
+  ];
+  const mdecList = document.getElementById('mdecList');
+  ELECTIVES.mdec.forEach((item,i)=>{
+    const li = document.createElement('li');
+    li.className = 'rounded-xl px-4 py-3 text-white text-[13.5px] leading-relaxed shadow-sm';
+    li.style.background = mdecGrads[i % mdecGrads.length];
+    li.innerHTML = item;
+    mdecList.appendChild(li);
+  });
+  const ogecList = document.getElementById('ogecList');
+  ELECTIVES.ogec.forEach(item=>{
+    const li = document.createElement('li');
+    li.className = 'px-3.5 py-1.5 rounded-full bg-rsph-surface-alt border border-rsph-border text-[13px] text-rsph-indigo';
+    li.textContent = item;
+    ogecList.appendChild(li);
+  });
+}
+
+/* ===================== INTERACTIONS ===================== */
+function expandAll(open){
+  document.querySelectorAll('.course-card details').forEach(d => d.open = open);
+}
+
+document.getElementById('searchInput').addEventListener('input', function(e){
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll('.course-card').forEach(card=>{
+    const match = !q || card.dataset.search.includes(q);
+    card.style.display = match ? '' : 'none';
+  });
+  document.querySelectorAll('section[id^="semester-"]').forEach(section=>{
+    const visible = section.querySelectorAll('.course-card').length ? Array.from(section.querySelectorAll('.course-card')).some(c=>c.style.display!=='none') : true;
+    section.style.display = visible ? '' : 'none';
+  });
+});
+
+window.addEventListener('beforeprint', ()=> expandAll(true));
+
+// scrollspy
+function initScrollSpy(){
+  const sections = SEMESTERS.map(sm => document.getElementById(`semester-${sm.num}`)).filter(Boolean);
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        document.querySelectorAll('.sem-link').forEach(l=>{ l.classList.remove('bg-rsph-surface','text-rsph-indigo'); l.style.fontWeight = '400'; });
+        const active = document.querySelector(`.sem-link[data-sem="${entry.target.id.split('-')[1]}"]`);
+        if(active){ active.classList.add('bg-rsph-surface','text-rsph-indigo'); active.style.fontWeight = '600'; }
+      }
+    });
+  }, {rootMargin: '-20% 0px -70% 0px'});
+  sections.forEach(s=>observer.observe(s));
+}
+
+renderAll();
+initScrollSpy();
+</script>
+</body>
+</html>

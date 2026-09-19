@@ -1,0 +1,22 @@
+# Dependencies & build artifacts
+node_modules/
+.firebase/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Antigravity agent state
+.agents/
+
+# Large binary files (optional - keep PDFs if needed)
+# *.pdf
+
+RSPH_MPH_Website/

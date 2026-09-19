@@ -1,0 +1,842 @@
+Programme
+Specifications
+
+MPH Programme: Batch 2022
+
+Programme:                                   Department:
+097: Master of Public Health (MPH)           Allied Health Sciences
+
+Faculty of Life and Allied Health Sciences
+M.S. Ramaiah University of Applied Sciences
+
+ University House, New BEL Road, MSR Nagar, Bangalore ­ 560 054
+
+Zwww.msruas.ac.in
+ MPH ­ PROGRAMME SPECIFICATIONS
+
+          UNIVERSITY'S VISION, MISSION AND OBJECTIVES
+
+The M. S. Ramaiah University of Applied Sciences (MSRUAS) will focus on student-centric professional
+education and motivates its staff and students to contribute significantly to the growth of technology, science,
+economy and society through their imaginative, creative and innovative pursuits. Hence, the University has
+articulated the following vision and objectives.
+
+Vision
+MSRUAS aspires to be the premier university of choice in Asia for student-centric professional education and
+services with a strong focus on applied research whilst maintaining the highest academic and ethical standards
+in a creative and innovative environment.
+
+Mission
+Our purpose is the creation and dissemination of knowledge. We are committed to creativity, innovation and
+excellence in our teaching and research. We value integrity, quality and teamwork in all our endeavors. We
+inspire critical thinking, personal development and a passion for lifelong learning. We serve the technical,
+scientific and economic needs of our society.
+
+Objectives
+ 1. To disseminate knowledge and skills through instructions, teaching, training, seminars, workshops and
+
+      symposia in Engineering and Technology, Art and Design, Management and Commerce, Health and
+      Allied Sciences, Physical and Life Sciences, Arts, Humanities and Social Sciences to equip students and
+      scholars to meet the needs of industries, business and society
+ 2. To generate knowledge through research in Engineering and Technology, Art and Design, Management
+      and Commerce, Health and Allied Sciences, Physical and Life Sciences, Arts, Humanities and Social
+      Sciences to meet the challenges that arise in industry, business and society
+ 3. To promote health, human well-being and provide holistic healthcare
+ 4. To provide technical and scientific solutions to real life problems posed by industry, business and society
+      in Engineering and Technology, Art and Design, Management and Commerce, Health and Allied
+      Sciences, Physical and Life Sciences, Arts, Humanities and Social Sciences
+ 5. To instill the spirit of entrepreneurship in our youth to help create more career opportunities in the society
+      by incubating and nurturing technology product ideas and supporting technology-backed business
+ 6. To identify and nurture leadership skills in students and help in the development of our future leaders to
+      enrich the society we live in
+ 7. To develop partnership with universities, industries, businesses, research establishments, NGOs,
+      international organizations, governmental organizations in India and abroad to enrich the experiences of
+      faculties and students through research and developmental programmes
+
+Faculty of Life and Allied Health Sciences  RUAS                                                                    2
+MPH ­ PROGRAMME SPECIFICATIONS
+
+PROGRAMME SPECIFICATIONS: MASTER OF PUBLIC HEALTH (MPH)
+
+                     Faculty                Faculty of Life and Allied Health Sciences (FLAHS)
+
+                     Department Allied Health Sciences
+
+                     Programme Master of Public Health (MPH)
+
+                     Head of the Dr. Tushar Shaw
+                     Department
+
+1. Title of the Award
+         MPH
+
+2. Mode of Study
+         Full-Time
+
+3. Awarding Institution/Body
+         M.S. Ramaiah University of Applied Sciences, Bangalore (India)
+
+4. Joint Award
+         --
+
+5. Teaching Institution
+         Faculty of Life and Allied Health Sciences
+         M.S. Ramaiah University of Applied Sciences, Bangalore (India)
+
+6. Date of Programme Specifications
+         July 2022
+
+7. Date of Programme Approval by the Academic Council of MSRUAS
+         July 2022
+
+8. Next Review Date
+         June 2024
+
+9. Programme Approving Regulatory Body and Date of Approval
+         --
+
+10. Programme Accrediting Body and Date of Accreditation
+         --
+
+11. Grade Awarded by the Accreditation Body
+         --
+
+12. Programme Accreditation Validity
+         --
+
+13. Programme Benchmark
+
+14. Background and Details of the Programme
+
+Faculty of Life and Allied Health Sciences                                                      RUAS  3
+MPH ­ PROGRAMME SPECIFICATIONS
+
+14.1 Background and Need
+
+Despite significant achievements over the years, public health challenges continue to daunt the
+governments and health authorities, both in India and elsewhere. Over the years, life span of
+people has risen; leading killers such as malaria, polio and measles have been controlled; we have
+seen reduction in the deaths of women and children all over the world. However, non-
+communicable disease such as cardio-vascular diseases, diabetes, cancers and mental health
+issues continue to affect in large scale, and India is no exception. In addition, epidemic outbreaks
+such as SARS, Ebola and more recently novel coronavirus (COVID-19) that quickly progress into
+global pandemics have huge implications for socio-economic development and progress of the
+nations. If these challenges are not effectively tackled with the right scientific tempo and public
+health approaches, these challenges have the potential to halt or even reverse the progress of the
+nations by several decades.
+Public health is an essential component of a health system as it is responsible for reducing
+morbidities and mortalities by maintaining and improving health of population. India is ranked
+in the bottom quantile for overall Sustainable Development Goals (SDGs), which necessitates a
+well-trained and motivated health workforce. There is a recognized need to initiate and
+appropriately strengthen the public health education in the country in consort with considerable
+investment in public health. To address this, quality training is needed to create professionally
+trained public health workforce who can significantly contribute towards strengthening the Indian
+health system.
+In 2012, the high level expert group for universal health coverage for India recommended
+strengthening of the health system by supporting postgraduate programmes in public health.
+Along with this, it has been iterated that the present health syllabi in the country are not abreast
+with the changing dynamics of public health, health policies, demographics and epidemiological
+transitions. Despite the undeniable need to strengthen India's health workforce, it can be argued
+that MPH programmes are currently undersubscribed. Furthermore, it is increasingly felt that the
+training of public health students at the post-graduate level are lacking explicitly as per the stated
+standardized competency framework that is tailor made for the Indian context. Therefore,
+increased clarity on the training and role of public health graduates in the Indian context would
+help institutions adjust their programmes and ensure graduates with required skill-sets,
+competencies, attitude and motivation.
+
+MPH programmes being offered in India have witnessed a rapid expansion in the past two
+decades. Unfortunately, the supply and demand for public health graduates are not matched.
+Currently, there are 44 educational institutions offering MPH programme, out of which 26 are
+privately owned and 18 are in the public sector. Even though there is a recognized need to
+strengthen the public health workforce in India, there is no clearly defined career pathways for
+MPH graduates in the national public health system. This clearly implies that the institutions and
+public health bodies must collaborate to design and deliver MPH programmes to address the
+identified competencies. These competencies are the ones defined in consultation with the experts
+at national and international levels considering globalization and other factors.
+Ramaiah University of Applied Sciences expresses its solidarity through building a competent
+and compassionate public health workforce through its Masters and Doctoral training
+programmes in Public Health. The MPH programme being offered under Ramaiah University of
+Applied Sciences has been developed in consultation with eminent global health and public
+health experts while drawing learning and experience from other successful courses both within
+the country and outside. The graduates will be offered exposure to many disciplines that contribute
+
+Faculty of Life and Allied Health Sciences  RUAS                                                        4
+MPH ­ PROGRAMME SPECIFICATIONS
+
+              to the public health like health care, behavioral and social sciences, epidemiology, statistics,
+              management, communication, environment, nutrition, ethics and public policy. This course will
+              be particularly relevant for those who seek to respond to the public health challenges through
+              developing and scaling up innovations in health care delivery, research and knowledge
+              generation, and health administration, etc. The course will train the students to become dedicated,
+              competent and ethical public health researchers, practitioners, and policymakers who meet
+              society's need to prevent and ameliorate local, national, and global public health problems.
+
+              14.2 Job Opportunities
+
+              There are plenty of job opportunities that range from the public to private sector: government,
+              private health care, non-governmental organizations, academia, research enterprises, and donor
+              agencies. The course will address the needs of various roles of a public health cadre: designing,
+              planning and implementing national health programmes; primary health care provision; health
+              administration; monitoring, research and evaluation; advisory and policy level functioning, etc.
+              The course will also prepare students to pursue focused specialized opportunities such as health
+              communication, health economics, behavioral sciences, public health ethics, policy, etc.
+              Depending upon the competency level, qualification, work experience and attitudes, plenty of
+              opportunities are possible at the local, state, national, regional and global levels. Here are some
+              common roles that a public health professional can potentially take up:
+
+                        · Epidemiologist
+
+                        · Health educators and community health workers
+
+                        · Occupational health and safety specialist
+
+                        · Social and community service managers
+                        · Public health management analyst
+
+                        · Health communication specialist
+
+                        · Public relations officer
+
+                        · Research scientist
+
+                        · Health resource professional
+
+                        · Professor/lecturer
+
+                        · Senior technical specialist ­ public health
+
+                        · Environmental health specialist
+
+                        · Social worker cum counsellor
+
+                        · Monitoring and evaluation specialist
+
+                        · Public health advisor
+
+14.3 Unique features of MPH in RUAS
+
+· Students are from diverse backgrounds that bring richness of perspectives and ideas
+    which facilitate learning. We adopt innovative peer-driven and peer-centered learning
+
+Faculty of Life and Allied Health Sciences  RUAS                                                                   5
+ MPH ­ PROGRAMME SPECIFICATIONS
+
+                             methods as part of our pedagogy.
+
+                        · The students are trained by experienced faculty from various disciplines such as
+                             community medicine, public health dentistry, public health nursing, clinical
+                             specialty, social work, engineering and technology, integrative medicine,
+                             management, etc.
+
+                        · RUAS faculty has excellent engagement with eminent global health platforms of
+                             University of Illinois, U.S.A and University of Manitoba, Canada, thus bringing their
+                             global health expertise to the teaching.
+
+                        · Excellent networking opportunities through industrial visits, conferences,
+                             symposium, workshops and internships
+
+                        · Strong collaborations with health organizations, policy centers, medical settings,
+                             public health centers and hospitals
+
+                        · Competency-based and research-driven curriculum
+
+                        · Rich immersion to the field programmes and challenges in public health so that
+                             students appreciate the issues, connect with the community and identify innovative
+                             solutions as part of student internship.
+
+                        · Fosters strong sense of social justice, ethics and leadership during the programme
+
+                14.4 Admission process
+
+                         · Target audience: Graduates from multidisciplinary medical backgrounds such as
+                              medicine, dentistry, physiotherapy, occupational therapy, AYUSH (ayurveda, yoga
+                              and naturopathy, unani, siddha and homoeopathy), nursing, veterinary sciences or
+                              pharmacy; and non-medical backgrounds such as engineering,
+                              statistics/biostatistics, demography, population studies, nutrition, sociology,
+                              economics, psychology, anthropology, social work, management, life sciences,
+                              social sciences, management, law and arts.
+
+                         · Eligibility: Candidates should have at least 50% marks in aggregate and should secure
+                              at least 5.0 CGPA on a 10-point scale.
+
+                         · Selection process:
+
+                                          · Statement of purpose
+                                          · Writing sample
+                                          · Group Discussions
+                                          · Personal Interview
+
+15. Programme Aim:
+
+                The aim of this programme is to provide students with a multi-disciplinary experience across a
+                whole range of public health competencies, areas and programs.
+
+Faculty of Life and Allied Health Sciences  RUAS                                                                    6
+ MPH ­ PROGRAMME SPECIFICATIONS
+
+16. Programme Outcomes (PO's)
+
+                 PO-1. Public health knowledge: Apply the knowledge of art, science, public health
+                 fundamentals, and a public health specialization to the solution of complex community
+                 problems.
+
+                 PO-2. Problem analysis: Identify, formulate, review research literature, and analyse
+                 complex public health problems reaching substantiated conclusions using first principles of
+                 public health, natural sciences, and medical sciences.
+
+                 PO-3. Design/development of solutions: Design solutions for complex public health
+                 problems and design system components or processes that meet the specified needs with
+                 appropriate consideration for public health and safety, and the cultural, societal, and
+                 environmental considerations.
+
+                 PO-4. Conduct investigations of complex problems: Use research-based knowledge and
+                 research methods including design of interventions, analysis and interpretation of data, and
+                 synthesis of the information to provide valid conclusions.
+
+                 PO-5. Modern tool usage: Create, select and apply appropriate techniques, resources, and
+                 modern medical engineering and tools including prediction and modelling to complex public
+                 health activities with an understanding of the limitations.
+
+                 PO-6. Public health and society: Apply reasoning informed by the contextual knowledge
+                 to assess societal, health, safety, legal and cultural issues and the consequent responsibilities
+                 relevant to the professional public health practice.
+
+                 PO-7. Environment and sustainability: Understand the impact of professional public
+                 health solutions in societal, occupational and environmental contexts, and demonstrate the
+                 knowledge of and need for sustainable development.
+
+                 PO-8. Ethics: Apply ethical principles and commit to professional ethics and
+                 responsibilities and norms of the public health practice.
+
+                 PO-9. Individual and teamwork: Function effectively as an individual and as a member or
+                 leader in diverse teams and in multidisciplinary settings.
+
+                 PO-10. Communication: Communicate effectively on complex public health activities with
+                 the engineering community and with society at large, such as being able to comprehend and
+                 write effective reports and design documentation, make effective presentations, and give and
+                 receive clear instructions.
+
+                 PO-11. Project management and finance: Demonstrate knowledge and understanding of
+                 public health and management principles and apply these to one's own work, as a member and
+                 leader in a team, to manage projects and in multidisciplinary environments.
+
+                 PO-12. Life-long learning: Recognize the need for and have the preparation and ability to
+                 engage in independent and life-long learning in the broadest context of scientific change.
+
+Faculty of Life and Allied Health Sciences  RUAS                                                                    7
+ MPH ­ PROGRAMME SPECIFICATIONS
+
+17. Programme Education Objectives
+
+                 PEO-1. Provide students with a strong foundation in public health principles, concepts and
+                 research, to enable them to devise and deliver effective solutions to challenging public health
+                 problems
+                 PEO-2. Impart technical skills required to develop innovative solutions as per behavioral,
+                 technological and structural requirements in public healthcare
+                 PEO-3. Impart the required managerial and entrepreneurial skills to enable students to
+                 contribute to the public healthcare industry as specialist
+                 PEO-4. Instill human values, social, interpersonal and leadership skills required for
+                 professional success in evolving as global professionals
+
+18. Programme Specific Outcomes (PSOs) for MPH Program
+
+At the end of the MPH Programme, the post-graduate will be able to:
+                 PSO-1. Apply the knowledge of epidemiology, biostatistics and behavioral science in
+                 public health to develop innovative and safe solutions to challenges
+                 PSO-2. Adapt to technological advancement in diagnostics, planning and implementation
+                 by upgrading to the latest design processes in public health
+                 PSO-3. Demonstrate the leadership qualities and strive for the betterment of organization,
+                 environment and society
+                 PSO-4. Demonstrate an understanding of the importance of life-long learning through
+                 professional development, practical training and specialized certifications
+
+19. Programme Structure:
+
+         MPH Programme
+         This is designed for the students who aspire to become public health professionals with a goal of
+         administering health programmes, undertaking research and analyzing and interpreting data for
+         public health action and policy. The programme is designed for a total of 72 credits of which 36
+         credits include core courses, 8 credits of research courses, 18 credits will be fulfilled by project
+         work, internship and dissertation and 10 credits of electives.
+         The following are the courses a student is required to successfully complete for the award of MPH
+         degree. The programme is delivered as per the time-table.
+
+Faculty of Life and Allied Health Sciences  RUAS                                                                  8
+MPH ­ PROGRAMME SPECIFICATIONS
+
+                                SEMESTER-I
+
+S.   Code  Course Title                     Theory Tutorial Practical  Total    Max.
+                                            (h/W/S) (h/W/S) (h/W/S)    Credits  Marks
+No.        Principles and
+           Practice of Public                                              3        100
+1 PHC501A  Health                           2   1  0
+           Public Health
+2 PHC502A  Systems and Health               3   1  0                   4        100
+           Policy
+3 PHC503A  Epidemiology                     2   1  0                   3        100
+
+4 PHC504B Healthcare                        3   1  0                   4        100
+                         Management and
+                         Leadership         3   1  0                   4        100
+
+5 PHC505A Biostatistics                     2   0  0                   2        50
+
+6 PHO501A O/GEC-1                           15  5  0                   20       550
+
+                         Total
+
+Total number of contact hours per week          20 hours per week
+
+                                SEMESTER-II
+
+S.   Code  Course Title                     Theory Tutorial Practical Total Max.
+                                            (h/W/S) (h/W/S) (h/W/S) Credits Marks
+No.
+
+1 PHC506A Public Health                     3   1  0                   4        100
+
+           Priorities in India- I
+
+2 PHC507A Public Health                     3   1  0                   4        100
+
+           Priorities in India-II
+
+3 PHC508A Research                          3   1  0                   4        100
+
+           Methodology in
+
+           Public Health
+
+4 PHC509A Health Behaviour and 2                1  0                   3        100
+
+           Health Promotion
+
+5 PHC510A Ethics in public                  1   1  0                   2        50
+
+           health
+
+6 PHE5XXA MDEC-1                            2   1  0                   3        100
+
+           Total                            14  6                      20       550
+
+Total number of contact hours per week          20 hours per week
+
+Faculty of Life and Allied Health Sciences                                      RUAS     9
+MPH ­ PROGRAMME SPECIFICATIONS
+
+                                SEMESTER-III
+
+S.   Code      Course Title                 Theory Tutorial Practical  Total    Max.
+                                            (h/W/S) (h/W/S) (h/W/S)    Credits  Marks
+No.
+                                                                           2       50
+1 PHC601A Global Health                     1  1         0
+
+2 PHC602A Technology in Public              2  1         0             3        100
+
+               Health
+
+3 PHC603A Programme Planning                2  1         0             3        100
+
+               and Evaluation
+
+4 PHC604A Demography and                    1  1         0             2                              50
+
+               Population Sciences
+
+5 PHP605A Project work                      0  0         10            5        150
+
+6 PHE6XXA MDEC -2                           2  1         0             3        100
+
+7 PHP606A Dissertation-Part 1               0  0         6             3        200
+
+               Total                        8  5         16            21       750
+
+Total number of contact hours per week
+
+                                               29 hours per week
+
+                                            SEMESTER-IV
+
+S.   Code      Course Title                 Theory Tutorial Practical  Total    Max.
+                                            (h/W/S) (h/W/S) (h/W/S)    Credits  Marks
+No.
+                                                                           3       100
+1 PHE6XXA MDEC-3                            2  1         0
+
+2 PHOXXA O/GEC-2                            3  0         0             3        100
+
+3 PHP607A Dissertation-Part 2               0  0         14            7        300
+
+4 PHI608A Internship                        0  0         12            6        150
+
+               Total                        5  1         26            19       650
+
+Total number of contact hours per week         32 hours per week
+
+Maximum Marks                                  2500 (550+550+750+650)
+
+Total Credits                                  80 (20+20+21+19)
+
+Note: The vacations and other activities shall be as per the time-table for the corresponding batch.
+
+20. Elective Courses
+
+1. Major Discipline Elective Courses (MDEC)
+We offer three major discipline elective courses (MDEC-1, MDEC-2 and MDEC-3) of equivalent credit (i.e.,
+2 credits) as mandatory electives from the list given. At the beginning of the academic year, 3 mandatory
+electives will be chosen by (the head of the institute) based on the public health competency requirements in
+
+Faculty of Life and Allied Health Sciences                                                            RUAS     10
+ MPH ­ PROGRAMME SPECIFICATIONS
+
+the field (in discussion with NGOs, academia, Government. and research agencies) and also availability of
+respective course leader.
+
+                                                Major Discipline Elective Courses (MDEC)
+                                                                     (MDEC)
+
+                                               Qualitative Research methods (semester 2)
+                                               Environment and Health (semester 2)
+                                               Implementation Research Methods
+                                               (semester 3)
+                                               Health Economics (semester 3)
+                                               Evidence synthesis (semester 4)
+                                               Population Microbiology (semester 4)
+
+2. Open/Generic Elective Courses (O/GEC)
+We offer two Open/Generic Elective Courses (O/GEC -1 and O/GEC-2) of equivalent credit (i.e., 2 credits) in
+semester 1 and 4, respectively. Open elective courses in the first semester are generic in nature, such as soft
+skills and leadership, digital fluency, foreign languages, health and wellbeing (yoga and philosophy) in
+alignment with NEP 2020 guidelines to promote holistic development of students. Open elective in the fourth
+semester will be related to public health domain over and above what is taught in the regular mode. The student
+can opt for UGC-Massive Online Open Courses SWAYAM portal/Coursera or from any Faculty of MSRUAS
+offering open elective or from the below list.
+
+                                            Open/Generic Elective Courses
+
+                                 (O/GEC)
+Infectious Disease Epidemiology (RUAS)
+
+Cancer Epidemiology (RUAS)
+
+Advanced Epidemiology in Health Sciences (RUAS)
+Advanced Bio-statistics in Health Sciences (RUAS)
+
+Health Insurance and Health Financing (RUAS)
+
+Health Technology Assessment (RUAS)
+Cluster Randomized Controlled Trials (RUAS)
+Nutritional Epidemiology/Public health nutrition
+(RUAS/RICPHI)
+Social Marketing and Public Health (RUAS/KHPT/IHAT)
+Quality Improvement and Management in Public Health
+(RUAS)
+Health Inequity and Social Determinants (RUAS/RICPHI)
+Integrative Health Research Methods (RUAS)
+Mixed Methods Research (RUAS)
+One-Health Approach (RUAS)
+Integrative Disease Surveillance (RUAS)
+Concurrent Monitoring and Evaluation Of Health Programmes
+(RUAS/KHPT/IHAT)
+
+Faculty of Life and Allied Health Sciences                                 RUAS                                  11
+ MPH ­ PROGRAMME SPECIFICATIONS
+
+                                   Oral Health Promotion (RUAS)
+                                   Public Health Nursing (RUAS)
+                                   Community Optometry (RUAS)
+
+MPH with Specialization (optional)
+
+Specializations in MPH are aimed at providing an in-depth, specialized knowledge and skills in a specialized
+area of public health. The students will be provided with a choice to select their area of interest based on the
+available specialization, offered in collaboration with local partners such as RICPHI, KHPT, IPH etc. and
+global partners such as UIC, UoM (IIDGHTP), etc. The student can opt for specialization on accumulation of
+a minimum of 25 credits comprising of project work, electives, core course, dissertation and internship in a
+particular public health domain.
+
+We offer the following specializations:
+              · Maternal, Neonatal and Child Health
+              · Adolescent Health
+              · Non-Communicable Diseases
+              · Infectious Diseases
+              · Public Health Nutrition
+              · Integrative Health
+              · Digital Health
+              · Occupational Health
+
+Faculty of Life and Allied Health Sciences  RUAS                                                                  12
+ MPH ­ PROGRAMME SPECIFICATIONS
+Proposed Choice-based Credit System Structure for MPH programme
+
+                 Proposed CBCS Structure for MPH Programme                       Total
+                                                                                 Credits
+
+                 PHC501A        PHC502A        PHC503A           PHC504B
+
+                 Principles     Public Health  Epidemiology      Healthcare
+                 and            Systems and    Credit-3          Management
+                 Practices of   Health Policy                    and Leadership
+Major            Public         Credit-4                         Credit-4
+Discipline Core  Health
+course (MDCC)    Credit-3       PHC507A        PHC509A           PHC510A
+
+                 PHC506A
+
+                 Public         Public Health Health             Ethics in Public 37
+
+                 Health         Priorities in  Behaviour and Health Credit-2
+
+                 Priorities in  India-II       Health
+
+                 India-I        Credit-4       Promotion
+
+                 Credit-4                      Credit-3
+
+                 PHC601A        PHC602A        PHC603A           PHC604A
+                 Global Health  Technology in                    Demography and
+                 Credit-2       Public Health  Programme         Population
+                                Credit-3       Planning and      Sciences
+                                               Evaluation        Credit-2
+
+                                               Credit-3
+
+Major Discipline PHE5XXA        PHE6XXA        PHE6XXA                           9
+
+Elective Courses MDEC-1         MDEC-2         EC-3
+(MDEC-1,                        Credit-3       Credit-3
+                 Credit-3
+MDEC-2,
+
+MDEC-3)
+
+Open/ Generic PHO5XXB           PHO6XXB                                          5
+
+Elective Courses O/GEC-1        O/GEC-2
+(O/GEC-1,                       Credit-3
+O/GEC-2)         Credit-2
+
+Research         PHC505A        PHC508A                                          8
+
+Courses (RC)     Biostatistics  Research
+
+                 Credit-4       Methodology
+                                in Public
+
+                                Health
+
+                                Credit-4
+
+Project work/ PHP605A           PHI608A        PHP607A                           21
+
+Dissertation/    Project work   Internship     Dissertation
+Internship       Credit-5       Credit-6       Credit-10
+
+Faculty of Life and Allied Health Sciences                                                13
+RUAS
+MPH ­ PROGRAMME SPECIFICATIONS
+
+Sl.No.                                      Course Type  Credit
+
+1 Major Discipline Core course                             37
+                                                           09
+2. Major Discipline Elective Courses                       05
+3 Open/Generic Elective Courses                            08
+4 Research Courses                                         21
+5 Project work/Dissertation/Internship                     80
+
+                    Total Credit
+
+       Project
+work/Dissertation/
+
+     Internship
+         26%
+
+Research Courses                                                            Major Discipline
+        10%                                                                    Core course
+                                                                                    47%
+ Open/Generic Elective
+           Courses      Major Discipline Elective Courses
+              6%                          11%
+
+a. Programme Delivery Structure
+    The programme is delivered on weekdays from Monday to Saturday as per the time-table.
+
+b. Teaching and Learning Methods
+    The course delivery comprises of a combination of few or all of the following methods:
+               i. Face-to-face lectures using audio-visual aid.
+              ii. Case-based learning
+             iii. Workshops, group discussions, debates and presentations
+             iv. Demonstration
+              v. Guest lectures from industry and academia
+             vi. Laboratory/field work
+
+Faculty of Life and Allied Health Sciences                                                    14
+RUAS
+MPH ­ PROGRAMME SPECIFICATIONS
+
+              vii. Industry visit/visit to public health/health organizations
+              viii. Seminars/conferences
+
+               ix. Group exercise
+                x. Project exhibitions
+
+c. PHP605B Project Work
+
+            This course is intended to apply and synergize the learning outcomes of MPH
+            programme through a project work. As part of the project work, students will be placed
+            in different public health/health organizations such as sub-centers, primary health
+            centers, community health care centers, district hospitals, first referral units and
+            outreach centers in rural and urban areas. The project will enable the students to apply
+            the theoretical and practical aspects of community-based or health-facility survey and
+            project on relevant public health issue. This facilitates understanding and exploration
+            of how the National Health Programmes are implemented at the population, health-
+            facility and household levels.
+
+d. PHI608B Internship
+
+            As part of the internship course, students will be placed in different public
+            health/health organizations such as NGOs and reputed health organizations. This
+            course will provide opportunity for experiential learning with respect to social
+            determinants, understanding various factors that interplay in deciding the health of the
+            community and initiatives taken at the local, regional and international levels to
+            address public health challenges.
+
+e. PHP607B Dissertation
+            A student selects a topic for dissertation based on the contemporary health issue and
+            undertake the research. The dissertation requires primary data collection from health
+            facilities/participants and preparation of a thesis at the Master's level and its defense.
+            The students are also required to obtain Institutional Human Ethics Committee (IHEC)
+            approval prior to primary data collection involving human subjects. In addition,
+            students are encouraged to present a paper based on their research findings at a
+            National/International conference and submit a manuscript for peer review publication
+            in impact factor/UGC-CARE listed Journals. Please note that dissertation is
+            considered completed only if both part-1 and part-2 are accomplished.
+
+a. Assessment and Grading
+
+     A course assessment will have two components:
+
+          · Component-1: Continuous evaluation-60%
+
+          · Component-2: Semester-End Examination (SEE)-40%
+
+    For more details on the break-ups of weightage, please refer the respective course syllabus.
+
+    A student is required to score a minimum of 40% (independently in components 1 and 2) for
+    successful completion of a course and earning the credits.
+
+    Note: Final marks awarded in each of the courses will be confirmed only after SAB/PAB as
+
+Faculty of Life and Allied Health Sciences                                                              15
+RUAS
+MPH ­ PROGRAMME SPECIFICATIONS
+
+      explained in Academic Regulations of MPH programme.
+
+ b. Attendance
+           A student is required to obtain a minimum of 75% attendance to be eligible to write the
+           examination. Less than 75% attendance is considered FAIL; such a student is required to
+           follow the same procedure as that of a failed student.
+
+  c. Award of degree
+
+              As per the Academic Regulations for MPH programme.
+
+ d. Student Support for Learning
+
+              Students are given the following support:
+                   a. Reference books in the library
+                   b. Pre-reads and handouts
+                   c. Cases/case study
+                   d. Magazines and journals
+                   e. Internet facility
+                   f. Computing facility
+                   g. Laboratory facility
+                   h. Workshop facility
+                   i. Staff support
+                   j. Lounges for discussions
+                   k. Any other support that enhances their learning
+
+ e. Quality Control Measures
+
+              The following are the quality control measures:
+             1. Review of question papers and assignment at the Department level
+             2. Student feedback
+             3. Opportunities for the students to see their assessed work
+             4. Review by external examiners and external examiners reports
+             5. Staff student consultative committee meetings
+             6. Student exit feedback
+             7. Subject assessment board
+             8. Programme assessment board
+
+Faculty of Life and Allied Health Sciences                                                          16
+RUAS
+MPH ­ PROGRAMME SPECIFICATIONS
+
+Programme Map (Course-PO-PSO Map)
+
+  Course  Programme Outcomes (POs)                   Programme
+  Code                                                 Specific
+                                                      Outcomes
+PHC501A                                                 (PSOs)
+PHC502A
+PHC503A   PO- PO- PO- PO- PO- PO- PO- PO- PO- PO- PO- PO- PSO PSO PSOPSO
+PHC504B    1 2 3 4 5 6 7 8 9 10 11 12 -1 -2 -3 -4
+PHC505A
+PHC506A   333333111232 33 11
+
+PHC507A   333323121222 33 11
+
+PHC509A   333333211232 33 11
+PHC510A
+PHE5XXA   333313123333 31 31
+PHC601A
+PHC602A   333333221132 33 11
+PHC603A
+PHC604A   333132111212 33 31
+PHP605A
+PHE6XXA   333323111222 33 33
+PHC607A
+PHE6XXA   333332213132 33 33
+ PHI608A
+          33321223311232                                                                         1
+
+          333333                            33333 33 23
+
+          333323111222 33 31
+
+          3332322111                        2 33 33
+
+          333212211112 33 32
+
+          333333211132 33 32
+
+          333333333333 33 33
+
+          333333332132 33 22
+
+          333333211132 33 32
+
+          3333311333                        3 33 13
+
+                                            3313221  23
+
+Co-curricular Activities
+         Students are encouraged to participate in co-curricular activities like seminars,
+         conferences, symposium, paper writing, attending industry exhibitions, project
+         competitions and related activities to enhance their knowledge and network.
+
+Cultural and Literary Activities
+         Annual cultural festivals are held to unwind and ignite the creative endeavors, and
+         students are encouraged to plan and participate in cultural and literary activities.
+
+Sports and Athletics
+         Students are encouraged to participate in out-door and in-door games on regular basis.
+
+Faculty of Life and Allied Health Sciences                                                          17
+RUAS
+
