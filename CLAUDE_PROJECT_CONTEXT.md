@@ -41,6 +41,7 @@ An **interactive, single-page web application** (SPA) that serves as the officia
 | **RAG AI Knowledge Base** | `rag_knowledge_base.js` — external JS file with 50 academic units loaded via `<script src>` |
 | **Cloud Database** | Google Cloud Firestore (Firebase project `rsph-prism-2026-8d817`) |
 | **Hosting** | Firebase Hosting |
+| **Backend (email only)** | `functions/` — Firebase Cloud Functions (Node 20), Resend API. Requires Blaze plan; not yet deployed — see §9a |
 | **Authentication** | None (open registration); Faculty Roster passcode-gated (client-side: `rsph2026`) |
 | **Version Control** | Git → GitHub (`Drhari730/RSPH-Bridge-Course`, branch `main`) |
 
@@ -255,6 +256,29 @@ Faculty Roster (passcode: rsph2026)
 | **Phase 6** | Added Module 6 (Medical Terminology & Clinical Coding, Days 21–25 initially), expanded RAG to 50 units from 2 new prescribed textbooks |
 | **Phase 7** | Restructured to **30-Day course** (6 modules × 5 days = 30 days), added 5 new daily lessons across Modules 1–5, reindexed Module 6 to Days 26–30, updated all metadata |
 | **Phase 8** | Pushed complete codebase to GitHub (`Drhari730/RSPH-Bridge-Course`) |
+| **Phase 9** | Added Faculty/Admin progress dashboard (per-day lesson tracking, quiz scores, Pink Cert codes, drill-down detail view), registration gate on the Learning Path, passcode-gated Faculty Demo Preview account, 9-step User Guide flowchart on Home, admissions-cohort checklist (MPH+MHA name list cross-checked against live registrations), removed Registrar signature from the final certificate (Dean only), added a dedicated `prism_icon.svg` program mark used as the browser favicon and hero accent |
+| **Phase 10** | Registration form changed from free-text name entry to a Program→Name dropdown sourced from the admissions cohort list (with a "not listed" manual fallback); added `functions/` — Firebase Cloud Functions (Node 20) that send transactional email via **Resend** server-side, reacting to Firestore writes: registration confirmation, module/Pink Certificate award, final certificate, and a daily progress digest (Cloud Scheduler, 08:00 IST) |
+
+---
+
+## 9a. Automated Email (Resend via Firebase Cloud Functions)
+
+Client-side email (EmailJS) was deliberately removed — a Resend API key must never live in this page's public JavaScript. Email is instead sent server-side by Cloud Functions in `functions/index.js`, triggered automatically by the same Firestore writes the client already makes (no client code needs to call anything to send an email):
+
+| Function | Trigger | Sends |
+|:---|:---|:---|
+| `onStudentRegistered` | `onDocumentCreated` on `students/{id}` | Registration confirmation (once, at first registration) |
+| `onStudentProgressUpdated` | `onDocumentUpdated` on `students/{id}` | Diffs before/after: new `pinkCert_mod_N` → module/Pink Cert email; `finalCertificateAwarded` false→true → final certificate email |
+| `dailyProgressDigest` | `onSchedule` (`0 8 * * *`, Asia/Kolkata) | Once-daily progress summary to every registered scholar who has started at least one lesson/quiz |
+
+**Setup (not yet deployed as of Phase 10 — needs the project owner to do these manually):**
+1. Upgrade `rsph-prism-2026-8d817` to the Firebase **Blaze** (pay-as-you-go) plan in the Firebase Console — required for any Cloud Functions deploy and for the scheduled function's Cloud Scheduler job. Usage at this course's scale (~30 students) stays within the free monthly quota.
+2. `firebase functions:secrets:set RESEND_API_KEY` (from the project root) — paste an existing or new Resend API key. Never commit this key to git.
+3. Set the sender address to a domain verified in Resend, either by editing the `FROM_EMAIL` default in `functions/index.js` or via `firebase functions:config` — do not use an unverified domain, Resend will reject sends.
+4. `cd functions && npm install`
+5. `firebase deploy --only functions --project rsph-prism-2026-8d817`
+
+Demo/faculty-preview profiles (`DEMO-` prefixed student IDs) are explicitly excluded from all three functions.
 
 ---
 

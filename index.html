@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRISM: 30-Day Bridge Course | Ramaiah School of Public Health</title>
-  
+  <link rel="icon" type="image/svg+xml" href="prism_icon.svg" />
+
   <style>
     :root {
       --rsph-crimson: #A82042;
@@ -312,12 +313,39 @@
       display: flex;
       flex-direction: column;
       gap: 6px;
-      transition: all 0.3s ease;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      opacity: 0;
+      transform: translateY(18px);
     }
     .guide-step:hover {
       border-color: var(--rsph-crimson);
       box-shadow: 0 10px 24px rgba(168, 32, 66, 0.12);
       transform: translateY(-4px);
+    }
+    .user-guide-section.is-revealed .guide-step {
+      animation: slideInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .user-guide-section.is-revealed .guide-step:nth-child(1) { animation-delay: 0.03s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(2) { animation-delay: 0.09s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(3) { animation-delay: 0.15s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(4) { animation-delay: 0.21s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(5) { animation-delay: 0.27s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(6) { animation-delay: 0.33s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(7) { animation-delay: 0.39s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(8) { animation-delay: 0.45s; }
+    .user-guide-section.is-revealed .guide-step:nth-child(9) { animation-delay: 0.51s; }
+    .guide-step-num {
+      transition: transform 0.3s ease;
+    }
+    .guide-step:hover .guide-step-num {
+      transform: scale(1.12) rotate(-6deg);
+    }
+    .guide-step-emoji {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+    .guide-step:hover .guide-step-emoji {
+      transform: scale(1.25) rotate(8deg);
     }
     /* Connector arrow to the next step (desktop 3-col: hidden at end of each row) */
     .guide-flow .guide-step:not(:nth-child(3n))::after {
@@ -400,7 +428,9 @@
       height: 100%;
       width: 0%;
       background: linear-gradient(90deg, var(--rsph-crimson), var(--rsph-orange));
-      transition: width 0.4s;
+      background-size: 200% 100%;
+      transition: width 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      animation: shimmer 2.4s linear infinite;
     }
 
     /* LMS TWO-COLUMN VIEW */
@@ -1862,8 +1892,6 @@
   <!-- Firebase App & Cloud Firestore SDKs (v10.12.0 compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-  <!-- EmailJS SDK (client-side automated email delivery) -->
-  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </head>
 <body>
 
@@ -1896,7 +1924,9 @@
   <section class="hero-banner">
     <div class="hero-container">
       <div class="hero-kicker">Ramaiah School of Public Health</div>
-      <h1 class="hero-title">PRISM: 30-Day Bridge Course</h1>
+      <h1 class="hero-title">
+        <img src="prism_icon.svg" alt="PRISM Program Mark" style="height: 0.85em; width: auto; vertical-align: -0.08em; border-radius: 6px; margin-right: 10px;" />PRISM: 30-Day Bridge Course
+      </h1>
       <div class="hero-badge">
         <strong>P</strong>ublic Health • <strong>R</strong>esearch Methods • <strong>I</strong>nformatics • <strong>S</strong>tatistics • <strong>M</strong>anagement
       </div>
@@ -2363,19 +2393,23 @@
         </p>
         <div style="display: flex; flex-direction: column; gap: 12px;">
           <div>
+            <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Candidate Program (Exclusively MPH / MHA)*</label>
+            <select id="regDiscipline" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px; font-weight: 600;" onchange="populateRegNameOptions()">
+              <option value="MPH Candidate (Master of Public Health)">🎓 Master of Public Health (MPH Candidate)</option>
+              <option value="MHA Candidate (Master of Hospital Administration)">🏥 Master of Hospital Administration (MHA Candidate)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Select Your Name (from the RSPH Admissions List)*</label>
+            <select id="regNameSelect" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" onchange="onRegNameSelectChange()"></select>
+          </div>
+          <div id="regFullNameOtherWrap" style="display: none;">
             <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Full Legal Name (as on Certificate)*</label>
             <input type="text" id="regFullName" placeholder="e.g. Dr. Hariprakash M" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" />
           </div>
           <div>
             <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Email Address (for automated progress &amp; certificate emails)*</label>
             <input type="email" id="regEmail" placeholder="e.g. ananya.sharma@example.com" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" />
-          </div>
-          <div>
-            <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Candidate Program (Exclusively MPH / MHA)*</label>
-            <select id="regDiscipline" style="width: 100%; padding: 9px 12px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px; font-weight: 600;">
-              <option value="MPH Candidate (Master of Public Health)">🎓 Master of Public Health (MPH Candidate)</option>
-              <option value="MHA Candidate (Master of Hospital Administration)">🏥 Master of Hospital Administration (MHA Candidate)</option>
-            </select>
           </div>
           <div>
             <label style="font-size: 12px; font-weight: 700; color: #0F172A; display: block; margin-bottom: 4px;">Prior Academic / Clinical Background</label>
@@ -3371,15 +3405,8 @@
             completedAt: new Date().toISOString()
           };
           db.collection('students').doc(studentProfile.id).set(modUpdate, { merge: true }).catch(console.warn);
-        }
-        // Automated module completion / Pink Certificate email
-        if (!studentProfile.isDemo) {
-          sendPrismEmail('module_complete', studentProfile, {
-            module_number: mod.module_number,
-            module_name: mod.name,
-            score: score,
-            percent: score * 20
-          });
+          // Module completion / Pink Certificate email is sent server-side
+          // (see functions/index.js), triggered automatically by this write.
         }
       } else {
         box.innerHTML += ` • <span style="color: var(--rsph-crimson); font-weight: 700;">Score under 80%. Review readings and re-attempt.</span>`;
@@ -4575,6 +4602,8 @@
       document.getElementById('certContainer').scrollIntoView({ behavior: 'smooth' });
 
       // Dual-write final course certificate to Firestore (skipped for the Faculty Demo profile)
+      // The completion email is sent server-side (see functions/index.js),
+      // triggered automatically the moment finalCertificateAwarded flips to true.
       const certDateVal = document.getElementById('certDate').innerText;
       const certIdVal = document.getElementById('certId').innerText;
       if (studentProfile && studentProfile.id && db && !studentProfile.isDemo) {
@@ -4584,15 +4613,6 @@
           finalCertificateDate: certDateVal,
           lastActive: new Date().toISOString()
         }, { merge: true }).catch(console.warn);
-      }
-
-      // Automated final course-completion email
-      if (!studentProfile.isDemo) {
-        sendPrismEmail('final_certificate', studentProfile, {
-          student_name: name,
-          cert_id: certIdVal,
-          cert_date: certDateVal
-        });
       }
     }
 // RAG CHATBOT - RSPH RAG AI TUTOR RETRIEVAL & INTELLIGENCE ENGINE (CLAUDE / CHATGPT STYLE)
@@ -4931,74 +4951,15 @@
     }
 
     // ==========================================
-    // AUTOMATED EMAIL INTEGRATION (EmailJS — client-side, no backend server required)
+    // AUTOMATED EMAIL DELIVERY
     // ==========================================
-    // TO ACTIVATE: 1) Create a free account at https://www.emailjs.com/
-    //              2) Add an Email Service (e.g. Gmail/Outlook) and note its Service ID
-    //              3) Create three Email Templates (Registration Confirmation, Module/Pink
-    //                 Certificate Award, Final Course Completion) and note each Template ID.
-    //                 Each template should accept variables: {{to_name}}, {{to_email}},
-    //                 {{student_id}}, {{discipline}}, {{message}} (see sendPrismEmail below
-    //                 for the exact variables passed per email type).
-    //              4) Copy your Public Key from EmailJS Account > API Keys.
-    //              5) Replace the four placeholder strings below. Until replaced, emails
-    //                 are safely skipped (logged to console only) — nothing else breaks.
-    const EMAILJS_CONFIG = {
-      publicKey: 'YOUR_EMAILJS_PUBLIC_KEY',
-      serviceId: 'YOUR_EMAILJS_SERVICE_ID',
-      templates: {
-        registration: 'YOUR_EMAILJS_TEMPLATE_ID_REGISTRATION',
-        module_complete: 'YOUR_EMAILJS_TEMPLATE_ID_MODULE_COMPLETE',
-        final_certificate: 'YOUR_EMAILJS_TEMPLATE_ID_FINAL_CERTIFICATE'
-      }
-    };
-    const EMAILJS_READY = typeof emailjs !== 'undefined'
-      && EMAILJS_CONFIG.publicKey && !EMAILJS_CONFIG.publicKey.startsWith('YOUR_');
-    if (EMAILJS_READY) {
-      try { emailjs.init({ publicKey: EMAILJS_CONFIG.publicKey }); }
-      catch (e) { console.warn('EmailJS init note:', e); }
-    }
-
-    function sendPrismEmail(type, profile, extra) {
-      extra = extra || {};
-      if (!profile || !profile.name) return;
-      if (!EMAILJS_READY) {
-        console.log(`✉️ [EmailJS not configured] Would send "${type}" email to ${profile.name} (${profile.email || 'no email on file'}).`, extra);
-        return;
-      }
-      if (!profile.email) {
-        console.warn(`✉️ Cannot send "${type}" email: no email address on file for ${profile.name}.`);
-        return;
-      }
-      const templateId = EMAILJS_CONFIG.templates[type];
-      if (!templateId || templateId.startsWith('YOUR_')) return;
-
-      let subject = 'RSPH PRISM Bridge Course Update';
-      let message = '';
-      if (type === 'registration') {
-        subject = 'Welcome to the RSPH PRISM Bridge Course';
-        message = `Dear ${profile.name}, your registration is confirmed. Your Student ID is ${profile.id}. You now have full access to all 30 daily lessons, interactive labs, quizzes and Pink Certificates.`;
-      } else if (type === 'module_complete') {
-        subject = `Module ${extra.module_number} Complete — Pink Certificate Awarded`;
-        message = `Dear ${profile.name}, congratulations on passing the Module ${extra.module_number} (${extra.module_name}) quiz with a score of ${extra.percent}%. Your Pink Certificate of Module Mastery has been issued.`;
-      } else if (type === 'final_certificate') {
-        subject = 'PRISM Course Completion Certificate Issued';
-        message = `Dear ${extra.student_name || profile.name}, congratulations on completing the full 30-Day PRISM Bridge Course. Your official Certificate of Competence (ID: ${extra.cert_id}) was issued on ${extra.cert_date}.`;
-      }
-
-      emailjs.send(EMAILJS_CONFIG.serviceId, templateId, {
-        to_name: profile.name,
-        to_email: profile.email,
-        student_id: profile.id || '',
-        discipline: profile.discipline || '',
-        subject: subject,
-        message: message
-      }).then(() => {
-        console.log(`✉️ "${type}" email sent to ${profile.email}.`);
-      }).catch((err) => {
-        console.warn(`✉️ "${type}" email failed to send:`, err);
-      });
-    }
+    // All transactional email (registration confirmation, module/Pink Certificate
+    // awards, final certificate, and the daily progress digest) is sent
+    // server-side via a Resend-backed Firebase Cloud Function, triggered
+    // automatically by the Firestore writes this page already makes below
+    // (syncStudentToFirestore / quiz pass / Pink Certificate / final certificate).
+    // See functions/index.js for the sending logic and setup instructions —
+    // nothing here on the client needs to change to activate it.
 
     // STUDENT REGISTRATION MANAGEMENT (DUAL-WRITE: LOCALSTORAGE + FIRESTORE)
     let studentProfile = {
@@ -5030,10 +4991,55 @@
       }
     }
 
+    // Populate the Name dropdown from the admissions cohort list, filtered by
+    // the currently selected program (MPH/MHA). Always offers a manual fallback.
+    function populateRegNameOptions() {
+      const discVal = document.getElementById('regDiscipline').value;
+      const isMph = discVal.includes('MPH');
+      const filtered = (typeof expectedCohortRoster !== 'undefined' ? expectedCohortRoster : [])
+        .filter(e => e.discipline === (isMph ? 'MPH' : 'MHA'));
+
+      const sel = document.getElementById('regNameSelect');
+      let html = '<option value="">— Select your name —</option>';
+      filtered.forEach(e => {
+        html += `<option value="${e.name.replace(/"/g, '&quot;')}">${e.name}</option>`;
+      });
+      html += '<option value="__other__">✏️ My name is not listed — enter manually</option>';
+      sel.innerHTML = html;
+      onRegNameSelectChange();
+    }
+
+    function onRegNameSelectChange() {
+      const sel = document.getElementById('regNameSelect');
+      document.getElementById('regFullNameOtherWrap').style.display = (sel.value === '__other__') ? 'block' : 'none';
+    }
+
+    function getSelectedRegName() {
+      const sel = document.getElementById('regNameSelect');
+      if (!sel) return '';
+      if (sel.value === '__other__') {
+        return (document.getElementById('regFullName').value || '').trim();
+      }
+      return sel.value;
+    }
+
     function openStudentModal() {
-      document.getElementById('regFullName').value = studentProfile.name || '';
-      document.getElementById('regEmail').value = studentProfile.email || '';
       document.getElementById('regDiscipline').value = studentProfile.discipline || 'MPH Candidate (Master of Public Health)';
+      populateRegNameOptions();
+
+      const sel = document.getElementById('regNameSelect');
+      const matchesListedName = studentProfile.name && Array.from(sel.options).some(o => o.value === studentProfile.name);
+      if (matchesListedName) {
+        sel.value = studentProfile.name;
+      } else if (studentProfile.name) {
+        sel.value = '__other__';
+        document.getElementById('regFullName').value = studentProfile.name;
+      } else {
+        sel.value = '';
+      }
+      onRegNameSelectChange();
+
+      document.getElementById('regEmail').value = studentProfile.email || '';
       if (document.getElementById('regPriorDegree') && studentProfile.prior) {
         document.getElementById('regPriorDegree').value = studentProfile.prior;
       }
@@ -5076,9 +5082,9 @@
     }
 
     function saveStudentRegistration() {
-      const name = document.getElementById('regFullName').value.trim();
+      const name = getSelectedRegName();
       if (!name) {
-        alert('Please enter your full legal name.');
+        alert('Please select your name from the list (or choose "My name is not listed" and type your full legal name).');
         return;
       }
       const email = document.getElementById('regEmail').value.trim();
@@ -5086,7 +5092,6 @@
         alert('Please enter a valid email address — it is used to send your automated progress and certificate updates.');
         return;
       }
-      const wasAlreadyRegistered = !!studentProfile.id;
       studentProfile.name = name;
       studentProfile.email = email;
       studentProfile.discipline = document.getElementById('regDiscipline').value;
@@ -5117,11 +5122,8 @@
       updateStudentHeaderUI();
       closeStudentModal();
       alert(`Registration Successful!\nWelcome, ${studentProfile.name}.\nStudent ID: ${studentProfile.id}\nYour profile is now registered in the Central RSPH Database. Pink Certificates will be issued in your name, and progress updates will be emailed to ${studentProfile.email}.`);
-
-      // 3. Automated registration confirmation email (only on first-time registration)
-      if (!wasAlreadyRegistered) {
-        sendPrismEmail('registration', studentProfile);
-      }
+      // A registration confirmation email is sent server-side (see functions/index.js),
+      // triggered automatically the first time this student's Firestore doc is created.
     }
 
     // ==========================================

@@ -2,6 +2,13 @@
   "firestore": {
     "rules": "firestore.rules"
   },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "nodejs20"
+    }
+  ],
   "hosting": {
     "site": "rsph-prism-2026-8d817",
     "public": ".",
@@ -9,7 +16,8 @@
       "firebase.json",
       "**/.*",
       "**/node_modules/**",
-      "*.py"
+      "*.py",
+      "functions/**"
     ],
     "headers": [
       {
