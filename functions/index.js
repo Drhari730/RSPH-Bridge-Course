@@ -8,12 +8,14 @@
  * client already makes.
  *
  * SETUP (one-time):
- *   1. `firebase use rsph-prism-2026-8d817` (from the project root)
- *   2. `firebase functions:secrets:set RESEND_API_KEY`   (paste your Resend key)
- *   3. Edit FROM_EMAIL default below (or set via
- *      `firebase functions:config` / the RESEND_FROM_EMAIL param) to a
- *      sender address on a domain verified in your Resend account.
- *   4. `firebase deploy --only functions`   (requires the Blaze plan)
+ *   1. Upgrade the Firebase project to the Blaze plan (Cloud Functions and
+ *      Secret Manager are unavailable on the free Spark plan).
+ *   2. `firebase use rsph-prism-2026-8d817` (from the project root)
+ *   3. `firebase functions:secrets:set RESEND_API_KEY`   (paste your Resend key)
+ *   4. Sender is prism@drhari.co.in (FROM_EMAIL below) — confirm this domain
+ *      shows "Verified" at https://resend.com/domains before deploying,
+ *      otherwise Resend will reject every send.
+ *   5. `firebase deploy --only functions`
  */
 
 const { onDocumentCreated, onDocumentUpdated } = require('firebase-functions/v2/firestore');
@@ -28,7 +30,7 @@ const db = admin.firestore();
 
 const RESEND_API_KEY = defineSecret('RESEND_API_KEY');
 const FROM_EMAIL = defineString('RESEND_FROM_EMAIL', {
-  default: 'RSPH PRISM Bridge Course <prism@rsph-portal.example>'
+  default: 'PRISM Bridge Course <prism@drhari.co.in>'
 });
 
 const TOTAL_LESSONS = 30;
