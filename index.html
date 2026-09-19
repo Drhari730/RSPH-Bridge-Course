@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PRISM: 30-Day Bridge Course | Ramaiah School of Public Health</title>
-  <link rel="icon" type="image/svg+xml" href="prism_icon.svg" />
+  <link rel="icon" type="image/svg+xml" href="rsph_logo.svg" />
+  <link rel="alternate icon" type="image/png" href="rsph_official_logo.png" />
 
   <style>
     :root {
@@ -1924,9 +1925,7 @@
   <section class="hero-banner">
     <div class="hero-container">
       <div class="hero-kicker">Ramaiah School of Public Health</div>
-      <h1 class="hero-title">
-        <img src="prism_icon.svg" alt="PRISM Program Mark" style="height: 0.85em; width: auto; vertical-align: -0.08em; border-radius: 6px; margin-right: 10px;" />PRISM: 30-Day Bridge Course
-      </h1>
+      <h1 class="hero-title">PRISM: 30-Day Bridge Course</h1>
       <div class="hero-badge">
         <strong>P</strong>ublic Health • <strong>R</strong>esearch Methods • <strong>I</strong>nformatics • <strong>S</strong>tatistics • <strong>M</strong>anagement
       </div>
@@ -2164,11 +2163,15 @@
         <div style="max-width: 600px; margin: 0 auto 24px; text-align: center;">
           <h2 style="font-size: 24px; color: #0F172A;">PRISM Course Completion Certificate</h2>
           <p style="font-size: 13px; color: var(--rsph-muted); margin-top: 4px;">
-            Enter your full student name to generate and print your official verified Ramaiah School of Public Health Certificate of Competence.
+            Enter your Student ID — the one emailed to you when you registered — to verify your identity and generate your official Ramaiah School of Public Health Certificate of Competence.
           </p>
-          <div style="display: flex; gap: 8px; margin-top: 14px; justify-content: center;">
-            <input type="text" id="studentNameInput" placeholder="Enter Full Student Name (e.g. Dr. Ananya Sharma)" style="flex: 1; max-width: 360px; padding: 10px 14px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px;" />
-            <button class="action-btn" onclick="generateCertificate()">Generate Certificate</button>
+          <div style="display: flex; gap: 8px; margin-top: 14px; justify-content: center; flex-wrap: wrap;">
+            <input type="text" id="certStudentIdInput" placeholder="Enter Your Student ID (e.g. MPH-2026-4821)" style="flex: 1; max-width: 300px; padding: 10px 14px; border: 1px solid var(--rsph-border); border-radius: 6px; font-size: 13px; font-family: monospace; text-transform: uppercase;" onkeyup="if(event.key==='Enter') verifyCertStudentId()" />
+            <button class="action-btn secondary" onclick="verifyCertStudentId()">🔍 Verify ID</button>
+          </div>
+          <div id="certVerifyStatus" style="margin-top: 10px; font-size: 12.5px; min-height: 18px;"></div>
+          <div style="margin-top: 12px;">
+            <button class="action-btn" id="generateCertBtn" onclick="generateCertificate()" disabled style="opacity: 0.45; cursor: not-allowed;">Generate Certificate</button>
           </div>
         </div>
 
@@ -4589,25 +4592,74 @@
     }
 
     // CERTIFICATE GENERATION
-    function generateCertificate() {
-      const name = document.getElementById('studentNameInput').value.trim();
-      if (!name) {
-        alert('Please enter your full name to generate certificate.');
+    // Certificate generation requires a verified Student ID — no more typing
+    // an arbitrary name. verifiedCertStudent is set by verifyCertStudentId().
+    let verifiedCertStudent = null;
+
+    async function verifyCertStudentId() {
+      const idInput = document.getElementById('certStudentIdInput');
+      const statusEl = document.getElementById('certVerifyStatus');
+      const genBtn = document.getElementById('generateCertBtn');
+      const id = (idInput.value || '').trim().toUpperCase();
+      idInput.value = id;
+
+      verifiedCertStudent = null;
+      genBtn.disabled = true;
+      genBtn.style.opacity = '0.45';
+      genBtn.style.cursor = 'not-allowed';
+
+      if (!id) {
+        statusEl.innerHTML = '<span style="color: var(--rsph-crimson);">Please enter your Student ID.</span>';
         return;
       }
+
+      statusEl.innerHTML = '<span style="color: #64748B;">Verifying…</span>';
+
+      // Fast path: this browser's own active registration, no round-trip needed.
+      if (studentProfile && studentProfile.id === id && studentProfile.name && !studentProfile.isDemo) {
+        verifiedCertStudent = studentProfile;
+      } else if (db) {
+        try {
+          const snap = await db.collection('students').doc(id).get();
+          if (snap.exists) {
+            verifiedCertStudent = snap.data();
+          }
+        } catch (err) {
+          console.warn('Certificate ID verification error:', err);
+        }
+      }
+
+      if (verifiedCertStudent && verifiedCertStudent.name) {
+        statusEl.innerHTML = `<span style="color: #15803D; font-weight: 700;">✓ Verified: ${verifiedCertStudent.name} (${verifiedCertStudent.discipline || 'PRISM Scholar'})</span>`;
+        genBtn.disabled = false;
+        genBtn.style.opacity = '1';
+        genBtn.style.cursor = 'pointer';
+      } else {
+        statusEl.innerHTML = '<span style="color: var(--rsph-crimson);">No registered scholar found with that Student ID. Double-check the ID from your registration email.</span>';
+      }
+    }
+
+    function generateCertificate() {
+      if (!verifiedCertStudent || !verifiedCertStudent.name) {
+        alert('Please verify your Student ID first.');
+        return;
+      }
+      const name = verifiedCertStudent.name;
       document.getElementById('certStudentName').innerText = name.toUpperCase();
       document.getElementById('certDate').innerText = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('certId').innerText = 'RSPH-PRISM-' + Math.random().toString(36).substring(2, 9).toUpperCase();
       document.getElementById('certContainer').style.display = 'block';
       document.getElementById('certContainer').scrollIntoView({ behavior: 'smooth' });
 
-      // Dual-write final course certificate to Firestore (skipped for the Faculty Demo profile)
-      // The completion email is sent server-side (see functions/index.js),
-      // triggered automatically the moment finalCertificateAwarded flips to true.
+      // Dual-write final course certificate to Firestore, against the
+      // VERIFIED student's own doc (may differ from this browser's active
+      // profile if generated from a different device). The completion email
+      // is sent by the scripts/send-emails.js GitHub Actions worker, triggered
+      // automatically the moment finalCertificateAwarded flips to true.
       const certDateVal = document.getElementById('certDate').innerText;
       const certIdVal = document.getElementById('certId').innerText;
-      if (studentProfile && studentProfile.id && db && !studentProfile.isDemo) {
-        db.collection('students').doc(studentProfile.id).set({
+      if (verifiedCertStudent.id && db && !verifiedCertStudent.isDemo) {
+        db.collection('students').doc(verifiedCertStudent.id).set({
           finalCertificateAwarded: true,
           finalCertificateId: certIdVal,
           finalCertificateDate: certDateVal,
@@ -4975,15 +5027,15 @@
     function updateStudentHeaderUI() {
       const nameDisp = document.getElementById('regStudentNameDisplay');
       const idDisp = document.getElementById('regStudentIdDisplay');
-      const certInput = document.getElementById('studentNameInput');
+      const certIdInput = document.getElementById('certStudentIdInput');
 
       if (studentProfile.name) {
         nameDisp.innerHTML = `Student: <strong>${studentProfile.name}</strong> (${studentProfile.discipline || 'PRISM Scholar'})`;
         idDisp.innerText = studentProfile.isDemo
           ? `ID: ${studentProfile.id} • 🎓 Faculty Demo Preview (not saved)`
           : `ID: ${studentProfile.id} • ☁️ Central Cloud Synced`;
-        if (certInput && !certInput.value) {
-          certInput.value = studentProfile.name;
+        if (certIdInput && !certIdInput.value && !studentProfile.isDemo) {
+          certIdInput.value = studentProfile.id;
         }
       } else {
         nameDisp.innerHTML = `Student: <em>Guest Scholar (Click to Register)</em>`;

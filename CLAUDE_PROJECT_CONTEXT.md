@@ -41,7 +41,7 @@ An **interactive, single-page web application** (SPA) that serves as the officia
 | **RAG AI Knowledge Base** | `rag_knowledge_base.js` — external JS file with 50 academic units loaded via `<script src>` |
 | **Cloud Database** | Google Cloud Firestore (Firebase project `rsph-prism-2026-8d817`) |
 | **Hosting** | Firebase Hosting |
-| **Backend (email only)** | `functions/` — Firebase Cloud Functions (Node 20), Resend API. Requires Blaze plan; not yet deployed — see §9a |
+| **Backend (email only)** | `scripts/` — Node worker run by GitHub Actions on a schedule, Resend API. No billing plan required — see §9a |
 | **Authentication** | None (open registration); Faculty Roster passcode-gated (client-side: `rsph2026`) |
 | **Version Control** | Git → GitHub (`Drhari730/RSPH-Bridge-Course`, branch `main`) |
 
@@ -84,17 +84,25 @@ rsph-prism-portal/
 ├── RSPH_Bridge_Course_Portal_Interactive.html  # Exact mirror copy of index.html
 ├── rag_knowledge_base.js                   # 50-unit RAG AI Knowledge Base (192KB)
 │
-├── rsph_logo.svg                           # Official RSPH vector logo (primary)
-├── rsph_official_logo.png                  # Fallback PNG logo
-├── rsph_logo.png                           # Additional logo variant
-├── rsph_icon.svg                           # Icon variant
+├── rsph_logo.svg                           # Official RSPH vector logo — the ONLY logo used
+│                                            #   sitewide (favicon, header, footer, certificates).
+│                                            #   A prior custom "prism_icon.svg" program mark was
+│                                            #   tried and reverted (Phase 11) — do not re-add it
+│                                            #   without explicit sign-off, it did not land well.
+├── rsph_official_logo.png                  # PNG fallback (onerror target for rsph_logo.svg)
 │
 ├── prism_hero.jpg                          # Hero banner image
 ├── prism_mod1_art.jpg through mod6_art.jpg # Module infographic banners (6 total)
 ├── prism_health_systems.jpg                # Supplementary infographic
 ├── prism_data_science.jpg                  # Supplementary infographic
 │
-├── firebase.json                           # Firebase Hosting config (public: ".")
+├── scripts/                                # ★ EMAIL WORKER (no Firebase billing plan needed)
+│   ├── send-emails.js                      # Reads Firestore, sends via Resend, tracks state
+│   ├── email-templates.js                  # Branded HTML templates (registration/module/final/digest)
+│   └── package.json                        # firebase (web SDK) dependency; run via GitHub Actions
+├── .github/workflows/prism-emails.yml      # Runs scripts/send-emails.js every 15 min (free, public repo)
+│
+├── firebase.json                           # Firebase Hosting config (public: "."); scripts/** ignored
 ├── firestore.rules                         # Firestore security rules
 ├── .firebaserc                             # Firebase project binding
 ├── .gitignore                              # Git ignore rules
@@ -173,7 +181,8 @@ rsph-prism-portal/
 | `selectLesson(mIdx, lIdx)` | Load a specific lesson in the learning path |
 | `submitModuleQuiz(mIdx)` | Score the 5-question quiz (≥80% = pass) |
 | `generatePinkModuleCert(mIdx)` | Render per-module Pink Certificate |
-| `generateCertificate()` | Render final course completion certificate |
+| `verifyCertStudentId()` | Look up a Student ID (own profile fast-path, else Firestore) and unlock certificate generation only on a match |
+| `generateCertificate()` | Render final course completion certificate — requires `verifiedCertStudent` to be set first; no more free-typed names |
 | `saveStudentRegistration()` | Register student (dual-write: localStorage + Firestore) |
 | `syncStudentToFirestore(profile)` | Push student data to Cloud Firestore |
 | `openRosterModal()` / `verifyRosterAccess()` | Faculty roster with passcode gate |
@@ -257,28 +266,23 @@ Faculty Roster (passcode: rsph2026)
 | **Phase 7** | Restructured to **30-Day course** (6 modules × 5 days = 30 days), added 5 new daily lessons across Modules 1–5, reindexed Module 6 to Days 26–30, updated all metadata |
 | **Phase 8** | Pushed complete codebase to GitHub (`Drhari730/RSPH-Bridge-Course`) |
 | **Phase 9** | Added Faculty/Admin progress dashboard (per-day lesson tracking, quiz scores, Pink Cert codes, drill-down detail view), registration gate on the Learning Path, passcode-gated Faculty Demo Preview account, 9-step User Guide flowchart on Home, admissions-cohort checklist (MPH+MHA name list cross-checked against live registrations), removed Registrar signature from the final certificate (Dean only), added a dedicated `prism_icon.svg` program mark used as the browser favicon and hero accent |
-| **Phase 10** | Registration form changed from free-text name entry to a Program→Name dropdown sourced from the admissions cohort list (with a "not listed" manual fallback); added `functions/` — Firebase Cloud Functions (Node 20) that send transactional email via **Resend** server-side, reacting to Firestore writes: registration confirmation, module/Pink Certificate award, final certificate, and a daily progress digest (Cloud Scheduler, 08:00 IST) |
+| **Phase 10** | Registration form changed from free-text name entry to a Program→Name dropdown sourced from the admissions cohort list (with a "not listed" manual fallback). First attempt at automated email used Firebase Cloud Functions + Resend, but this required the paid Blaze plan — abandoned in Phase 11 in favor of a billing-free approach. |
+| **Phase 11** | Replaced the Firebase Functions email idea with a **free GitHub Actions worker** (`scripts/send-emails.js`, runs every 15 min via `.github/workflows/prism-emails.yml`) that emails via Resend — no billing plan of any kind. Redesigned all four email templates (`scripts/email-templates.js`) as polished branded HTML (matching the Pariksha portal's email style) with the student's name, a prominent Student ID badge, and tiered motivational messaging. Reworked Certificate generation to require **Student ID verification** (looked up against Firestore) instead of free-typing any name — makes the Student ID actually load-bearing. Reverted the custom `prism_icon.svg` program mark (didn't land well) back to the official RSPH logo for the favicon and hero. |
 
 ---
 
-## 9a. Automated Email (Resend via Firebase Cloud Functions)
+## 9a. Automated Email (Resend via a free GitHub Actions worker)
 
-Client-side email (EmailJS) was deliberately removed — a Resend API key must never live in this page's public JavaScript. Email is instead sent server-side by Cloud Functions in `functions/index.js`, triggered automatically by the same Firestore writes the client already makes (no client code needs to call anything to send an email):
+Client-side email (EmailJS) and a server-side Firebase Cloud Functions approach were both tried and abandoned — EmailJS can't run unattended (no scheduling for the daily digest), and Cloud Functions require the paid Blaze plan. The current approach needs **no billing plan at all**:
 
-| Function | Trigger | Sends |
-|:---|:---|:---|
-| `onStudentRegistered` | `onDocumentCreated` on `students/{id}` | Registration confirmation (once, at first registration) |
-| `onStudentProgressUpdated` | `onDocumentUpdated` on `students/{id}` | Diffs before/after: new `pinkCert_mod_N` → module/Pink Cert email; `finalCertificateAwarded` false→true → final certificate email |
-| `dailyProgressDigest` | `onSchedule` (`0 8 * * *`, Asia/Kolkata) | Once-daily progress summary to every registered scholar who has started at least one lesson/quiz |
+- **`scripts/send-emails.js`** — a Node script that reads the `students` collection directly using the same public Firebase web config already in `index.html` (Firestore rules allow open read, so no service-account secret is needed), and sends mail via the **Resend REST API**.
+- **`scripts/email-templates.js`** — the four branded HTML templates (registration, module/Pink Certificate, final certificate, daily digest), styled to match Pariksha's result-email design (table-based layout, gradient header, motivational headline+note, stat rows) in RSPH navy/crimson/pink.
+- **`.github/workflows/prism-emails.yml`** — runs the script every 15 minutes via GitHub Actions `schedule` (free and unlimited since this repo is public), plus `workflow_dispatch` for manual runs.
+- **State**: a single Firestore doc `meta/emailAutomationState` tracks which registrations/module-certs/final-certs have already been emailed, so re-runs never double-send. The daily digest fires once during the run that lands in the 08:00–08:59 IST window.
+- **Secret**: `RESEND_API_KEY` is stored as a GitHub Actions **repository secret** (`gh secret set RESEND_API_KEY --repo Drhari730/RSPH-Bridge-Course`) — never committed to git, never touches Firebase.
+- **Sender**: `PRISM Bridge Course <prism@drhari.co.in>` — **requires `drhari.co.in` to show "Verified" at https://resend.com/domains**; until then Resend rejects every send with a 403. Check that page before assuming email is live.
 
-**Setup (not yet deployed as of Phase 10 — needs the project owner to do these manually):**
-1. Upgrade `rsph-prism-2026-8d817` to the Firebase **Blaze** (pay-as-you-go) plan in the Firebase Console — required for any Cloud Functions deploy and for the scheduled function's Cloud Scheduler job. Usage at this course's scale (~30 students) stays within the free monthly quota.
-2. `firebase functions:secrets:set RESEND_API_KEY` (from the project root) — paste an existing or new Resend API key. Never commit this key to git.
-3. Set the sender address to a domain verified in Resend, either by editing the `FROM_EMAIL` default in `functions/index.js` or via `firebase functions:config` — do not use an unverified domain, Resend will reject sends.
-4. `cd functions && npm install`
-5. `firebase deploy --only functions --project rsph-prism-2026-8d817`
-
-Demo/faculty-preview profiles (`DEMO-` prefixed student IDs) are explicitly excluded from all three functions.
+Demo/faculty-preview profiles (`DEMO-` prefixed student IDs) are excluded from all sends. To test without a verified domain, temporarily send via Resend's built-in `onboarding@resend.dev` sender (no verification needed) — see git history for the throwaway diagnostic script pattern (reads the API key from stdin, never as a literal in a command).
 
 ---
 

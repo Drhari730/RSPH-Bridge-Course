@@ -27,6 +27,7 @@ const {
   getDoc,
   setDoc
 } = require('firebase/firestore');
+const { registrationEmail, moduleCertEmail, finalCertEmail, digestEmail } = require('./email-templates');
 
 const firebaseConfig = {
   apiKey: 'AIzaSyDt2cIExr_hEK_q_b9HhtnzKzeSbXsqT_I',
@@ -102,11 +103,7 @@ async function main() {
         await sendEmail(
           s.email,
           'Welcome to the RSPH PRISM Bridge Course',
-          `<p>Dear ${s.name || 'Scholar'},</p>
-           <p>Your registration for the <strong>RSPH PRISM 30-Day Bridge Course</strong> is confirmed.</p>
-           <p><strong>Student ID:</strong> ${s.id}<br/><strong>Program:</strong> ${s.discipline || ''}</p>
-           <p>You now have full access to all 30 daily lessons, interactive labs, quizzes and Pink Certificates.</p>
-           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+          registrationEmail({ name: s.name || 'Scholar', studentId: s.id, discipline: s.discipline })
         );
         notifiedRegistrations.add(s.id);
         sentCount++;
@@ -117,6 +114,7 @@ async function main() {
 
     // 2) Module / Pink Certificate emails
     const alreadyNotifiedMods = new Set(notifiedCerts[s.id] || []);
+    const totalCertsSoFar = countPinkCerts(s);
     for (const key of Object.keys(s)) {
       if (!key.startsWith('pinkCert_mod_')) continue;
       const cert = s[key];
@@ -125,10 +123,15 @@ async function main() {
         await sendEmail(
           s.email,
           `Module ${cert.moduleNum} Complete — Pink Certificate Awarded`,
-          `<p>Dear ${s.name || 'Scholar'},</p>
-           <p>Congratulations! You've passed the quiz for <strong>Module ${cert.moduleNum}: ${cert.moduleName}</strong> and earned your Pink Certificate of Module Mastery.</p>
-           <p><strong>Certificate Code:</strong> ${cert.code}<br/><strong>Awarded:</strong> ${cert.awardedDate}</p>
-           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+          moduleCertEmail({
+            name: s.name || 'Scholar',
+            studentId: s.id,
+            moduleNum: cert.moduleNum,
+            moduleName: cert.moduleName,
+            certCode: cert.code,
+            awardedDate: cert.awardedDate,
+            modulesRemaining: Math.max(0, TOTAL_MODULES - totalCertsSoFar)
+          })
         );
         alreadyNotifiedMods.add(cert.moduleNum);
         sentCount++;
@@ -144,11 +147,12 @@ async function main() {
         await sendEmail(
           s.email,
           'PRISM Course Completion Certificate Issued',
-          `<p>Dear ${s.name || 'Scholar'},</p>
-           <p>Congratulations on completing the full 30-Day PRISM Bridge Course!</p>
-           <p>Your official <strong>Certificate of Competence</strong> has been issued.</p>
-           <p><strong>Certificate ID:</strong> ${s.finalCertificateId || ''}<br/><strong>Date:</strong> ${s.finalCertificateDate || ''}</p>
-           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+          finalCertEmail({
+            name: s.name || 'Scholar',
+            studentId: s.id,
+            certId: s.finalCertificateId || '',
+            certDate: s.finalCertificateDate || ''
+          })
         );
         notifiedFinal.add(s.id);
         sentCount++;
@@ -173,16 +177,16 @@ async function main() {
         await sendEmail(
           s.email,
           'Your RSPH PRISM Daily Progress Update',
-          `<p>Dear ${s.name || 'Scholar'},</p>
-           <p>Here's where you stand in the 30-Day PRISM Bridge Course:</p>
-           <ul>
-             <li><strong>Lessons completed:</strong> ${lessonsDone} / ${TOTAL_LESSONS}</li>
-             <li><strong>Module quizzes passed:</strong> ${quizzesPassed} / ${TOTAL_MODULES}</li>
-             <li><strong>Pink Certificates earned:</strong> ${countPinkCerts(s)}</li>
-             <li><strong>Final Certificate:</strong> ${s.finalCertificateAwarded ? 'Issued 🎓' : 'Not yet issued'}</li>
-           </ul>
-           <p>Keep up the momentum — log back in to continue your next lesson.</p>
-           <p>— Ramaiah School of Public Health (RSPH), MSRUAS</p>`
+          digestEmail({
+            name: s.name || 'Scholar',
+            studentId: s.id,
+            lessonsDone,
+            totalLessons: TOTAL_LESSONS,
+            quizzesPassed,
+            totalModules: TOTAL_MODULES,
+            pinkCerts: countPinkCerts(s),
+            finalAwarded: !!s.finalCertificateAwarded
+          })
         );
         sentCount++;
       } catch (err) {
