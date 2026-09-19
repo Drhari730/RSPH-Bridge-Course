@@ -796,8 +796,16 @@
       overflow: hidden;
       animation: popIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .chatbot-drawer.open { display: flex; }
+    .chatbot-drawer.expanded {
+      width: min(920px, calc(100vw - 48px));
+      height: calc(100vh - 100px);
+      max-height: calc(100vh - 100px);
+      right: 24px;
+      bottom: 84px;
+    }
     @media (max-width: 600px) {
       .chatbot-drawer {
         right: 8px;
@@ -2661,19 +2669,20 @@
     </div>
   </div>
 
-  <!-- FLOATING RAG CHATBOT FAB -->
+  <!-- FLOATING AI STUDY TUTOR FAB -->
   <div class="chatbot-fab" onclick="toggleChat()">
-    <span style="font-size: 16px;">🔍</span> <span>Curriculum Knowledge Search</span>
+    <span style="font-size: 16px;">🔍</span> <span>Ask Setu — Your Study Tutor</span>
   </div>
 
-  <!-- RAG CHATBOT DRAWER -->
+  <!-- SETU: AI STUDY TUTOR DRAWER -->
   <div class="chatbot-drawer" id="chatDrawer">
     <div class="chat-header">
       <div class="chat-header-info">
-        <h4>RSPH Curriculum &amp; Faculty Knowledge Base</h4>
+        <h4>🌉 Setu — Your PRISM Study Tutor</h4>
         <span class="chat-sub">Grounded in Gordis 7th, Park 28th, IPHS 2022, Greene Med Term &amp; ICD-10/11</span>
       </div>
       <div class="chat-header-actions">
+        <button class="chat-hdr-btn" id="chatExpandBtn" onclick="toggleChatExpand()" title="Expand to Full Chat">⤢</button>
         <button class="chat-hdr-btn" onclick="resetChat()" title="Restart Conversation">↺</button>
         <button class="chat-hdr-btn" onclick="toggleChat()" title="Close Drawer">&times;</button>
       </div>
@@ -2682,11 +2691,11 @@
     <div class="chat-messages" id="chatMsgs">
       <div class="chat-msg bot">
         <div class="tutor-header">
-          <span class="tutor-cat-badge">FACULTY CURRICULUM REPOSITORY</span>
-          <h3 class="tutor-title">Ramaiah School of Public Health Academic Knowledge Repository</h3>
+          <span class="tutor-cat-badge">SETU · AI STUDY TUTOR</span>
+          <h3 class="tutor-title">🌉 Meet Setu — Your PRISM Study Companion</h3>
         </div>
         <div class="tutor-section">
-          <p>Interactive curriculum and literature search repository for the <strong>RSPH 30-Day Bridge Course</strong>, grounded directly in approved MPH &amp; MHA curricula and primary literature:</p>
+          <p>I'm <strong>Setu</strong> ("bridge" in Sanskrit) — here to bridge you from the textbook page to real understanding across the <strong>RSPH 30-Day Bridge Course</strong>, grounded directly in your approved MPH &amp; MHA curricula and primary literature:</p>
           <ul>
             <li><strong>Epidemiology:</strong> Gordis (7th Ed), Rothman, study designs, 2x2 diagnostic testing, outbreak investigation</li>
             <li><strong>Biostatistics:</strong> Daniel Biostatistics, hypothesis testing, test selection matrix, sample size</li>
@@ -5064,6 +5073,14 @@
       }
     }
 
+    function toggleChatExpand() {
+      const drawer = document.getElementById('chatDrawer');
+      const btn = document.getElementById('chatExpandBtn');
+      const expanded = drawer.classList.toggle('expanded');
+      btn.innerHTML = expanded ? '⤡' : '⤢';
+      btn.title = expanded ? 'Collapse Chat' : 'Expand to Full Chat';
+    }
+
     function askQuick(q) {
       const drawer = document.getElementById('chatDrawer');
       if (!drawer.classList.contains('open')) drawer.classList.add('open');
@@ -5076,17 +5093,17 @@
       const isKnownStudent = typeof studentProfile !== 'undefined' && studentProfile && studentProfile.name && !studentProfile.isDemo;
       const firstName = isKnownStudent ? studentProfile.name.split(/\s+/)[0] : '';
       const greetingHtml = isKnownStudent
-        ? `<p>Welcome back, <strong>${firstName}</strong>! I'm grounded in your prescribed PRISM textbooks — ask me anything from your daily lessons.</p>`
+        ? `<p>Welcome back, <strong>${firstName}</strong>! Setu here, grounded in your prescribed PRISM textbooks — ask me anything from your daily lessons.</p>`
         : '';
       msgContainer.innerHTML = `
         <div class="chat-msg bot">
           <div class="tutor-header">
-            <span class="tutor-cat-badge">FACULTY CURRICULUM REPOSITORY</span>
-            <h3 class="tutor-title">Ramaiah School of Public Health Academic Knowledge Repository</h3>
+            <span class="tutor-cat-badge">SETU · AI STUDY TUTOR</span>
+            <h3 class="tutor-title">🌉 Meet Setu — Your PRISM Study Companion</h3>
           </div>
           <div class="tutor-section">
             ${greetingHtml}
-            <p>Interactive curriculum and literature search repository for the <strong>RSPH 30-Day Bridge Course</strong>, grounded directly in approved MPH &amp; MHA curricula and primary literature:</p>
+            <p>I'm <strong>Setu</strong> ("bridge" in Sanskrit) — here to bridge you from the textbook page to real understanding across the <strong>RSPH 30-Day Bridge Course</strong>, grounded directly in your approved MPH &amp; MHA curricula and primary literature:</p>
             <ul>
               <li><strong>Epidemiology:</strong> Gordis (7th Ed), Rothman, study designs, 2x2 diagnostic testing, outbreak investigation</li>
               <li><strong>Biostatistics:</strong> Daniel Biostatistics, hypothesis testing, test selection matrix, sample size</li>
@@ -5223,7 +5240,7 @@
       msgContainer.innerHTML += `
         <div class="typing-indicator" id="${typingId}">
           <div class="typing-dots"><span></span><span></span><span></span></div>
-          <span>Consulting your prescribed textbooks...</span>
+          <span>Setu is checking your prescribed textbooks...</span>
         </div>
       `;
       msgContainer.scrollTop = msgContainer.scrollHeight;
