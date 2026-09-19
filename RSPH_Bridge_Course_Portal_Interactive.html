@@ -90,12 +90,32 @@
 
     /* HERO BANNER */
     .hero-banner {
+      position: relative;
+      overflow: hidden;
       background: linear-gradient(135deg, #A82042 0%, #C4303A 45%, #D84A28 100%);
       color: #FFFFFF;
       padding: 44px 28px 40px;
       box-shadow: 0 4px 20px rgba(168, 32, 66, 0.18);
     }
-    .hero-container { max-width: 1240px; margin: 0 auto; }
+    /* Fills empty gradient space on wide screens with a subtle "light through
+       a prism" beam pattern — decorative texture, not a logo/icon. */
+    .hero-banner::after {
+      content: '';
+      position: absolute;
+      top: -10%; right: 0; bottom: -10%;
+      width: 60%;
+      background-image: repeating-linear-gradient(
+        115deg,
+        rgba(255, 255, 255, 0.10) 0px,
+        rgba(255, 255, 255, 0.10) 2px,
+        transparent 2px,
+        transparent 36px
+      );
+      -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,0.9) 25%, rgba(0,0,0,0) 100%);
+      mask-image: linear-gradient(to left, rgba(0,0,0,0.9) 25%, rgba(0,0,0,0) 100%);
+      pointer-events: none;
+    }
+    .hero-container { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; }
     .hero-kicker {
       font-size: 12px;
       font-weight: 700;
@@ -1438,6 +1458,63 @@
   .reflist a{font-weight:700}
 
 
+  /* ============ ANIMATED NOTICE OVERLAY (replaces alert/confirm) ============ */
+  .notice-overlay {
+    position: fixed; inset: 0; z-index: 200000;
+    background: rgba(2, 17, 82, 0.55);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .notice-overlay.open { opacity: 1; pointer-events: auto; }
+  .notice-card {
+    background: #FFFFFF;
+    border-radius: 18px;
+    border-top: 5px solid var(--rsph-crimson);
+    padding: 34px 30px 28px;
+    max-width: 420px; width: 100%;
+    text-align: center;
+    box-shadow: 0 28px 64px rgba(2, 6, 23, 0.38);
+    transform: scale(0.85) translateY(18px);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  .notice-overlay.open .notice-card { transform: scale(1) translateY(0); opacity: 1; }
+  .notice-card.tone-success { border-top-color: #15803D; }
+  .notice-card.tone-error { border-top-color: var(--rsph-crimson); }
+  .notice-card.tone-warning { border-top-color: #D97706; }
+  .notice-card.tone-info { border-top-color: var(--rsph-navy); }
+  .notice-icon {
+    font-size: 46px; line-height: 1; margin-bottom: 12px;
+    animation: noticePop 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  @keyframes noticePop {
+    0% { transform: scale(0) rotate(-15deg); }
+    60% { transform: scale(1.18) rotate(4deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  .notice-title {
+    font-family: 'Georgia', serif; font-size: 19px; font-weight: 700;
+    color: #0F172A; margin: 0 0 10px; line-height: 1.35;
+  }
+  .notice-message {
+    font-size: 13.5px; color: #475569; line-height: 1.65;
+    white-space: pre-line; margin: 0 0 24px;
+  }
+  .notice-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .notice-btn {
+    padding: 10px 22px; border-radius: 8px; border: none;
+    font-weight: 700; font-size: 13px; cursor: pointer;
+    transition: all 0.2s ease; font-family: inherit;
+  }
+  .notice-btn.primary { background: var(--rsph-crimson); color: #FFFFFF; }
+  .notice-btn.primary:hover { background: #9D174D; transform: translateY(-2px); box-shadow: 0 8px 18px rgba(168,32,66,0.3); }
+  .notice-btn.secondary { background: #F1F5F9; color: #334155; }
+  .notice-btn.secondary:hover { background: #E2E8F0; }
+
   /* ============ HIGH RESOLUTION IMAGE LIGHTBOX MODAL ============ */
   .lightbox-modal {
     display: none;
@@ -1910,7 +1987,7 @@
   <!-- STUDENT PROFILE / REGISTRATION BAR -->
   <div class="student-reg-bar">
     <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-      <span class="student-badge-pill">
+      <span class="student-badge-pill" onclick="openStudentModal()" style="cursor: pointer;" title="Click to view or update your registration">
         <span>👤</span> <span id="regStudentNameDisplay">Student: <em>Guest Scholar</em></span>
       </span>
       <span id="regStudentIdDisplay" style="font-size: 11.5px; color: var(--rsph-muted);">ID: Not Registered</span>
@@ -3020,8 +3097,11 @@
     // Tab switching
     function switchTab(tabId) {
       if (tabId === 'learning' && !isRegistered()) {
-        alert('🔒 Registration Required\n\nYou must complete Student Registration before accessing the 30-Day Learning Path, daily lessons, and module quizzes.\n\nClick "📝 Student Registration" at the top of the page to get your Student ID — it only takes a minute and unlocks all lessons, interactive labs, quizzes, and Pink Certificates.');
-        openStudentModal();
+        showNotice({
+          tone: 'warning', icon: '🔒', title: 'Registration Required',
+          message: 'You must complete Student Registration before accessing the 30-Day Learning Path, daily lessons, and module quizzes.\n\nClick "Student Registration" at the top of the page to get your Student ID — it only takes a minute and unlocks all lessons, interactive labs, quizzes, and Pink Certificates.',
+          onOk: openStudentModal
+        });
         return;
       }
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -3253,8 +3333,7 @@
 
     function markLessonComplete(day) {
       if (!isRegistered()) {
-        alert('🔒 Registration Required\n\nPlease complete Student Registration before marking lessons complete.');
-        openStudentModal();
+        showNotice({ tone: 'warning', icon: '🔒', title: 'Registration Required', message: 'Please complete Student Registration before marking lessons complete.', onOk: openStudentModal });
         return;
       }
       completedLessons.add(day);
@@ -3287,8 +3366,7 @@
     // MODULE EVALUATION (QUIZ & ASSIGNMENT)
     function openModuleEvaluation(mIdx) {
       if (!isRegistered()) {
-        alert('🔒 Registration Required\n\nPlease complete Student Registration before attempting a module quiz.');
-        openStudentModal();
+        showNotice({ tone: 'warning', icon: '🔒', title: 'Registration Required', message: 'Please complete Student Registration before attempting a module quiz.', onOk: openStudentModal });
         return;
       }
       currentModuleIndex = mIdx;
@@ -3364,8 +3442,7 @@
 
     function submitModuleQuiz(mIdx) {
       if (!isRegistered()) {
-        alert('🔒 Registration Required\n\nPlease complete Student Registration before submitting a module quiz.');
-        openStudentModal();
+        showNotice({ tone: 'warning', icon: '🔒', title: 'Registration Required', message: 'Please complete Student Registration before submitting a module quiz.', onOk: openStudentModal });
         return;
       }
       const mod = courseData.modules[mIdx];
@@ -3420,7 +3497,7 @@
     function submitAssignment(mIdx) {
       const text = document.getElementById(`assignText_${mIdx}`).value.trim();
       if (!text) {
-        alert('Please enter your assignment response before submitting.');
+        showNotice({ tone: 'warning', icon: '✏️', title: 'Assignment Required', message: 'Please enter your assignment response before submitting.' });
         return;
       }
       document.getElementById(`assignConfirm_${mIdx}`).style.display = 'block';
@@ -4630,10 +4707,23 @@
       }
 
       if (verifiedCertStudent && verifiedCertStudent.name) {
-        statusEl.innerHTML = `<span style="color: #15803D; font-weight: 700;">✓ Verified: ${verifiedCertStudent.name} (${verifiedCertStudent.discipline || 'PRISM Scholar'})</span>`;
-        genBtn.disabled = false;
-        genBtn.style.opacity = '1';
-        genBtn.style.cursor = 'pointer';
+        const totalModules = courseData.modules.length;
+        const modulesDone = (verifiedCertStudent === studentProfile)
+          ? passedQuizzes.size
+          : (Array.isArray(verifiedCertStudent.passedQuizzes) ? verifiedCertStudent.passedQuizzes.length : 0);
+        const courseComplete = verifiedCertStudent.isDemo || modulesDone >= totalModules;
+
+        if (courseComplete) {
+          statusEl.innerHTML = `<span style="color: #15803D; font-weight: 700;">✓ Verified: ${verifiedCertStudent.name} (${verifiedCertStudent.discipline || 'PRISM Scholar'}) — all ${totalModules} modules complete!</span>`;
+          genBtn.disabled = false;
+          genBtn.style.opacity = '1';
+          genBtn.style.cursor = 'pointer';
+        } else {
+          statusEl.innerHTML = `<span style="color: #D97706; font-weight: 700;">🔒 Verified: ${verifiedCertStudent.name} — but only ${modulesDone} / ${totalModules} modules passed so far. Complete all modules to unlock your certificate.</span>`;
+          genBtn.disabled = true;
+          genBtn.style.opacity = '0.45';
+          genBtn.style.cursor = 'not-allowed';
+        }
       } else {
         statusEl.innerHTML = '<span style="color: var(--rsph-crimson);">No registered scholar found with that Student ID. Double-check the ID from your registration email.</span>';
       }
@@ -4641,7 +4731,20 @@
 
     function generateCertificate() {
       if (!verifiedCertStudent || !verifiedCertStudent.name) {
-        alert('Please verify your Student ID first.');
+        showNotice({ tone: 'warning', icon: '🪪', title: 'Verify Your ID First', message: 'Please verify your Student ID before generating a certificate.' });
+        return;
+      }
+      const totalModules = courseData.modules.length;
+      // Same-browser fast-path: verifiedCertStudent IS the live studentProfile, whose real-time
+      // quiz progress lives in the separate `passedQuizzes` Set, not on the profile object itself.
+      const modulesDone = (verifiedCertStudent === studentProfile)
+        ? passedQuizzes.size
+        : (Array.isArray(verifiedCertStudent.passedQuizzes) ? verifiedCertStudent.passedQuizzes.length : 0);
+      if (modulesDone < totalModules && !verifiedCertStudent.isDemo) {
+        showNotice({
+          tone: 'warning', icon: '📚', title: 'Course Not Yet Complete',
+          message: `${verifiedCertStudent.name}, you've passed ${modulesDone} of ${totalModules} module quizzes so far. The final Certificate of Competence unlocks only once all ${totalModules} modules are complete — keep going!`
+        });
         return;
       }
       const name = verifiedCertStudent.name;
@@ -4728,6 +4831,38 @@
         q = q.replace(regex, digit);
       }
       return q;
+    }
+
+    // Small Levenshtein edit-distance helper so common misspellings of
+    // medical/epidemiology terms (e.g. "prevelance" for "prevalence") still
+    // surface a real answer instead of falling through to the generic
+    // "no match" screen. Only engages for longer words to avoid false
+    // positives on short/common tokens.
+    function levenshteinDistance(a, b) {
+      const m = a.length, n = b.length;
+      if (m === 0) return n;
+      if (n === 0) return m;
+      const dp = new Array(n + 1);
+      for (let j = 0; j <= n; j++) dp[j] = j;
+      for (let i = 1; i <= m; i++) {
+        let prevDiag = dp[0];
+        dp[0] = i;
+        for (let j = 1; j <= n; j++) {
+          const temp = dp[j];
+          dp[j] = a[i - 1] === b[j - 1] ? prevDiag : 1 + Math.min(prevDiag, dp[j], dp[j - 1]);
+          prevDiag = temp;
+        }
+      }
+      return dp[n];
+    }
+
+    function fuzzyTokenMatches(token, word) {
+      if (!token || !word) return false;
+      if (token === word) return true;
+      if (token.length < 5 || word.length < 5) return false;
+      const maxDist = (token.length >= 8 || word.length >= 8) ? 2 : 1;
+      if (Math.abs(token.length - word.length) > maxDist) return false;
+      return levenshteinDistance(token, word) <= maxDist;
     }
 
     function queryKnowledgeBase(query) {
@@ -4818,6 +4953,19 @@
           // Category match
           if (categoryLower.split(/[\s&]+/).includes(token)) {
             score += 3;
+          }
+          // Fuzzy typo fallback — only tried when no exact hit landed above
+          if (!tokenHit) {
+            const topicWords = topicLower.split(/[\s,.&-]+/);
+            if (topicWords.some(w => fuzzyTokenMatches(token, w))) {
+              score += 5;
+              tokenHit = true;
+            }
+            const keywordWords = keywordsLower.flatMap(k => k.split(/[\s-]+/));
+            if (keywordWords.some(w => fuzzyTokenMatches(token, w))) {
+              score += 4;
+              tokenHit = true;
+            }
           }
           if (tokenHit) matchedOriginalTokens++;
         });
@@ -4910,6 +5058,11 @@
 
     function resetChat() {
       const msgContainer = document.getElementById('chatMsgs');
+      const isKnownStudent = typeof studentProfile !== 'undefined' && studentProfile && studentProfile.name && !studentProfile.isDemo;
+      const firstName = isKnownStudent ? studentProfile.name.split(/\s+/)[0] : '';
+      const greetingHtml = isKnownStudent
+        ? `<p>Welcome back, <strong>${firstName}</strong>! I'm grounded in your prescribed PRISM textbooks — ask me anything from your daily lessons.</p>`
+        : '';
       msgContainer.innerHTML = `
         <div class="chat-msg bot">
           <div class="tutor-header">
@@ -4917,6 +5070,7 @@
             <h3 class="tutor-title">Ramaiah School of Public Health Academic Knowledge Repository</h3>
           </div>
           <div class="tutor-section">
+            ${greetingHtml}
             <p>Interactive curriculum and literature search repository for the <strong>RSPH 30-Day Bridge Course</strong>, grounded directly in approved MPH &amp; MHA curricula and primary literature:</p>
             <ul>
               <li><strong>Epidemiology:</strong> Gordis (7th Ed), Rothman, study designs, 2x2 diagnostic testing, outbreak investigation</li>
@@ -4934,6 +5088,69 @@
         </div>
       `;
     }
+
+    // ==========================================
+    // ANIMATED NOTICE SYSTEM (replaces native alert()/confirm())
+    // ==========================================
+    function showNotice(opts) {
+      opts = opts || {};
+      const overlay = document.getElementById('noticeOverlay');
+      const card = document.getElementById('noticeCard');
+      card.className = 'notice-card tone-' + (opts.tone || 'info');
+      document.getElementById('noticeIcon').textContent = opts.icon || 'ℹ️';
+      document.getElementById('noticeTitle').textContent = opts.title || '';
+      document.getElementById('noticeMessage').textContent = opts.message || '';
+
+      const actions = document.getElementById('noticeActions');
+      actions.innerHTML = '';
+      const okBtn = document.createElement('button');
+      okBtn.type = 'button';
+      okBtn.className = 'notice-btn primary';
+      okBtn.textContent = opts.okText || 'OK';
+      okBtn.onclick = () => { closeNotice(); if (opts.onOk) opts.onOk(); };
+      actions.appendChild(okBtn);
+
+      overlay.classList.add('open');
+      setTimeout(() => okBtn.focus(), 50);
+    }
+
+    function showConfirmNotice(opts) {
+      opts = opts || {};
+      const overlay = document.getElementById('noticeOverlay');
+      const card = document.getElementById('noticeCard');
+      card.className = 'notice-card tone-' + (opts.tone || 'warning');
+      document.getElementById('noticeIcon').textContent = opts.icon || '❓';
+      document.getElementById('noticeTitle').textContent = opts.title || '';
+      document.getElementById('noticeMessage').textContent = opts.message || '';
+
+      const actions = document.getElementById('noticeActions');
+      actions.innerHTML = '';
+      const cancelBtn = document.createElement('button');
+      cancelBtn.type = 'button';
+      cancelBtn.className = 'notice-btn secondary';
+      cancelBtn.textContent = opts.cancelText || 'Cancel';
+      cancelBtn.onclick = () => { closeNotice(); if (opts.onCancel) opts.onCancel(); };
+      const confirmBtn = document.createElement('button');
+      confirmBtn.type = 'button';
+      confirmBtn.className = 'notice-btn primary';
+      confirmBtn.textContent = opts.confirmText || 'Confirm';
+      confirmBtn.onclick = () => { closeNotice(); if (opts.onConfirm) opts.onConfirm(); };
+      actions.appendChild(cancelBtn);
+      actions.appendChild(confirmBtn);
+
+      overlay.classList.add('open');
+    }
+
+    function closeNotice() {
+      document.getElementById('noticeOverlay').classList.remove('open');
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('noticeOverlay');
+        if (overlay && overlay.classList.contains('open')) closeNotice();
+      }
+    });
 
     function escapeHtml(str) {
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
@@ -5136,12 +5353,12 @@
     function saveStudentRegistration() {
       const name = getSelectedRegName();
       if (!name) {
-        alert('Please select your name from the list (or choose "My name is not listed" and type your full legal name).');
+        showNotice({ tone: 'warning', icon: '🧑', title: 'Name Required', message: 'Please select your name from the list (or choose "My name is not listed" and type your full legal name).' });
         return;
       }
       const email = document.getElementById('regEmail').value.trim();
       if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        alert('Please enter a valid email address — it is used to send your automated progress and certificate updates.');
+        showNotice({ tone: 'warning', icon: '📧', title: 'Valid Email Required', message: 'Please enter a valid email address — it is used to send your automated progress and certificate updates.' });
         return;
       }
       studentProfile.name = name;
@@ -5173,9 +5390,13 @@
 
       updateStudentHeaderUI();
       closeStudentModal();
-      alert(`Registration Successful!\nWelcome, ${studentProfile.name}.\nStudent ID: ${studentProfile.id}\nYour profile is now registered in the Central RSPH Database. Pink Certificates will be issued in your name, and progress updates will be emailed to ${studentProfile.email}.`);
-      // A registration confirmation email is sent server-side (see functions/index.js),
-      // triggered automatically the first time this student's Firestore doc is created.
+      showNotice({
+        tone: 'success', icon: '✅', title: 'Registration Successful!',
+        message: `Welcome, ${studentProfile.name}.\nStudent ID: ${studentProfile.id}\nYour profile is now registered in the Central RSPH Database. Pink Certificates will be issued in your name, and progress updates will be emailed to ${studentProfile.email}.`
+      });
+      // A registration confirmation email is sent by the scripts/send-emails.js
+      // GitHub Actions worker, triggered automatically by this Firestore write.
+      resetChat();
     }
 
     // ==========================================
@@ -5248,26 +5469,36 @@
     // not written to localStorage, and excluded from the roster / Firestore writes.
     function launchFacultyDemoMode() {
       if (facultyDemoMode) {
-        alert('Faculty Demo Preview is already active for this session.\nStudent ID: DEMO-FACULTY-2026 — all modules, labs and quizzes are unlocked for review.');
+        showNotice({
+          tone: 'info', icon: '🎓', title: 'Demo Preview Already Active',
+          message: 'Faculty Demo Preview is already active for this session.\nStudent ID: DEMO-FACULTY-2026 — all modules, labs and quizzes are unlocked for review.'
+        });
         return;
       }
-      const ok = confirm('Launch Faculty Demo Preview?\n\nThis unlocks the full 30-Day Learning Path, labs and quizzes for review using a shared demo profile (DEMO-FACULTY-2026). No real student data is created or affected, and demo activity is never written to the Central Registry.');
-      if (!ok) return;
-
-      facultyDemoMode = true;
-      studentProfile = {
-        name: 'Faculty Demo Reviewer',
-        email: '',
-        discipline: 'Faculty Preview',
-        prior: '',
-        college: 'Ramaiah School of Public Health, MSRUAS',
-        id: 'DEMO-FACULTY-2026',
-        registeredAt: new Date().toISOString(),
-        isDemo: true
-      };
-      updateStudentHeaderUI();
-      alert('🎓 Faculty Demo Preview activated.\nAll 30 daily lessons, interactive labs and module quizzes are now unlocked for review. Nothing you do in this mode is saved to the real student registry.');
-      switchTab('learning');
+      showConfirmNotice({
+        tone: 'warning', icon: '🎓', title: 'Launch Faculty Demo Preview?',
+        message: 'This unlocks the full 30-Day Learning Path, labs and quizzes for review using a shared demo profile (DEMO-FACULTY-2026). No real student data is created or affected, and demo activity is never written to the Central Registry.',
+        confirmText: 'Launch Preview', cancelText: 'Cancel',
+        onConfirm: () => {
+          facultyDemoMode = true;
+          studentProfile = {
+            name: 'Faculty Demo Reviewer',
+            email: '',
+            discipline: 'Faculty Preview',
+            prior: '',
+            college: 'Ramaiah School of Public Health, MSRUAS',
+            id: 'DEMO-FACULTY-2026',
+            registeredAt: new Date().toISOString(),
+            isDemo: true
+          };
+          updateStudentHeaderUI();
+          showNotice({
+            tone: 'success', icon: '🎓', title: 'Demo Preview Activated',
+            message: 'All 30 daily lessons, interactive labs and module quizzes are now unlocked for review. Nothing you do in this mode is saved to the real student registry.',
+            onOk: () => switchTab('learning')
+          });
+        }
+      });
     }
 
     function openRosterModal() {
@@ -5416,7 +5647,7 @@
     // FULL PER-STUDENT PROGRESS DRILL-DOWN (Faculty/Admin Dashboard)
     function viewStudentDetail(studentId) {
       const s = allRosterStudents.find(x => x.id === studentId);
-      if (!s) { alert('Scholar record not found.'); return; }
+      if (!s) { showNotice({ tone: 'error', icon: '❌', title: 'Not Found', message: 'Scholar record not found.' }); return; }
 
       const totalLessons = courseData && courseData.modules ? courseData.modules.reduce((acc, m) => acc + (m.lessons ? m.lessons.length : 0), 0) : 30;
       const completed = new Set(Array.isArray(s.completedLessons) ? s.completedLessons : []);
@@ -5524,7 +5755,7 @@
 
     function exportRosterCSV() {
       if (!allRosterStudents || allRosterStudents.length === 0) {
-        alert('No roster data to export.');
+        showNotice({ tone: 'warning', icon: '📭', title: 'Nothing to Export', message: 'No roster data to export.' });
         return;
       }
 
@@ -6011,6 +6242,7 @@ function initScrollReveal() {
       selectLesson(0, 1);
       updateStudentHeaderUI();
       initScrollReveal();
+      resetChat();
 
       // Sync active student profile to cloud on boot
       if (studentProfile && studentProfile.id) {
@@ -6035,6 +6267,16 @@ function initScrollReveal() {
       <div class="lightbox-img-wrapper" id="lightboxWrapper" onclick="if(event.target===this) closeLightbox();">
         <img id="lightboxImg" src="" alt="Infographic" />
       </div>
+    </div>
+  </div>
+
+  <!-- ANIMATED NOTICE OVERLAY (replaces native alert()/confirm()) -->
+  <div class="notice-overlay" id="noticeOverlay" onclick="if(event.target===this) closeNotice();">
+    <div class="notice-card" id="noticeCard">
+      <div class="notice-icon" id="noticeIcon">ℹ️</div>
+      <h3 class="notice-title" id="noticeTitle"></h3>
+      <p class="notice-message" id="noticeMessage"></p>
+      <div class="notice-actions" id="noticeActions"></div>
     </div>
   </div>
 
