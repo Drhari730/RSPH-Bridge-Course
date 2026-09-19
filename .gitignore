@@ -21,3 +21,5 @@ desktop.ini
 
 RSPH_MPH_Website/
 firebase-debug.log
+.wrangler/
+.dev.vars

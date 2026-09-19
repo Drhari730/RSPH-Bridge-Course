@@ -909,6 +909,14 @@
       line-height: 1.55;
     }
     .tutor-section p { margin: 4px 0 6px 0; }
+    .tutor-ai-answer {
+      font-size: 13.5px;
+      color: #1E293B;
+      line-height: 1.65;
+    }
+    .tutor-ai-answer p { margin: 0 0 10px 0; }
+    .tutor-ai-answer ul { margin: 0 0 10px 18px; padding: 0; }
+    .tutor-ai-answer li { margin: 3px 0; }
     .tutor-sec-title {
       font-size: 12px;
       font-weight: 700;
@@ -4908,6 +4916,8 @@
 
       let bestMatch = null;
       let highestScore = 0;
+      let secondMatch = null;
+      let secondScore = 0;
 
       kb.forEach(entry => {
         let score = 0;
@@ -4990,12 +5000,17 @@
         });
 
         if (score > highestScore) {
+          secondMatch = bestMatch;
+          secondScore = highestScore;
           highestScore = score;
           bestMatch = entry;
+        } else if (score > secondScore) {
+          secondScore = score;
+          secondMatch = entry;
         }
       });
 
-      return { bestMatch, highestScore };
+      return { bestMatch, highestScore, secondMatch, secondScore };
     }
 
     function renderTutorResponse(entry) {
@@ -5156,6 +5171,44 @@
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
+    // PRISM Study Tutor backend (Cloudflare Worker -> Kimi/Moonshot AI).
+    // Set after `wrangler deploy`. If empty or unreachable, the chat falls
+    // back to the local rule-based retrieval automatically — never breaks.
+    const TUTOR_WORKER_URL = 'https://prism-study-tutor.hariprakash607.workers.dev';
+
+    function simpleMarkdownToHtml(text) {
+      const esc = escapeHtml(text || '');
+      const withInline = esc
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n{2,}/g, '</p><p>')
+        .replace(/\n- (.*?)(?=\n|$)/g, '<li>$1</li>')
+        .replace(/\n/g, '<br>');
+      let html = `<p>${withInline}</p>`;
+      if (html.includes('<li>')) {
+        html = html.replace(/(<li>.*?<\/li>)+/gs, (m) => `<ul style="margin:8px 0 8px 18px; padding:0;">${m}</ul>`);
+      }
+      return html;
+    }
+
+    function renderAiTutorResponse(answerText, primaryMatch) {
+      const followupsHtml = primaryMatch && primaryMatch.followups && primaryMatch.followups.length > 0
+        ? `<div class="tutor-followups">
+             <div class="tutor-followups-label">🔍 Recommended Next Concepts:</div>
+             <div class="tutor-followups-chips">${primaryMatch.followups.map(f => `<button class="tutor-chip-btn" onclick="askQuick('${f}')">${f} ➜</button>`).join(' ')}</div>
+           </div>`
+        : '';
+      const citation = primaryMatch
+        ? `<div class="tutor-citation">📚 Grounded in: ${escapeHtml(primaryMatch.source || primaryMatch.topic || '')}</div>`
+        : `<div class="tutor-citation">📚 Grounded in the 50 verified units from accredited RSPH curriculum textbooks</div>`;
+      return `
+        <div class="tutor-entry-card">
+          <div class="tutor-ai-answer">${simpleMarkdownToHtml(answerText)}</div>
+          ${followupsHtml}
+          ${citation}
+        </div>
+      `;
+    }
+
     function sendChat() {
       const input = document.getElementById('chatInput');
       const query = input.value.trim();
@@ -5170,27 +5223,58 @@
       msgContainer.innerHTML += `
         <div class="typing-indicator" id="${typingId}">
           <div class="typing-dots"><span></span><span></span><span></span></div>
-          <span>Searching approved curriculum textbooks &amp; guidelines...</span>
+          <span>Consulting your prescribed textbooks...</span>
         </div>
       `;
       msgContainer.scrollTop = msgContainer.scrollHeight;
 
-      setTimeout(() => {
+      const { bestMatch, highestScore, secondMatch, secondScore } = queryKnowledgeBase(query);
+      const matches = [bestMatch, secondScore >= 5 ? secondMatch : null].filter(Boolean);
+      const studentFirstName = (typeof studentProfile !== 'undefined' && studentProfile && studentProfile.name && !studentProfile.isDemo)
+        ? studentProfile.name.split(/\s+/)[0] : '';
+
+      const finish = (html) => {
         const typingEl = document.getElementById(typingId);
         if (typingEl) typingEl.remove();
-
-        const { bestMatch, highestScore } = queryKnowledgeBase(query);
-
-        let responseHtml = '';
-        if (bestMatch && highestScore >= 7) {
-          responseHtml = renderTutorResponse(bestMatch);
-        } else {
-          responseHtml = renderFallbackResponse(query);
-        }
-
-        msgContainer.innerHTML += `<div class="chat-msg bot">${responseHtml}</div>`;
+        msgContainer.innerHTML += `<div class="chat-msg bot">${html}</div>`;
         msgContainer.scrollTop = msgContainer.scrollHeight;
-      }, 400);
+      };
+
+      const fallbackToRules = () => {
+        if (bestMatch && highestScore >= 7) {
+          finish(renderTutorResponse(bestMatch));
+        } else {
+          finish(renderFallbackResponse(query));
+        }
+      };
+
+      if (!TUTOR_WORKER_URL || TUTOR_WORKER_URL.includes('WORKERS_SUBDOMAIN')) {
+        setTimeout(fallbackToRules, 400);
+        return;
+      }
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+
+      fetch(TUTOR_WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        signal: controller.signal,
+        body: JSON.stringify({ question: query, studentName: studentFirstName, matches })
+      })
+        .then(res => { if (!res.ok) throw new Error('Worker error ' + res.status); return res.json(); })
+        .then(data => {
+          clearTimeout(timeoutId);
+          if (data && data.answer) {
+            finish(renderAiTutorResponse(data.answer, bestMatch));
+          } else {
+            fallbackToRules();
+          }
+        })
+        .catch(() => {
+          clearTimeout(timeoutId);
+          fallbackToRules();
+        });
     }
 
     // ==========================================
