@@ -5853,8 +5853,13 @@
       });
       flushPara(); closeList();
 
-      html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[Number(i)] || '');
+      // TABLE must be re-inserted before MATH: a formula inside a table cell
+      // was extracted into mathBlocks and left as an @@MATH#@@ token INSIDE
+      // that cell's already-rendered HTML (stored in tableBlocks), not in
+      // this outer `html` skeleton — replacing MATH first would never reach
+      // it, leaving the literal token visible in the table.
       html = html.replace(/@@TABLE(\d+)@@/g, (m, i) => tableBlocks[Number(i)] || '');
+      html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[Number(i)] || '');
       return html;
     }
 
@@ -5954,9 +5959,15 @@
 
       let html = blockMdToHtml(escapeHtml(raw));
 
-      html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[Number(i)] || '');
-      html = html.replace(/@@FLOW(\d+)@@/g, (m, i) => flowBlocks[Number(i)] || '');
+      // TABLE and FLOW must be re-inserted before MATH: a formula inside a
+      // table cell or flow step was extracted into mathBlocks and left as an
+      // @@MATH#@@ token INSIDE that block's already-rendered HTML (stored in
+      // tableBlocks/flowBlocks), not in this outer `html` skeleton —
+      // replacing MATH first would never reach it, leaving the literal
+      // token visible instead of a rendered formula.
       html = html.replace(/@@TABLE(\d+)@@/g, (m, i) => tableBlocks[Number(i)] || '');
+      html = html.replace(/@@FLOW(\d+)@@/g, (m, i) => flowBlocks[Number(i)] || '');
+      html = html.replace(/@@MATH(\d+)@@/g, (m, i) => mathBlocks[Number(i)] || '');
 
       return html;
     }
