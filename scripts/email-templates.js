@@ -30,22 +30,15 @@ function idBadge(studentId, note) {
   </table>`;
 }
 
-const LOGO_ICON_URL = 'https://rsph-prism-2026-8d817.web.app/prism_logo_icon.png';
-
-function shell({ bodyHtml, footerNote = '' }) {
+function shell({ kicker = 'BRIDGE COURSE', bodyHtml, footerNote = '' }) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="color-scheme" content="light"></head>
 <body style="margin:0;padding:0;background:#F1F5F9;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1F5F9;padding:24px 12px;">
 <tr><td align="center">
   <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;box-shadow:0 8px 30px rgba(2,6,23,.12);">
-    <tr><td style="background:#FFFFFF;padding:20px 26px;border-bottom:3px solid #CF3E30;">
-      <table role="presentation" cellpadding="0" cellspacing="0"><tr>
-        <td style="padding-right:12px;"><img src="${LOGO_ICON_URL}" width="52" alt="PRISM" style="display:block;width:52px;height:auto;border:0;" /></td>
-        <td style="vertical-align:middle;">
-          <div style="font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:24px;color:#A82042;line-height:1;">PRISM</div>
-          <div style="font-weight:700;font-size:10px;letter-spacing:2px;color:#334155;margin-top:4px;">30-DAY BRIDGE COURSE</div>
-        </td>
-      </tr></table>
+    <tr><td style="background:linear-gradient(135deg,#021152,#A82042);padding:24px 26px;">
+      <div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;">PRISM</div>
+      <div style="color:#FBCFE8;font-size:10px;font-weight:700;letter-spacing:3px;margin-top:2px;">${kicker}</div>
     </td></tr>
     <tr><td style="padding:0;">
       ${bodyHtml}
