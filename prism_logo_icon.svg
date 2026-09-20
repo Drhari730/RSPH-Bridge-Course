@@ -1,0 +1,16 @@
+<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PRISM icon">
+  <defs>
+    <linearGradient id="prismIconGrad" x1="15%" y1="10%" x2="90%" y2="95%">
+      <stop offset="0%" stop-color="#F59E0B" />
+      <stop offset="55%" stop-color="#CF3E30" />
+      <stop offset="100%" stop-color="#A82042" />
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="116" height="116" rx="26" fill="#FFFFFF" stroke="#F1E0E3" stroke-width="2" />
+  <polygon points="60,20 100,96 20,96" fill="url(#prismIconGrad)" />
+  <polygon points="57,20 65,20 46,96 37,96" fill="#FFFFFF" opacity="0.5" />
+  <circle cx="35" cy="85" r="5" fill="#021152" />
+  <circle cx="49" cy="72" r="6" fill="#821531" />
+  <circle cx="64" cy="56" r="7" fill="#F59E0B" />
+  <path d="M87 22 L90.5 30 L99 32 L90.5 34 L87 42 L83.5 34 L75 32 L83.5 30 Z" fill="#F59E0B" />
+</svg>

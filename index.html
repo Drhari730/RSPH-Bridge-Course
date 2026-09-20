@@ -135,6 +135,32 @@
       margin-bottom: 8px;
       color: #FFFFFF;
     }
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .hero-logo-card {
+      display: inline-block;
+      background: #FFFFFF;
+      border-radius: 18px;
+      padding: 14px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    }
+    .hero-logo-img {
+      display: block;
+      height: 84px;
+      width: auto;
+      max-width: 100%;
+    }
+    @media (max-width: 600px) {
+      .hero-logo-img { height: 60px; }
+    }
     .hero-badge {
       display: inline-block;
       background: rgba(255, 255, 255, 0.2);
@@ -2312,9 +2338,9 @@
   <section class="hero-banner">
     <div class="hero-container">
       <div class="hero-kicker">Ramaiah School of Public Health</div>
-      <h1 class="hero-title">PRISM: 30-Day Bridge Course</h1>
-      <div class="hero-badge">
-        <strong>P</strong>ublic Health • <strong>R</strong>esearch Methods • <strong>I</strong>nformatics • <strong>S</strong>tatistics • <strong>M</strong>anagement
+      <h1 class="sr-only">PRISM: 30-Day Bridge Course — Public Health, Research Methods, Informatics, Statistics, Management</h1>
+      <div class="hero-logo-card">
+        <img src="prism_logo.svg" alt="PRISM: 30-Day Bridge Course" class="hero-logo-img" onerror="this.style.display='none'" />
       </div>
       <p class="hero-sub">
         An intensive 30-day interdisciplinary curriculum designed to build baseline competence across health systems, epidemiological methods, biostatistical thinking, healthcare leadership, and research ethics. Complete lessons, interactive simulations, and module assessments to earn your Certificate of Competence.

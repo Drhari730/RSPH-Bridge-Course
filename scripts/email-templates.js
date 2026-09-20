@@ -30,22 +30,23 @@ function idBadge(studentId, note) {
   </table>`;
 }
 
-function shell({ kicker = 'BRIDGE COURSE', bodyHtml, footerNote = '' }) {
+const LOGO_URL = 'https://rsph-prism-2026-8d817.web.app/prism_logo_email.png';
+
+function shell({ bodyHtml, footerNote = '' }) {
   return `<!doctype html><html><head><meta charset="utf-8"><meta name="color-scheme" content="light"></head>
 <body style="margin:0;padding:0;background:#F1F5F9;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F1F5F9;padding:24px 12px;">
 <tr><td align="center">
   <table role="presentation" width="520" cellpadding="0" cellspacing="0" style="max-width:520px;width:100%;background:#FFFFFF;border-radius:16px;overflow:hidden;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;box-shadow:0 8px 30px rgba(2,6,23,.12);">
-    <tr><td style="background:linear-gradient(135deg,#021152,#A82042);padding:24px 26px;">
-      <div style="color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;">PRISM</div>
-      <div style="color:#FBCFE8;font-size:10px;font-weight:700;letter-spacing:3px;margin-top:2px;">${kicker}</div>
+    <tr><td style="background:#FFFFFF;padding:22px 26px;border-bottom:3px solid #CF3E30;">
+      <img src="${LOGO_URL}" width="220" alt="PRISM: 30-Day Bridge Course" style="display:block;width:220px;max-width:60%;height:auto;border:0;" />
     </td></tr>
     <tr><td style="padding:0;">
       ${bodyHtml}
     </td></tr>
     <tr><td style="padding:16px 26px 24px;border-top:1px solid #eef2f7;">
       <p style="margin:0;font-size:11.5px;color:#94a3b8;line-height:1.6;">${footerNote || 'This is an automated message from the RSPH PRISM Bridge Course portal.'}</p>
-      <p style="margin:10px 0 0;font-size:10px;font-weight:700;letter-spacing:2px;color:#cbd5e1;">RAMAIAH SCHOOL OF PUBLIC HEALTH &middot; MSRUAS</p>
+      <p style="margin:10px 0 0;font-size:10px;font-weight:700;letter-spacing:2px;color:#64748b;">RAMAIAH SCHOOL OF PUBLIC HEALTH &middot; MSRUAS</p>
     </td></tr>
   </table>
 </td></tr>
