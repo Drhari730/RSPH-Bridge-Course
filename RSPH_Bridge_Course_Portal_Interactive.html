@@ -579,6 +579,15 @@
     @media (max-width: 900px) {
       .lms-layout { grid-template-columns: 1fr; }
     }
+    /* Grid tracks default to a content-based minimum, so a wide table, image,
+       or SVG explainer inside either column silently forces the whole grid
+       (and the page) wider than the viewport on tablets/phones. min-width: 0
+       lets the track actually shrink to the available space; overflow-x on
+       the item catches anything still wider than that. */
+    .lms-sidebar, .lesson-viewer {
+      min-width: 0;
+      overflow-x: auto;
+    }
 
     /* SIDEBAR MODULE LIST */
     .lms-sidebar {
@@ -972,6 +981,19 @@
       transition: transform 0.2s;
     }
     .chatbot-fab:hover { transform: scale(1.04); }
+    @media (max-width: 600px) {
+      .chatbot-fab {
+        bottom: 16px;
+        right: 16px;
+        width: 52px;
+        height: 52px;
+        padding: 0;
+        border-radius: 50%;
+        justify-content: center;
+        box-shadow: 0 6px 18px rgba(168, 32, 66, 0.4);
+      }
+      .chatbot-fab-label { display: none; }
+    }
     /* ACADEMIC KNOWLEDGE SEARCH STYLES */
     .chatbot-drawer {
       position: fixed;
@@ -2960,7 +2982,7 @@
 
   <!-- FLOATING AI STUDY TUTOR FAB -->
   <div class="chatbot-fab" onclick="toggleChat()">
-    <span style="font-size: 16px;">🔍</span> <span>Ask Setu — Your Study Tutor</span>
+    <span style="font-size: 16px;">🔍</span> <span class="chatbot-fab-label">Ask Setu — Your Study Tutor</span>
   </div>
 
   <!-- SETU: AI STUDY TUTOR DRAWER -->
