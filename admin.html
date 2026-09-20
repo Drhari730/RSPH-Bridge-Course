@@ -274,13 +274,14 @@
                 <th style="text-align:center;">Quizzes</th>
                 <th style="text-align:center;">Pink Certs</th>
                 <th style="text-align:center;">Final Cert</th>
+                <th style="text-align:center;">Pre &rarr; Post MCQ</th>
                 <th style="text-align:center;">Min. Active Today</th>
                 <th>Last Active</th>
                 <th style="text-align:center;">Details</th>
               </tr>
             </thead>
             <tbody id="rosterBody">
-              <tr><td colspan="10" style="padding:24px; text-align:center; color:#64748B;">Enter the passcode to load the registry.</td></tr>
+              <tr><td colspan="11" style="padding:24px; text-align:center; color:#64748B;">Enter the passcode to load the registry.</td></tr>
             </tbody>
           </table>
         </div>
@@ -506,7 +507,7 @@
     function renderRoster(students) {
       const tbody = document.getElementById('rosterBody');
       if (!students || students.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="10" style="padding:24px; text-align:center; color:#64748B;">No enrolled scholars found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="11" style="padding:24px; text-align:center; color:#64748B;">No enrolled scholars found.</td></tr>';
         renderStats([]);
         return;
       }
@@ -529,6 +530,11 @@
         const isActiveNow = lastActiveMs && (now - lastActiveMs) <= ACTIVE_NOW_WINDOW_MS;
         const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : (s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : 'Recently');
         const minutesToday = (s.activeDateStamp === todayIST && typeof s.activeSecondsToday === 'number') ? Math.round(s.activeSecondsToday / 60) : 0;
+        const hasBaseline = typeof s.baselineScorePct === 'number';
+        const hasPost = typeof s.postTestScorePct === 'number';
+        const mcqCell = hasBaseline
+          ? `${s.baselineScorePct}% &rarr; ${hasPost ? s.postTestScorePct + '%' : '<span style="color:#94A3B8;">pending</span>'}`
+          : '<span style="color:#94A3B8;">not taken</span>';
         rows += `
           <tr>
             <td style="font-weight:700; color:var(--rsph-navy); font-family:monospace;">${s.id || 'N/A'}</td>
@@ -538,6 +544,7 @@
             <td style="text-align:center; font-weight:700; color:#059669;">${passedCount} / ${TOTAL_MODULES}</td>
             <td style="text-align:center;"><span class="badge pink">🌸 ${pinkCount}</span></td>
             <td style="text-align:center;">${finalBadge}</td>
+            <td style="text-align:center; font-size:11.5px; font-weight:700;">${mcqCell}</td>
             <td style="text-align:center; font-weight:700;">${minutesToday}m</td>
             <td style="color:#64748B; font-size:11.5px;">${isActiveNow ? '<span class="badge now">🟢 Active now</span><br>' : ''}${lastActiveStr}</td>
             <td style="text-align:center;">
@@ -611,6 +618,12 @@
       const lastActiveStr = s.lastActive ? new Date(s.lastActive).toLocaleString('en-GB') : '—';
       const regStr = s.registeredAt ? new Date(s.registeredAt).toLocaleString('en-GB') : '—';
       const minutesToday = typeof s.activeSecondsToday === 'number' ? Math.round(s.activeSecondsToday / 60) : 0;
+      const baselineStr = typeof s.baselineScorePct === 'number'
+        ? `${s.baselineScorePct}% (${s.baselineDate ? new Date(s.baselineDate).toLocaleDateString('en-GB') : '—'})`
+        : 'Not taken yet';
+      const postTestStr = typeof s.postTestScorePct === 'number'
+        ? `${s.postTestScorePct}% (${s.postTestDate ? new Date(s.postTestDate).toLocaleDateString('en-GB') : '—'})`
+        : 'Not taken yet';
       document.getElementById('detailTitle').textContent = `${s.name || 'Anonymous Scholar'} — Progress Detail`;
       document.getElementById('detailBody').innerHTML = `
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:10px; margin-bottom:18px; font-size:12.5px;">
@@ -622,6 +635,8 @@
           <div><strong style="color:#64748B;">Registered:</strong><br>${regStr}</div>
           <div><strong style="color:#64748B;">Last Active:</strong><br>${lastActiveStr}</div>
           <div><strong style="color:#64748B;">Active Today:</strong><br>${minutesToday} minutes</div>
+          <div><strong style="color:#64748B;">Baseline MCQ (Day 1):</strong><br>${baselineStr}</div>
+          <div><strong style="color:#64748B;">Post-Course MCQ:</strong><br>${postTestStr}</div>
         </div>
         <h4 style="font-family: Georgia, serif; color: var(--rsph-navy); font-size: 15px; margin-bottom: 6px;">📅 Lesson Completion (${completed.size} / ${TOTAL_LESSONS} Days)</h4>
         <div style="margin-bottom: 18px; line-height: 1.4;">${dayBadges}</div>
@@ -643,7 +658,7 @@
         showNotice({ tone: 'warning', icon: '📭', title: 'Nothing to Export', message: 'No roster data to export yet.' });
         return;
       }
-      const headers = ['Student ID', 'Full Name', 'Email', 'Discipline', 'Prior Academic Background', 'College / Institution', 'Registration Date', 'Lessons Completed', 'Passed Quizzes Count', 'Pink Certificates Issued', 'Final Certificate Status', 'Minutes Active Today', 'Last Active'];
+      const headers = ['Student ID', 'Full Name', 'Email', 'Discipline', 'Prior Academic Background', 'College / Institution', 'Registration Date', 'Lessons Completed', 'Passed Quizzes Count', 'Pink Certificates Issued', 'Final Certificate Status', 'Baseline MCQ %', 'Post-Course MCQ %', 'Minutes Active Today', 'Last Active'];
       const rows = [headers.join(',')];
       allStudents.forEach((s) => {
         const passedCount = Array.isArray(s.passedQuizzes) ? s.passedQuizzes.length : 0;
@@ -661,6 +676,8 @@
           `"${(s.registeredAt || '').replace(/"/g, '""')}"`,
           lessonsDone, passedCount, pinkCount,
           s.finalCertificateAwarded ? 'Awarded' : 'Pending',
+          typeof s.baselineScorePct === 'number' ? s.baselineScorePct : '',
+          typeof s.postTestScorePct === 'number' ? s.postTestScorePct : '',
           minutesToday,
           `"${(s.lastActive || '').replace(/"/g, '""')}"`
         ];

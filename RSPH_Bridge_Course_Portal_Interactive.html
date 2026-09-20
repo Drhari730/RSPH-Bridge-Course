@@ -5185,12 +5185,42 @@
       const pct = Math.round((score / total) * 100);
       const box = document.getElementById('diagScoreBox');
       box.style.display = 'block';
-      document.getElementById('diagScoreTitle').innerText = `Assessment Result: ${score} / ${total} (${pct}%)`;
-      if (pct >= 80) {
-        document.getElementById('diagScoreDetails').innerHTML = `<strong style="color: #15803D;">Benchmark Passed (80%+)!</strong> Excellent foundational competence demonstrated across Health Systems, Epidemiology, Biostatistics, Healthcare Management, and Research Ethics.`;
+
+      // First attempt on record = baseline (pre-course). Any attempt after
+      // that overwrites the post-course score — matches the "administered
+      // Day 1, re-administered at completion" copy above the button. Neither
+      // is persisted for an unregistered Guest Scholar (no Firestore doc to
+      // attach it to), so those students just see the local result each time.
+      const isRegistered = !!(studentProfile && studentProfile.id && !studentProfile.isDemo);
+      const hasBaseline = isRegistered && typeof studentProfile.baselineScorePct === 'number';
+      const attemptLabel = hasBaseline ? 'Post-Course' : 'Baseline';
+      const nowIso = new Date().toISOString();
+
+      document.getElementById('diagScoreTitle').innerText = `${attemptLabel} Assessment Result: ${score} / ${total} (${pct}%)`;
+
+      let detailsHtml = pct >= 80
+        ? `<strong style="color: #15803D;">Benchmark Passed (80%+)!</strong> Excellent foundational competence demonstrated across Health Systems, Epidemiology, Biostatistics, Healthcare Management, and Research Ethics.`
+        : `<strong style="color: var(--rsph-crimson);">Foundation Review Recommended.</strong> Continue progressing through the daily lessons and interactive simulation tools.`;
+
+      if (!isRegistered) {
+        detailsHtml += `<br><br><em style="color: var(--rsph-muted);">📝 Register with your Student ID to save this as your permanent ${hasBaseline ? 'post-course' : 'baseline'} record — right now this result isn't being saved anywhere.</em>`;
+      } else if (hasBaseline) {
+        const gain = pct - studentProfile.baselineScorePct;
+        const gainStr = gain > 0 ? `+${gain}` : String(gain);
+        const gainColor = gain > 0 ? '#15803D' : (gain < 0 ? 'var(--rsph-crimson)' : 'var(--rsph-muted)');
+        detailsHtml += `<br><br><strong>Baseline was ${studentProfile.baselineScorePct}%</strong> — this post-course attempt is <strong style="color: ${gainColor};">${gainStr} points</strong> from your Day 1 score. Recorded to your record.`;
+        studentProfile.postTestScorePct = pct;
+        studentProfile.postTestDate = nowIso;
+        localStorage.setItem('rsph_student_posttest_pct', String(pct));
+        syncStudentToFirestore(studentProfile, { postTestScorePct: pct, postTestScore: score, postTestTotal: total, postTestDate: nowIso });
       } else {
-        document.getElementById('diagScoreDetails').innerHTML = `<strong style="color: var(--rsph-crimson);">Foundation Review Recommended.</strong> Continue progressing through the daily lessons and interactive simulation tools.`;
+        detailsHtml += `<br><br><em style="color: var(--rsph-muted);">Saved as your Day 1 baseline. Retake this assessment after finishing the course to see your improvement.</em>`;
+        studentProfile.baselineScorePct = pct;
+        studentProfile.baselineDate = nowIso;
+        localStorage.setItem('rsph_student_baseline_pct', String(pct));
+        syncStudentToFirestore(studentProfile, { baselineScorePct: pct, baselineScore: score, baselineTotal: total, baselineDate: nowIso });
       }
+      document.getElementById('diagScoreDetails').innerHTML = detailsHtml;
       box.scrollIntoView({ behavior: 'smooth' });
     }
 
@@ -6065,6 +6095,15 @@
       id: localStorage.getItem('rsph_student_id') || '',
       registeredAt: localStorage.getItem('rsph_student_registered_at') || ''
     };
+    // Baseline/post-course diagnostic scores persist across reloads via
+    // localStorage (mirroring the pattern above) — without this, every
+    // page reload would forget the baseline and re-record it as a fresh one.
+    (function restoreDiagnosticScores() {
+      const b = localStorage.getItem('rsph_student_baseline_pct');
+      const p = localStorage.getItem('rsph_student_posttest_pct');
+      if (b !== null) studentProfile.baselineScorePct = parseInt(b, 10);
+      if (p !== null) studentProfile.postTestScorePct = parseInt(p, 10);
+    })();
 
     function updateStudentHeaderUI() {
       const nameDisp = document.getElementById('regStudentNameDisplay');
