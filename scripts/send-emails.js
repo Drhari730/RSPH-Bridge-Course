@@ -41,7 +41,7 @@ const firebaseConfig = {
   appId: '1:535427084339:web:10de0e7d86fd6ff591f346'
 };
 
-const FROM_EMAIL = 'PRISM Bridge Course <prism@drhari.co.in>';
+const FROM_EMAIL = 'PRISM Bridge Course <noreply@prism.drhari.co.in>';
 const TOTAL_LESSONS = 30;
 const TOTAL_MODULES = 6;
 const DIGEST_HOUR_IST = 8; // send the daily digest during the 08:00 IST run
