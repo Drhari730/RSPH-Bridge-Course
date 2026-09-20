@@ -145,6 +145,7 @@
       border: 0;
     }
     .hero-logo-card {
+      position: relative;
       display: inline-flex;
       align-items: center;
       gap: 16px;
@@ -153,13 +154,44 @@
       padding: 14px 24px;
       margin-bottom: 18px;
       box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+      overflow: hidden;
+      opacity: 0;
+      animation: heroLogoIn 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+    }
+    .hero-logo-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -60%;
+      width: 45%;
+      height: 100%;
+      background: linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.75) 50%, transparent 100%);
+      transform: skewX(-18deg);
+      animation: heroLogoShine 4.5s ease-in-out 1.4s infinite;
+      pointer-events: none;
+    }
+    .hero-logo-icon-wrap {
+      position: relative;
+      flex-shrink: 0;
+      animation: heroIconFloat 3.6s ease-in-out 1s infinite;
     }
     .hero-logo-icon {
       display: block;
       height: 74px;
       width: auto;
-      flex-shrink: 0;
     }
+    .hero-sparkle {
+      position: absolute;
+      color: #F59E0B;
+      font-size: 13px;
+      line-height: 1;
+      opacity: 0;
+      animation: heroSparkleTwinkle 2.6s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero-sparkle.s1 { top: -2px; right: 2px; font-size: 15px; animation-delay: 0.3s; }
+    .hero-sparkle.s2 { top: 14px; right: -8px; font-size: 9px; animation-delay: 1.4s; }
+    .hero-sparkle.s3 { top: 28px; right: 10px; font-size: 7px; animation-delay: 2.1s; }
     .hero-logo-word {
       font-family: Georgia, 'Times New Roman', serif;
       font-weight: 700;
@@ -184,6 +216,29 @@
       padding-top: 5px;
       border-top: 2px solid #CF3E30;
       white-space: nowrap;
+    }
+    @keyframes heroLogoIn {
+      from { opacity: 0; transform: scale(0.82) translateY(14px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    @keyframes heroLogoShine {
+      0% { left: -60%; }
+      35% { left: 130%; }
+      100% { left: 130%; }
+    }
+    @keyframes heroIconFloat {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-5px) rotate(-1.5deg); }
+    }
+    @keyframes heroSparkleTwinkle {
+      0%, 100% { opacity: 0; transform: scale(0.4) rotate(0deg); }
+      50% { opacity: 1; transform: scale(1) rotate(20deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .hero-logo-card { opacity: 1; animation: none; }
+      .hero-logo-card::after { display: none; }
+      .hero-logo-icon-wrap { animation: none; }
+      .hero-sparkle { display: none; }
     }
     @media (max-width: 600px) {
       .hero-logo-icon { height: 52px; }
@@ -2369,7 +2424,12 @@
       <div class="hero-kicker">Ramaiah School of Public Health</div>
       <h1 class="sr-only">PRISM: 30-Day Bridge Course — Public Health, Research Methods, Informatics, Statistics, Management</h1>
       <div class="hero-logo-card">
-        <img src="prism_logo_icon.png" alt="PRISM icon" class="hero-logo-icon" onerror="this.style.display='none'" />
+        <div class="hero-logo-icon-wrap">
+          <img src="prism_logo_icon.png" alt="PRISM icon" class="hero-logo-icon" onerror="this.style.display='none'" />
+          <span class="hero-sparkle s1">&#10022;</span>
+          <span class="hero-sparkle s2">&#10022;</span>
+          <span class="hero-sparkle s3">&#10022;</span>
+        </div>
         <div>
           <div class="hero-logo-word">PRISM</div>
           <div class="hero-logo-sub">30-DAY BRIDGE COURSE</div>
