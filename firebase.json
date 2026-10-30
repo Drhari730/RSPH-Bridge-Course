@@ -11,7 +11,14 @@
       "**/node_modules/**",
       "*.py",
       "scripts/**",
-      "cloudflare-worker/**"
+      "cloudflare-worker/**",
+      "MPH*",
+      "Masters*",
+      "**/*.md",
+      "**/*.docx",
+      "**/*.pptx",
+      "**/*.txt",
+      "RSPH_Bridge_Course_Portal_Mockup.png"
     ],
     "headers": [
       {

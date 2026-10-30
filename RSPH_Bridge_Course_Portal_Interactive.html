@@ -3960,6 +3960,7 @@
       }
       if (tabId === 'register') {
         populateRegNameOptions();
+        syncRosterFromFirestore();
       }
       if (tabId === 'certificate' && facultyDemoMode) {
         const idInput = document.getElementById('certStudentIdInput');
@@ -6749,8 +6750,9 @@ function updateStudentHeaderUI() {
     // the currently selected program (MPH/MHA). Always offers a manual fallback.
     function populateRegNameOptions() {
       const discSel = document.getElementById('regDiscipline');
-      const discVal = discSel.value;
+      const discVal = discSel ? discSel.value : '';
       const sel = document.getElementById('regNameSelect');
+      if (!sel) return;
 
       if (discVal === '__other_program__') {
         sel.innerHTML = '<option value="__other__">✏️ Enter my full name</option>';
@@ -6760,21 +6762,76 @@ function updateStudentHeaderUI() {
       }
 
       const isMph = discVal.includes('MPH');
-      const filtered = (typeof expectedCohortRoster !== 'undefined' ? expectedCohortRoster : [])
-        .filter(e => e.discipline === (isMph ? 'MPH' : 'MHA'));
+      const roster = (typeof expectedCohortRoster !== 'undefined' ? expectedCohortRoster : []);
+      const filtered = roster
+        .filter(e => e.discipline === (isMph ? 'MPH' : 'MHA'))
+        .slice()
+        .sort((a, b) => a.name.localeCompare(b.name));
 
+      const prevVal = sel.value;
       let html = '<option value=""> Select your name </option>';
       filtered.forEach(e => {
         html += `<option value="${e.name.replace(/"/g, '&quot;')}">${e.name}</option>`;
       });
       html += '<option value="__other__">✏️ My name is not listed enter manually</option>';
       sel.innerHTML = html;
+      if (prevVal && Array.from(sel.options).some(o => o.value === prevVal)) {
+        sel.value = prevVal;
+      }
       onRegNameSelectChange();
     }
 
     function onRegNameSelectChange() {
       const sel = document.getElementById('regNameSelect');
-      document.getElementById('regFullNameOtherWrap').style.display = (sel.value === '__other__') ? 'block' : 'none';
+      if (!sel) return;
+      const otherWrap = document.getElementById('regFullNameOtherWrap');
+      if (otherWrap) otherWrap.style.display = (sel.value === '__other__') ? 'block' : 'none';
+
+      // Auto-populate registered email if known from admissions list
+      if (sel.value && sel.value !== '__other__') {
+        const emailInput = document.getElementById('regEmail');
+        if (emailInput && (!emailInput.value.trim() || emailInput.dataset.autoFilled)) {
+          const match = (typeof expectedCohortRoster !== 'undefined' ? expectedCohortRoster : []).find(e => e.name === sel.value);
+          if (match && match.email) {
+            emailInput.value = match.email;
+            emailInput.dataset.autoFilled = 'true';
+          }
+        }
+      }
+    }
+
+    // Live sync roster with Firestore: any scholar added manually by faculty
+    // or newly registered in Firestore is dynamically merged into expectedCohortRoster
+    let rosterSyncedWithFirestore = false;
+    async function syncRosterFromFirestore() {
+      if (typeof db === 'undefined' || !db) return;
+      try {
+        const snap = await db.collection('students').get();
+        let changed = false;
+        snap.forEach(d => {
+          const s = d.data();
+          if (!s || !s.name || d.id.startsWith('DEMO-')) return;
+          const cleanName = s.name.trim();
+          const isMph = (s.discipline || '').includes('MPH');
+          const disc = isMph ? 'MPH' : 'MHA';
+          const already = expectedCohortRoster.some(e => e.name.toLowerCase() === cleanName.toLowerCase());
+          if (!already) {
+            expectedCohortRoster.push({ name: cleanName, discipline: disc, email: (s.email || '').trim() });
+            changed = true;
+          } else {
+            const existing = expectedCohortRoster.find(e => e.name.toLowerCase() === cleanName.toLowerCase());
+            if (existing && !existing.email && s.email) {
+              existing.email = s.email.trim();
+            }
+          }
+        });
+        if (changed || !rosterSyncedWithFirestore) {
+          rosterSyncedWithFirestore = true;
+          populateRegNameOptions();
+        }
+      } catch (e) {
+        console.warn('Roster live sync notice:', e);
+      }
     }
 
     function getSelectedRegName() {
@@ -7162,7 +7219,50 @@ function updateStudentHeaderUI() {
         let existing = null;
         try { existing = await findExistingRegistration(email); } catch (e) { console.warn('Duplicate check note:', e); }
         if (existing) {
-          const hint = existing.id.slice(0, existing.id.length - 4) + '\u2022\u2022\u2022\u2022';
+          const normExistingName = (existing.name || '').trim().toLowerCase();
+          const normInputName = name.trim().toLowerCase();
+          const isSameScholar = existing.addedByFaculty || normExistingName === normInputName || normExistingName.includes(normInputName) || normInputName.includes(normExistingName);
+
+          if (isSameScholar) {
+            // Seamlessly activate their registered profile on this device
+            studentProfile = {
+              id: existing.id,
+              name: existing.name || name,
+              email: existing.email || email,
+              discipline: existing.discipline || getSelectedRegDiscipline(),
+              prior: existing.prior || getSelectedRegPrior(),
+              college: existing.college || document.getElementById('regCollege').value.trim() || 'Ramaiah School of Public Health, MSRUAS',
+              registeredAt: existing.registeredAt || new Date().toISOString(),
+              isDemo: false
+            };
+            if (typeof existing.baselineScorePct === 'number') { studentProfile.baselineScorePct = existing.baselineScorePct; studentProfile.baselineDate = existing.baselineDate; }
+            if (typeof existing.postTestScorePct === 'number') { studentProfile.postTestScorePct = existing.postTestScorePct; studentProfile.postTestDate = existing.postTestDate; }
+            completedLessons = new Set(Array.isArray(existing.completedLessons) ? existing.completedLessons : []);
+            passedQuizzes = new Set(Array.isArray(existing.passedQuizzes) ? existing.passedQuizzes : []);
+            for (let n = 1; n <= courseData.modules.length; n++) {
+              if (existing['quiz_mod_' + n] && existing['quiz_mod_' + n].passed) passedQuizzes.add(n);
+            }
+
+            localStorage.setItem('rsph_student_name', studentProfile.name);
+            localStorage.setItem('rsph_student_email', studentProfile.email);
+            localStorage.setItem('rsph_student_discipline', studentProfile.discipline);
+            localStorage.setItem('rsph_student_prior', studentProfile.prior);
+            localStorage.setItem('rsph_student_college', studentProfile.college);
+            localStorage.setItem('rsph_student_id', studentProfile.id);
+            localStorage.setItem('rsph_student_registered_at', studentProfile.registeredAt);
+
+            startActivityTracking();
+            updateStudentHeaderUI();
+            closeStudentModal();
+            showNotice({
+              tone: 'success', icon: '✅', title: 'Scholar Profile Activated!',
+              message: `Welcome, ${studentProfile.name}!\n\nYour PRISM Scholar profile (${studentProfile.id}) is now active on this device. You can now access all learning modules and quizzes.`
+            });
+            resetChat();
+            return;
+          }
+
+          const hint = existing.id.slice(0, existing.id.length - 4) + '••••';
           try {
             await db.collection('meta').doc('emailAutomationState').set(
               { notifiedRegistrations: firebase.firestore.FieldValue.arrayRemove(existing.id) }, { merge: true });
@@ -7170,7 +7270,7 @@ function updateStudentHeaderUI() {
           document.getElementById('resumeEmail').value = email;
           if (document.getElementById('resumeBox').style.display === 'none') toggleResumeBox();
           showNotice({
-            tone: 'warning', icon: '\ud83d\udd01', title: 'You Are Already Registered',
+            tone: 'warning', icon: '🔁', title: 'You Are Already Registered',
             message: 'This email is already registered, so a second account was not created. Your Student ID begins with ' + hint + '.\n\nWe have re-sent your welcome email with your full Student ID. Enter it in "Resume My Progress" below to continue where you left off.'
           });
           return;
@@ -7219,22 +7319,47 @@ function updateStudentHeaderUI() {
     // dashboard that cross-checks this against registrations now lives in
     // admin.html.
     const expectedCohortRoster = [
-      { name: 'Sadiya Marziya', discipline: 'MPH' }, { name: 'Anagha R', discipline: 'MPH' },
-      { name: 'Meenakshi P', discipline: 'MPH' }, { name: 'Kavya.N', discipline: 'MPH' },
-      { name: 'Bhumika', discipline: 'MPH' }, { name: 'N Vishwas', discipline: 'MPH' },
-      { name: 'Neha Kumari', discipline: 'MPH' }, { name: 'N G Vyvidhya', discipline: 'MPH' },
-      { name: 'Gabriella Dondor Kharrubon', discipline: 'MPH' }, { name: 'Geetanjali D', discipline: 'MPH' },
-      { name: 'Shivani Suresh', discipline: 'MPH' }, { name: 'Renie Trisha', discipline: 'MPH' },
-      { name: 'Rashmi R', discipline: 'MPH' },
-      { name: 'Harshitha HR', discipline: 'MHA' }, { name: 'Moumita Barik', discipline: 'MHA' },
-      { name: 'Ramyashree K R', discipline: 'MHA' }, { name: 'Kajal TP', discipline: 'MHA' },
-      { name: 'Suprith', discipline: 'MHA' }, { name: 'Neha Pujari', discipline: 'MHA' },
-      { name: 'Raina Jesica', discipline: 'MHA' }, { name: 'Madivalappa Sajjan', discipline: 'MHA' },
-      { name: 'Owiaz Khan', discipline: 'MHA' }, { name: 'Dr. Archana', discipline: 'MHA' },
-      { name: 'Samiksha G M', discipline: 'MHA' }, { name: 'Afiya Fathima', discipline: 'MHA' },
-      { name: 'Kuruba Supriya', discipline: 'MHA' }, { name: 'Jayeta Roy', discipline: 'MHA' },
-      { name: 'Simran Grace Kujur', discipline: 'MHA' }, { name: 'Sanjana R', discipline: 'MHA' },
-      { name: 'Faiza Shirin Abul Fazal', discipline: 'MHA' }, { name: 'Jahanvi Sinha', discipline: 'MHA' }
+      // MPH Scholars (17)
+      { name: 'Anagha R', discipline: 'MPH', email: 'anaghabindusha@gmail.com' },
+      { name: 'Bhumika', discipline: 'MPH', email: 'rakshith.9850@gmail.com' },
+      { name: 'Drushya N', discipline: 'MPH', email: 'drushyanarayan2002@gmail.com' },
+      { name: 'Gabriella Dondor Kharrubon', discipline: 'MPH', email: 'kharrubong@gmail.com' },
+      { name: 'Geetanjali D', discipline: 'MPH', email: 'geetanjalijaddipal@gmail.com' },
+      { name: 'Kavya.N', discipline: 'MPH', email: 'Kavyanarayanakavya9@gmail.com' },
+      { name: 'Meenakshi P', discipline: 'MPH', email: 'meenubds26@gmail.com' },
+      { name: 'N G Vyvidhya', discipline: 'MPH', email: 'vyvidhyareddy02@gmail.com' },
+      { name: 'N Vishwas', discipline: 'MPH', email: 'nvishwasnvishwas6@gmail.com' },
+      { name: 'Neha Kumari', discipline: 'MPH', email: 'nehaku1798@gmail.com' },
+      { name: 'Rakshitha Shree J', discipline: 'MPH', email: 'rakshijagadeesh06@gmail.com' },
+      { name: 'Rashmi R', discipline: 'MPH', email: 'rashmircyadav@gmail.com' },
+      { name: 'Renie Trisha', discipline: 'MPH', email: 'trisharenie@gmail.com' },
+      { name: 'Sadiya Marziya', discipline: 'MPH', email: 'sadiyamarziya513@gmail.com' },
+      { name: 'Shivani Suresh', discipline: 'MPH', email: 'shivanipd99@gmail.com' },
+      { name: 'Smriti S', discipline: 'MPH', email: 'smriti.satish.2k@gmail.com' },
+      { name: 'Sunil', discipline: 'MPH', email: 'suniljankar79966@gmail.com' },
+
+      // MHA Scholars (21)
+      { name: 'Afiya Fathima', discipline: 'MHA', email: 'afiiyaafathima@gmail.com' },
+      { name: 'Bhanupriya K J', discipline: 'MHA', email: 'bbhanupriyakj@gmail.com' },
+      { name: 'Dr. Archana', discipline: 'MHA', email: 'archanamurthy1991@gmail.com' },
+      { name: 'Faiza Shirin Abul Fazal', discipline: 'MHA', email: 'faizasriahs@gmail.com' },
+      { name: 'Harshitha HR', discipline: 'MHA', email: 'harshithahr832@gmail.com' },
+      { name: 'Jahanvi Sinha', discipline: 'MHA', email: 'sinhajahanvi5@gmail.com' },
+      { name: 'Jayeta Roy', discipline: 'MHA', email: 'riyaroy1185@gmail.com' },
+      { name: 'Kajal TP', discipline: 'MHA', email: 'kajal.tp1990@gmail.com' },
+      { name: 'Kuruba Supriya', discipline: 'MHA' },
+      { name: 'Madivalappa Sajjan', discipline: 'MHA', email: 'madivalappasajjan06@gmail.com' },
+      { name: 'Moumita Barik', discipline: 'MHA', email: 'moumita.barik201@gmail.com' },
+      { name: 'Neha Pujari', discipline: 'MHA', email: 'nehapujari314@gmail.com' },
+      { name: 'Owiaz Khan', discipline: 'MHA', email: 'owiazk8@gmail.com' },
+      { name: 'Raina Jesica', discipline: 'MHA', email: 'rainarakesh2002@gmail.com' },
+      { name: 'Ramyashree K R', discipline: 'MHA', email: 'k.r.ramyashree145@gmail.com' },
+      { name: 'Samiksha G M', discipline: 'MHA', email: 'samiksha9141@gmail.com' },
+      { name: 'Sanjana R', discipline: 'MHA', email: 'sanjanaraju2808@gmail.com' },
+      { name: 'Simran Grace Kujur', discipline: 'MHA', email: 'simrangracekujur@gmail.com' },
+      { name: 'Suprith', discipline: 'MHA', email: 'suprithgp4sh@gmail.com' },
+      { name: 'Syeeda Bahar Khundmiri', discipline: 'MHA', email: 'baharkhundmiri@29gmail.com' },
+      { name: 'Vindya.M', discipline: 'MHA', email: 'vindyavindya7@gmail.com' }
     ];
 
     // FACULTY DEMO PREVIEW lets faculty review all 30 days, labs and quizzes
@@ -7728,6 +7853,7 @@ function generatePinkModuleCert(mIdx) {
       initSidebar();
       selectLesson(0, 1);
       updateStudentHeaderUI();
+      syncRosterFromFirestore();
       initScrollReveal();
       resetChat();
       loadCertSignatureConfig();
