@@ -1108,7 +1108,7 @@
         signatureDataUrl2: pendingSignatureDataUrl2,
         updatedAt: new Date().toISOString()
       }, { merge: true }).then(() => {
-        showNotice({ tone: 'success', icon: '✅', title: 'Signature Saved', message: 'Dr Shalini C Nooyi's signature will now appear on all final certificates.' });
+        showNotice({ tone: 'success', icon: '✅', title: 'Signature Saved', message: "Dr Shalini C Nooyi's signature will now appear on all final certificates." });
         document.getElementById('sigSaveBtn2').disabled = true;
       }).catch((err) => {
         showNotice({ tone: 'error', icon: '❌', title: 'Save Failed', message: err.message });
