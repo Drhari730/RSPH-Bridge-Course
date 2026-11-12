@@ -3150,12 +3150,29 @@
 
             <div id="finalCertQRWrap" style="display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 14px;"></div>
 
-            <div class="cert-signatures" style="justify-content: center;">
-              <div class="cert-sign-box">
-                <img id="certSignatureImg" src="" alt="Dean Signature" style="display:none; max-height:44px; margin: 0 auto 4px; object-fit:contain;" />
-                <div id="certSignatureText" style="height: 30px; font-family: cursive; font-size: 18px; color: #0F172A;">Dean RSPH</div>
-                <div class="sign-name">Dean &amp; Director</div>
-                <div class="sign-title">Ramaiah School of Public Health</div>
+            <div class="cert-signatures" style="display: flex; justify-content: space-around; align-items: flex-end; margin-top: 36px; padding-top: 20px; border-top: 1px solid #E8DFD8; flex-wrap: wrap; gap: 24px;">
+              <!-- Signature 1: Dean -->
+              <div class="cert-sign-box" style="text-align: center; min-width: 230px;">
+                <div style="height: 48px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 6px;">
+                  <img id="certSignatureImg" src="" alt="Dean Signature" style="display:none; max-height:46px; max-width: 190px; object-fit:contain;" />
+                  <div id="certSignatureText" style="font-family: 'Brush Script MT', 'Dancing Script', cursive; font-size: 22px; color: #021152; font-style: italic;">Dr. Nanda Kumar B S</div>
+                </div>
+                <div style="border-top: 1.5px solid #021152; width: 200px; margin: 0 auto 8px;"></div>
+                <div class="sign-name" style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 15px; color: var(--rsph-crimson); margin-bottom: 2px;">Dr Nanda Kumar B S</div>
+                <div class="sign-title" style="font-size: 12px; font-weight: 600; color: #021152; margin-bottom: 2px;">Dean</div>
+                <div style="font-size: 11px; color: #475569;">Ramaiah School of Public Health (RSPH)</div>
+              </div>
+
+              <!-- Signature 2: Program Head – Academics -->
+              <div class="cert-sign-box" style="text-align: center; min-width: 230px;">
+                <div style="height: 48px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 6px;">
+                  <img id="certSignatureImg2" src="" alt="Program Head Signature" style="display:none; max-height:46px; max-width: 190px; object-fit:contain;" />
+                  <div id="certSignatureText2" style="font-family: 'Brush Script MT', 'Dancing Script', cursive; font-size: 22px; color: #021152; font-style: italic;">Dr. Shalini C Nooyi</div>
+                </div>
+                <div style="border-top: 1.5px solid #021152; width: 200px; margin: 0 auto 8px;"></div>
+                <div class="sign-name" style="font-family: 'Fraunces', Georgia, serif; font-weight: 700; font-size: 15px; color: var(--rsph-crimson); margin-bottom: 2px;">Dr Shalini C Nooyi</div>
+                <div class="sign-title" style="font-size: 12px; font-weight: 600; color: #021152; margin-bottom: 2px;">Program Head – Academics</div>
+                <div style="font-size: 11px; color: #475569;">Ramaiah School of Public Health (RSPH)</div>
               </div>
             </div>
           </div>
@@ -6844,7 +6861,9 @@ function updateStudentHeaderUI() {
         let changed = false;
         snap.forEach(d => {
           const s = d.data();
-          if (!s || !s.name || d.id.startsWith('DEMO-')) return;
+          if (!s || !s.name || d.id.startsWith('DEMO-') || d.id.startsWith('FAC-') || d.id.startsWith('DEAN-') || s.isFaculty || s.role === 'faculty') return;
+          const discCheck = (s.discipline || '').toLowerCase();
+          if (discCheck.includes('faculty') || discCheck.includes('dean') || discCheck.includes('observer') || discCheck.includes('leadership')) return;
           const cleanName = s.name.trim();
           const isMph = (s.discipline || '').includes('MPH');
           const disc = isMph ? 'MPH' : 'MHA';
@@ -7092,6 +7111,12 @@ function updateStudentHeaderUI() {
           const txt = document.getElementById('certSignatureText');
           if (img) { img.src = data.signatureDataUrl; img.style.display = 'block'; }
           if (txt) txt.style.display = 'none';
+        }
+        if (data && data.signatureDataUrl2) {
+          const img2 = document.getElementById('certSignatureImg2');
+          const txt2 = document.getElementById('certSignatureText2');
+          if (img2) { img2.src = data.signatureDataUrl2; img2.style.display = 'block'; }
+          if (txt2) txt2.style.display = 'none';
         }
       }).catch((err) => console.warn('Certificate signature load note:', err));
     }

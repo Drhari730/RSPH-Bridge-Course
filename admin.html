@@ -225,6 +225,7 @@
     </div>
     <div style="display: flex; align-items: center; gap: 10px;">
       <button type="button" id="logoutBtn" class="portal-link" style="display: none; border: none; cursor: pointer; font-family: inherit;" onclick="logout()">🔒 Logout</button>
+      <a class="portal-link" href="faculty.html" target="_blank" rel="noopener" style="background:#7E22CE;">🏛️ Faculty Learning Portal ↗</a>
       <a class="portal-link" href="index.html" target="_blank" rel="noopener">🎓 Open Student Portal ↗</a>
     </div>
   </div>
@@ -266,9 +267,11 @@
           <input type="text" id="searchInput" placeholder="🔍 Search by name, ID, or prior degree…" oninput="filterTable()" />
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <select id="disciplineFilter" onchange="filterTable()">
-              <option value="ALL">All Cohorts (MPH &amp; MHA)</option>
-              <option value="MPH">MPH</option>
-              <option value="MHA">MHA</option>
+              <option value="ALL">All Enrolled (Students &amp; Faculty)</option>
+              <option value="STUDENTS">Students Only (MPH &amp; MHA)</option>
+              <option value="MPH">MPH Students</option>
+              <option value="MHA">MHA Students</option>
+              <option value="FACULTY">Faculty &amp; Leadership</option>
             </select>
             <button class="btn crimson" onclick="openAddStudentModal()">➕ Add Student Manually</button>
             <button class="btn green" onclick="exportCSV()">📥 Export CSV</button>
@@ -313,22 +316,49 @@
       </div>
 
       <div class="panel">
-        <h3>✍️ Certificate of Competence Dean Signature</h3>
-        <p class="panel-sub">Upload once here; it appears on every student's final certificate on the student portal automatically. Near-white background pixels are made transparent client-side so it sits cleanly on the certificate.</p>
-        <div class="sig-row">
-          <div class="sig-preview" id="sigPreviewWrap">
-            <span class="placeholder" id="sigPlaceholder">No signature saved yet</span>
-            <img id="sigPreviewImg" style="display:none;" alt="Saved signature preview" />
-          </div>
-          <div class="sig-controls">
-            <input type="file" id="sigFileInput" accept="image/*" onchange="handleSignatureFile(event)" />
-            <div>
-              <button class="btn crimson" id="sigSaveBtn" onclick="saveSignature()" disabled>💾 Save Signature</button>
-              <button class="btn outline" onclick="removeSignature()">🗑 Remove</button>
+        <h3>✍️ Certificate of Competence Official Signatures</h3>
+        <p class="panel-sub">Upload signatures for both dignitaries. Once saved, they appear on every scholar's final Certificate of Competence automatically with clean transparent backgrounds.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+          <!-- Signature 1: Dean -->
+          <div style="border: 1px solid var(--rsph-border); border-radius: 10px; padding: 16px; background: #FAFAFA;">
+            <div style="font-weight: 700; color: var(--rsph-crimson); font-size: 14px; margin-bottom: 2px;">Dr Nanda Kumar B S</div>
+            <div style="font-size: 12px; color: var(--rsph-navy); font-weight: 600; margin-bottom: 12px;">Dean &middot; Ramaiah School of Public Health</div>
+            <div class="sig-row">
+              <div class="sig-preview" id="sigPreviewWrap">
+                <span class="placeholder" id="sigPlaceholder">No Dean signature saved yet</span>
+                <img id="sigPreviewImg" style="display:none;" alt="Saved Dean signature preview" />
+              </div>
+              <div class="sig-controls">
+                <input type="file" id="sigFileInput" accept="image/*" onchange="handleSignatureFile(event)" />
+                <div style="display:flex; gap:6px;">
+                  <button class="btn crimson" id="sigSaveBtn" onclick="saveSignature()" disabled>💾 Save Dean Sign</button>
+                  <button class="btn outline" onclick="removeSignature()">🗑 Remove</button>
+                </div>
+              </div>
             </div>
-            <div class="sig-note">Best results: a signature scanned/photographed on plain white or light paper, cropped fairly tight. JPG or PNG, any size.</div>
+          </div>
+
+          <!-- Signature 2: Program Head – Academics -->
+          <div style="border: 1px solid var(--rsph-border); border-radius: 10px; padding: 16px; background: #FAFAFA;">
+            <div style="font-weight: 700; color: var(--rsph-crimson); font-size: 14px; margin-bottom: 2px;">Dr Shalini C Nooyi</div>
+            <div style="font-size: 12px; color: var(--rsph-navy); font-weight: 600; margin-bottom: 12px;">Program Head – Academics &middot; RSPH</div>
+            <div class="sig-row">
+              <div class="sig-preview" id="sigPreviewWrap2">
+                <span class="placeholder" id="sigPlaceholder2">No Program Head signature saved yet</span>
+                <img id="sigPreviewImg2" style="display:none;" alt="Saved Program Head signature preview" />
+              </div>
+              <div class="sig-controls">
+                <input type="file" id="sigFileInput2" accept="image/*" onchange="handleSignatureFile2(event)" />
+                <div style="display:flex; gap:6px;">
+                  <button class="btn crimson" id="sigSaveBtn2" onclick="saveSignature2()" disabled>💾 Save Academics Sign</button>
+                  <button class="btn outline" onclick="removeSignature2()">🗑 Remove</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        <div class="sig-note" style="margin-top: 12px;">Best results: a signature scanned or photographed on plain white paper, cropped fairly tight. JPG or PNG, any size.</div>
       </div>
 
       <div class="panel">
@@ -672,10 +702,11 @@
       const todayIST = new Date(now + 5.5 * 60 * 60 * 1000).toISOString().slice(0, 10);
       let rows = '';
       students.forEach((s) => {
+        const isFaculty = s.isFaculty || s.role === 'faculty' || (s.id || '').startsWith('FAC-') || (s.id || '').startsWith('DEAN-') || (s.discipline || '').toLowerCase().includes('faculty') || (s.discipline || '').toLowerCase().includes('dean');
         const isMph = (s.discipline || '').includes('MPH');
-        const discBadge = isMph
-          ? '<span class="badge mph">🎓 MPH</span>'
-          : '<span class="badge mha">🏥 MHA</span>';
+        const discBadge = isFaculty
+          ? '<span class="badge" style="background:#F3E8FF; color:#7E22CE; border:1px solid #D8B4FE;">🏛️ Faculty / Dean</span>'
+          : (isMph ? '<span class="badge mph">🎓 MPH</span>' : '<span class="badge mha">🏥 MHA</span>');
         const passedCount = countPassed(s);
         const lessonsDone = Array.isArray(s.completedLessons) ? s.completedLessons.length : 0;
         let pinkCount = countPinkCerts(s);
@@ -726,8 +757,11 @@
           (s.prior && s.prior.toLowerCase().includes(query)) ||
           (s.college && s.college.toLowerCase().includes(query));
         let matchesDisc = true;
-        if (discFilter === 'MPH') matchesDisc = (s.discipline || '').includes('MPH');
-        else if (discFilter === 'MHA') matchesDisc = (s.discipline || '').includes('MHA');
+        const isFac = s.isFaculty || s.role === 'faculty' || (s.id || '').startsWith('FAC-') || (s.id || '').startsWith('DEAN-') || (s.discipline || '').toLowerCase().includes('faculty') || (s.discipline || '').toLowerCase().includes('dean');
+        if (discFilter === 'STUDENTS') matchesDisc = !isFac;
+        else if (discFilter === 'MPH') matchesDisc = !isFac && (s.discipline || '').includes('MPH');
+        else if (discFilter === 'MHA') matchesDisc = !isFac && (s.discipline || '').includes('MHA');
+        else if (discFilter === 'FACULTY') matchesDisc = isFac;
         return matchesQuery && matchesDisc;
       });
       renderRoster(filtered);
@@ -1037,6 +1071,67 @@
       });
     }
 
+    let pendingSignatureDataUrl2 = null;
+
+    function handleSignatureFile2(evt) {
+      const file = evt.target.files && evt.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const data = imageData.data;
+          for (let i = 0; i < data.length; i += 4) {
+            if (data[i] > 235 && data[i + 1] > 235 && data[i + 2] > 235) data[i + 3] = 0;
+          }
+          ctx.putImageData(imageData, 0, 0);
+          pendingSignatureDataUrl2 = canvas.toDataURL('image/png');
+          document.getElementById('sigPreviewImg2').src = pendingSignatureDataUrl2;
+          document.getElementById('sigPreviewImg2').style.display = 'block';
+          document.getElementById('sigPlaceholder2').style.display = 'none';
+          document.getElementById('sigSaveBtn2').disabled = false;
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function saveSignature2() {
+      if (!pendingSignatureDataUrl2) return;
+      db.collection('meta').doc('certificateConfig').set({
+        signatureDataUrl2: pendingSignatureDataUrl2,
+        updatedAt: new Date().toISOString()
+      }, { merge: true }).then(() => {
+        showNotice({ tone: 'success', icon: '✅', title: 'Signature Saved', message: 'Dr Shalini C Nooyi's signature will now appear on all final certificates.' });
+        document.getElementById('sigSaveBtn2').disabled = true;
+      }).catch((err) => {
+        showNotice({ tone: 'error', icon: '❌', title: 'Save Failed', message: err.message });
+      });
+    }
+
+    function removeSignature2() {
+      showConfirmNotice({
+        tone: 'warning', icon: '🗑', title: 'Remove Signature?',
+        message: 'Program Head signature will fall back to cursive placeholder text.',
+        confirmText: 'Remove', cancelText: 'Cancel',
+        onConfirm: () => {
+          db.collection('meta').doc('certificateConfig').set({ signatureDataUrl2: '' }, { merge: true }).then(() => {
+            pendingSignatureDataUrl2 = null;
+            document.getElementById('sigPreviewImg2').style.display = 'none';
+            document.getElementById('sigPlaceholder2').style.display = 'block';
+            document.getElementById('sigSaveBtn2').disabled = true;
+            showNotice({ tone: 'success', icon: '✅', title: 'Removed', message: 'Certificates will use the cursive placeholder.' });
+          });
+        }
+      });
+    }
+
     function loadSignatureConfig() {
       db.collection('meta').doc('certificateConfig').get().then((snap) => {
         if (!snap.exists) return;
@@ -1045,6 +1140,11 @@
           document.getElementById('sigPreviewImg').src = data.signatureDataUrl;
           document.getElementById('sigPreviewImg').style.display = 'block';
           document.getElementById('sigPlaceholder').style.display = 'none';
+        }
+        if (data && data.signatureDataUrl2) {
+          document.getElementById('sigPreviewImg2').src = data.signatureDataUrl2;
+          document.getElementById('sigPreviewImg2').style.display = 'block';
+          document.getElementById('sigPlaceholder2').style.display = 'none';
         }
       }).catch((err) => console.warn('Signature load note:', err));
     }
